@@ -1,0 +1,6 @@
+rootProject.name='Sofar'
+
+include ':app'
+
+include ':framework:widget'
+include ':framework:utility'
