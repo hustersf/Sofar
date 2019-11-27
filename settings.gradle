@@ -4,3 +4,5 @@ include ':app'
 
 include ':framework:widget'
 include ':framework:utility'
+
+include ':core:skin'
