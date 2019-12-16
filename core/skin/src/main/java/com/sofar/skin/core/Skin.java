@@ -13,7 +13,7 @@ public class Skin {
    * Application 继承和init二选一
    * Activity暂时只支持继承的方式
    */
-  public void init(@NonNull Application application) {
+  public static void init(@NonNull Application application) {
     SkinManager.getInstance().init(application);
   }
 }

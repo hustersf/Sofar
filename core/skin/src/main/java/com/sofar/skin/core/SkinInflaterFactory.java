@@ -45,8 +45,16 @@ public class SkinInflaterFactory implements LayoutInflater.Factory2 {
     View view = delegate.createView(parent, name, context, attrs);
 
     boolean skinEnable = attrs.getAttributeBooleanValue(SkinConfig.NAMESPACE, SkinConfig.ATTR_SKIN_ENABLE, false);
-    if (skinEnable && view != null) {
-      parseSkinAttr(context, attrs, view);
+    if (skinEnable) {
+      if (view == null) {
+        view = SkinViewInflater.createViewFromTag(context, name, attrs);
+      }
+
+      if (view != null) {
+        parseSkinAttr(context, attrs, view);
+      } else {
+        SkinL.d("createView failed:" + name);
+      }
     }
     return view;
   }
