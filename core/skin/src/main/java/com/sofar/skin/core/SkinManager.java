@@ -36,6 +36,8 @@ public class SkinManager implements ISkinLoader {
   private boolean defaultSkin; //当前的皮肤是否是默认的
   private String skinPackageName; //皮肤apk的包名
 
+  private boolean colorSkin;  //当前皮肤是否是纯颜色换肤
+
   private List<ISkinUpdate> skinObservers;
 
   @Override
@@ -117,7 +119,10 @@ public class SkinManager implements ISkinLoader {
    */
   private void loadSkin() {
     String skinName = SkinConfig.getSkinName(context);
-    if (!TextUtils.isEmpty(skinName)) {
+    if (SkinConfig.SKIN_COLOR_NAME.equals(skinName)) {
+      SkinL.d("init load color skin");
+      loadColorSkin(SkinConfig.getSkinColorValue(context));
+    } else if (!TextUtils.isEmpty(skinName)) {
       SkinL.d("init load skin:" + skinName);
       loadSkin(skinName, null);
     } else {
@@ -133,11 +138,34 @@ public class SkinManager implements ISkinLoader {
   }
 
   /**
+   * 判断当前使用的皮肤是否纯颜色换肤
+   */
+  public boolean isColorSkin() {
+    return colorSkin;
+  }
+
+  /**
    * 恢复至默认皮肤
    */
   public void restoreDefaultTheme() {
     SkinConfig.saveSkinName(context, "");
     defaultSkin = true;
+    colorSkin = false;
+    resources = context.getResources();
+    skinPackageName = context.getPackageName();
+    notifySkinUpdate();
+  }
+
+  /**
+   * 纯颜色换肤
+   */
+  public void loadColorSkin(int color) {
+    SkinL.d("load color skin:" + Integer.toHexString(color));
+    SkinConfig.SKIN_COLOR_VALUE = color;
+    SkinConfig.saveSkinName(context, SkinConfig.SKIN_COLOR_NAME);
+    SkinConfig.saveSkinColorValue(context, color);
+    defaultSkin = false;
+    colorSkin = true;
     resources = context.getResources();
     skinPackageName = context.getPackageName();
     notifySkinUpdate();
@@ -200,6 +228,7 @@ public class SkinManager implements ISkinLoader {
         resources = result;
         if (resources != null) {
           defaultSkin = false;
+          colorSkin = false;
           SkinConfig.saveSkinName(context, skinName);
           if (listener != null) {
             listener.onSuccess();
@@ -267,12 +296,19 @@ public class SkinManager implements ISkinLoader {
 
 
   public int getColor(int resId) {
+    String resName = context.getResources().getResourceEntryName(resId);
+    if (colorSkin && SkinColorWhiteList.supportSkinColorResNames.contains(resName)) {
+      if (SkinConfig.SKIN_COLOR_VALUE == -1) {
+        SkinConfig.SKIN_COLOR_VALUE = SkinConfig.getSkinColorValue(context);
+      }
+      return SkinConfig.SKIN_COLOR_VALUE;
+    }
+
     int originColor = context.getResources().getColor(resId);
     if (resources == null || defaultSkin) {
       return originColor;
     }
 
-    String resName = context.getResources().getResourceEntryName(resId);
     int skinResId = resources.getIdentifier(resName, "color", skinPackageName);
     int skinColor;
     try {

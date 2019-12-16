@@ -10,5 +10,6 @@ public class SofarApp extends Application {
   public void onCreate() {
     super.onCreate();
     Skin.init(this);
+    Skin.addSupportSkinColorResName("themeColor");
   }
 }
