@@ -12,6 +12,7 @@ public class PageData {
   public static List<PageData> buildPageDatas() {
     List<PageData> list = new ArrayList<>();
     list.add(PageData.createPageData("换肤", "sofar://skin"));
+    list.add(PageData.createPageData("控件", "sofar://widget"));
     return list;
   }
 

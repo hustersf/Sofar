@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <declare-styleable name="VoteProgress">
+    <attr name="leftColor" format="color"></attr>
+    <attr name="rightColor" format="color"></attr>
+    <attr name="spaceColor" format="color"></attr>
+    <attr name="spaceWidth" format="dimension"></attr>
+  </declare-styleable>
+
+</resources>

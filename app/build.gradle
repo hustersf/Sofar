@@ -38,4 +38,5 @@ dependencies {
 
     implementation project(':core:skin')
     implementation project(':framework:utility')
+    implementation project(':framework:widget')
 }
