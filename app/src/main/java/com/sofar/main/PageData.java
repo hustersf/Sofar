@@ -13,6 +13,7 @@ public class PageData {
     List<PageData> list = new ArrayList<>();
     list.add(PageData.createPageData("换肤", "sofar://skin"));
     list.add(PageData.createPageData("控件", "sofar://widget"));
+    list.add(PageData.createPageData("网络", "sofar://network"));
     return list;
   }
 
