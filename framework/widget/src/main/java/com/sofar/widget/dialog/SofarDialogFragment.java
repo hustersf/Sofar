@@ -2,6 +2,7 @@ package com.sofar.widget.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -27,6 +28,8 @@ public class SofarDialogFragment extends DialogFragment {
   protected boolean dimBackground = true;
   protected int gravity = Gravity.CENTER;
   protected int animation = -1;
+
+  private DialogInterface.OnDismissListener dismissListener;
 
   public SofarDialogFragment setDialogTheme(int theme) {
     this.dialogTheme = theme;
@@ -71,6 +74,10 @@ public class SofarDialogFragment extends DialogFragment {
   public SofarDialogFragment setDimBackgroundEnabled(boolean dim) {
     this.dimBackground = dim;
     return this;
+  }
+
+  public void setOnDismissListener(DialogInterface.OnDismissListener listener) {
+    this.dismissListener = listener;
   }
 
   @NonNull
@@ -120,4 +127,11 @@ public class SofarDialogFragment extends DialogFragment {
     }
   }
 
+  @Override
+  public void onDismiss(@NonNull DialogInterface dialog) {
+    super.onDismiss(dialog);
+    if (dismissListener != null) {
+      dismissListener.onDismiss(dialog);
+    }
+  }
 }
