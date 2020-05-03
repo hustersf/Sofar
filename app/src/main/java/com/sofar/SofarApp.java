@@ -2,6 +2,7 @@ package com.sofar;
 
 import android.app.Application;
 
+import com.sofar.base.location.LocationProvider;
 import com.sofar.skin.core.Skin;
 
 public class SofarApp extends Application {
@@ -11,5 +12,7 @@ public class SofarApp extends Application {
     super.onCreate();
     Skin.init(this);
     Skin.addSupportSkinColorResName("themeColor");
+
+    LocationProvider.getInstance().init(this);
   }
 }
