@@ -35,4 +35,17 @@
     android:layout_marginTop="10dp"
     android:textSize="18dp" />
 
+  <com.sofar.widget.round.RCRelativeLayout
+    android:layout_width="200dp"
+    android:layout_height="200dp"
+    android:layout_gravity="center_horizontal"
+    app:round_corner="20dp">
+
+    <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@color/colorPrimary" />
+
+  </com.sofar.widget.round.RCRelativeLayout>
+
 </LinearLayout>
