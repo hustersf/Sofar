@@ -21,26 +21,26 @@ public class ViewBinder<T> {
   public final void create(@NonNull View view) {
     this.view = view;
     context = view.getContext();
+    onCreate();
     for (ViewBinder viewBinder : viewBinders) {
       viewBinder.create(view);
     }
-    onCreate();
   }
 
 
   public final void bind(T data) {
+    onBind(data);
     for (ViewBinder viewBinder : viewBinders) {
       viewBinder.bind(data);
     }
-    onBind(data);
   }
 
 
   public final void destroy() {
+    onDestroy();
     for (ViewBinder viewBinder : viewBinders) {
       viewBinder.destroy();
     }
-    onDestroy();
   }
 
   public void addViewBinder(ViewBinder viewBinder) {
