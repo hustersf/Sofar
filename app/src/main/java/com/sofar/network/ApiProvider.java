@@ -1,5 +1,7 @@
 package com.sofar.network;
 
+import com.sofar.business.github.api.GithubRetrofitConfig;
+import com.sofar.business.github.api.GithubService;
 import com.sofar.network.retrofit.RetrofitFactory;
 
 public class ApiProvider {
@@ -19,5 +21,14 @@ public class ApiProvider {
 
   public static MusicApiService getMusicApiService() {
     return MusicApiServiceHolderClass.INSTANCE;
+  }
+
+
+  private static class GithubServiceHolderClass {
+    private final static GithubService INSTANCE = RetrofitFactory.newBuilder(new GithubRetrofitConfig()).build().create(GithubService.class);
+  }
+
+  public static GithubService getGithubService() {
+    return GithubServiceHolderClass.INSTANCE;
   }
 }

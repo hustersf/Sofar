@@ -15,4 +15,8 @@
   <color name="skin_color_2">#2B98F0</color>
   <color name="skin_color_3">#FD9F28</color>
   <color name="skin_color_4">#E62565</color>
+
+  <color name="titleColor">#1F75FE</color>
+  <color name="titleColorAlpha">#551F75FE</color>
+  <color name="greyAlpha">#55999999</color>
 </resources>
