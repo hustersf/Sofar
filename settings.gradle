@@ -12,6 +12,7 @@ include ':framework:audio-record'
 
 include ':core:base'
 include ':core:fun'
+include ':core:im'
 
 include ':external:daogenerator'
 

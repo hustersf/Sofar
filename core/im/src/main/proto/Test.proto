@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option java_package = "com.sofar.im.proto";
+
+message Student {
+    string name = 1;
+    int64 id = 2;
+
+    repeated Course course = 3;
+
+    message Course {
+        string name = 1;
+    }
+
+}

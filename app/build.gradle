@@ -40,6 +40,8 @@ dependencies {
 
     implementation project(':core:base')
     implementation project(':core:fun')
+    implementation project(':core:im')
+
     implementation project(':framework:utility')
     implementation project(':framework:widget')
     implementation project(':framework:network')

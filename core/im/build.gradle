@@ -1,0 +1,43 @@
+apply from: rootProject.file('library.gradle')
+apply plugin: 'com.google.protobuf'
+
+android {
+    sourceSets {
+        main {
+            //定义protobuf文件夹
+            proto {
+                srcDir 'src/main/proto'
+            }
+        }
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.0.0'
+    }
+    plugins {
+        javalite {
+            artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.plugins {
+                javalite {}
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation project(':framework:network')
+    implementation project(':framework:utility')
+
+    implementation 'com.google.protobuf:protobuf-lite:3.0.0'
+}
+
+
+
+
