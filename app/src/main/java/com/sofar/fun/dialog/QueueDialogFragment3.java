@@ -1,4 +1,4 @@
-package com.sofar.widget.dialog;
+package com.sofar.fun.dialog;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 
 import com.sofar.R;
 
-public class QueueDialogFragment2 extends SofarDialogFragment {
+public class QueueDialogFragment3 extends SofarDialogFragment {
 
   @Nullable
   @Override
@@ -23,6 +23,6 @@ public class QueueDialogFragment2 extends SofarDialogFragment {
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     TextView textView = view.findViewById(R.id.title);
-    textView.setText("第二个弹窗");
+    textView.setText("第三个弹窗");
   }
 }

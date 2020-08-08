@@ -91,6 +91,24 @@
 
     </activity>
 
+    <activity
+      android:name=".fun.FunActivity"
+      android:configChanges="orientation|keyboardHidden|screenSize"
+      android:screenOrientation="portrait">
+
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+
+        <data
+          android:host="fun"
+          android:scheme="sofar" />
+      </intent-filter>
+
+    </activity>
+
   </application>
 
 </manifest>

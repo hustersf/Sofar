@@ -1,4 +1,4 @@
-package com.sofar.widget.dialog;
+package com.sofar.fun.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -12,7 +12,7 @@ import android.view.Window;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
-import com.sofar.widget.R;
+import com.sofar.fun.R;
 
 /**
  * 可设置 宽高，gravity，窗口透镜度等属性的dialog

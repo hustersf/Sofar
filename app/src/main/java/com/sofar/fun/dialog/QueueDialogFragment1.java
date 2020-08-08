@@ -1,4 +1,4 @@
-package com.sofar.widget.dialog;
+package com.sofar.fun.dialog;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

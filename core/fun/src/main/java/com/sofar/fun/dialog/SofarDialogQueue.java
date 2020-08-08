@@ -1,4 +1,4 @@
-package com.sofar.widget.dialog;
+package com.sofar.fun.dialog;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
