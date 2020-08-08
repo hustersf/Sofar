@@ -1,4 +1,4 @@
-package com.sofar.base;
+package com.sofar.fun.view;
 
 import android.content.Context;
 import android.graphics.Rect;
@@ -9,9 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.sofar.base.util.WeakHandler;
-
-import io.reactivex.annotations.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * 通过将EmptyView add 到父View

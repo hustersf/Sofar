@@ -1,4 +1,4 @@
-package com.sofar.base.util;
+package com.sofar.fun.view;
 
 import android.os.Handler;
 import android.os.Looper;
