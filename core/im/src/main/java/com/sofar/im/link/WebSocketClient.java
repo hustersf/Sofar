@@ -16,7 +16,8 @@ public class WebSocketClient {
   private static final String TAG = "WebSocketClient";
 
   private static OkHttpClient sClient = new OkHttpClient();
-  private String url;
+  String url;
+  String userId;
 
   @NonNull
   private WebSocket webSocket;
@@ -25,13 +26,20 @@ public class WebSocketClient {
     this.url = url;
   }
 
+  public void setUserId(String userId) {
+    this.userId = userId;
+  }
+
   public void connect() {
-    Request request = new Request.Builder().url(url).build();
+    Request request = new Request.Builder()
+      .header("userId", userId)
+      .url(url)
+      .build();
     webSocket = sClient.newWebSocket(request, listener);
   }
 
   public void disconnect() {
-    webSocket.close(-1, "app use disconnect function");
+    webSocket.close(1000, "app use disconnect function");
   }
 
 

@@ -24,6 +24,7 @@ public class ImManager {
 
   public void connect(String userId) {
     this.userId = userId;
+    client.setUserId(userId);
     client.connect();
   }
 
