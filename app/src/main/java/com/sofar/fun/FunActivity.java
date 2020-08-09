@@ -1,5 +1,6 @@
 package com.sofar.fun;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -11,6 +12,7 @@ import com.sofar.fun.dialog.QueueDialogFragment1;
 import com.sofar.fun.dialog.QueueDialogFragment2;
 import com.sofar.fun.dialog.QueueDialogFragment3;
 import com.sofar.fun.dialog.SofarDialogQueue;
+import com.sofar.fun.play.AutoPlayListActivity;
 
 public class FunActivity extends AppCompatActivity {
 
@@ -29,6 +31,12 @@ public class FunActivity extends AppCompatActivity {
       SofarDialogQueue.get().show(this, d1);
       SofarDialogQueue.get().show(this, d2);
       SofarDialogQueue.get().show(this, d3);
+    });
+
+    TextView play = findViewById(R.id.play);
+    play.setOnClickListener(v -> {
+      Intent intent = new Intent(this, AutoPlayListActivity.class);
+      startActivity(intent);
     });
   }
 }
