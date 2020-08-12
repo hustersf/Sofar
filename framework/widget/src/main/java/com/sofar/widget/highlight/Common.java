@@ -1,6 +1,6 @@
 package com.sofar.widget.highlight;
 
-import android.graphics.Rect;
+import android.graphics.RectF;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,10 +27,10 @@ class Common {
   /**
    * 获取目标View的区域
    */
-  static Rect getViewAbsRect(View view, int parentX, int parentY) {
+  static RectF getViewAbsRect(View view, int parentX, int parentY) {
     int[] loc = new int[2];
     view.getLocationInWindow(loc);
-    Rect rect = new Rect();
+    RectF rect = new RectF();
     rect.set(loc[0], loc[1], loc[0] + view.getMeasuredWidth(), loc[1] + view.getMeasuredHeight());
     rect.offset(-parentX, -parentY);
     return rect;

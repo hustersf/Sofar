@@ -106,6 +106,7 @@ class Configuration implements Parcelable {
     dest.writeInt(mGraphStyle);
     dest.writeByte((byte) (mAutoDismiss ? 1 : 0));
     dest.writeByte((byte) (mOverlayTarget ? 1 : 0));
+    dest.writeByte((byte) (mShowDecoration ? 1 : 0));
   }
 
   public static final Creator<Configuration> CREATOR = new Creator<Configuration>() {
@@ -124,6 +125,7 @@ class Configuration implements Parcelable {
       conf.mGraphStyle = source.readInt();
       conf.mAutoDismiss = source.readByte() == 1;
       conf.mOverlayTarget = source.readByte() == 1;
+      conf.mShowDecoration = source.readByte() == 1;
       return conf;
     }
 

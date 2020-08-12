@@ -2,12 +2,15 @@ package com.sofar.widget.highlight;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.RectF;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+
+import androidx.annotation.NonNull;
 
 /**
  * 遮罩系统的封装 <br>
@@ -23,10 +26,14 @@ public class Guide implements View.OnKeyListener, View.OnClickListener {
 
   private Configuration mConfiguration;
   private MaskView mMaskView;
+  private ViewGroup mRootView;
   private Component[] mComponents;
   // 根据locInwindow定位后，是否需要判断loc值非0
   private boolean mShouldCheckLocInWindow = true;
   private GuideBuilder.OnVisibilityChangedListener mOnVisibilityChangedListener;
+
+  private RectF mOriginRect = new RectF();
+  private RectF mDstRect = new RectF();
 
   void setConfiguration(Configuration configuration) {
     mConfiguration = configuration;
@@ -47,14 +54,37 @@ public class Guide implements View.OnKeyListener, View.OnClickListener {
    *
    * @param activity 目标Activity
    */
-  public void show(Activity activity) {
+  public void show(@NonNull Activity activity) {
     ViewGroup content = activity.findViewById(android.R.id.content);
     show(content);
   }
 
-  public void show(ViewGroup rootView) {
+  /**
+   * 两个guide 复用一个遮罩层，保证两个guide无缝切换（遮罩先消失，在展示）
+   * 但测试发现，先消失在展示，也近似无缝切换
+   *
+   * @param srcGuide
+   */
+  public void showWithGuide(@NonNull Guide srcGuide) {
+    this.mMaskView = srcGuide.mMaskView;
+    this.mRootView = srcGuide.mRootView;
+    if (mMaskView != null && mRootView != null) {
+      initMaskView(mRootView, mMaskView);
+    }
+  }
+
+  /**
+   * 显示该遮罩
+   * 外部借助{@link GuideBuilder}
+   * 创建好一个Guide实例后，使用该实例调用本函数遮罩才会显示
+   *
+   * @param rootView 遮罩父View
+   */
+  public void show(@NonNull ViewGroup rootView) {
+    mRootView = rootView;
     if (mMaskView == null) {
-      mMaskView = onCreateView(rootView);
+      mMaskView = new MaskView(rootView.getContext());
+      initMaskView(rootView, mMaskView);
     }
     if (mMaskView.getParent() == null) {
       rootView.addView(mMaskView);
@@ -147,8 +177,23 @@ public class Guide implements View.OnKeyListener, View.OnClickListener {
     mShouldCheckLocInWindow = set;
   }
 
-  private MaskView onCreateView(ViewGroup rootView) {
-    MaskView maskView = new MaskView(rootView.getContext());
+  /**
+   * 当targetView 大小动态变化时，高亮区域跟着变化，暂时只支持 同比例缩放
+   *
+   * @param padding 假设初始宽高为50，变化后为60，则padding=(60-50)/2
+   */
+  public void refreshTargetPadding(int padding) {
+    mDstRect.set(mOriginRect);
+    mDstRect.left -= padding;
+    mDstRect.top -= padding;
+    mDstRect.right += padding;
+    mDstRect.bottom += padding;
+    if (mMaskView != null) {
+      mMaskView.setTargetRect(mDstRect);
+    }
+  }
+
+  private void initMaskView(@NonNull ViewGroup rootView, @NonNull MaskView maskView) {
     maskView.setFullingColor(
       rootView.getContext().getResources().getColor(mConfiguration.mFullingColorId));
     maskView.setFullingAlpha(mConfiguration.mAlpha);
@@ -185,14 +230,15 @@ public class Guide implements View.OnKeyListener, View.OnClickListener {
     }
 
     if (mConfiguration.mTargetView != null) {
-      maskView.setTargetRect(Common.getViewAbsRect(mConfiguration.mTargetView, parentX, parentY));
+      mOriginRect.set(Common.getViewAbsRect(mConfiguration.mTargetView, parentX, parentY));
     } else {
       // Gets the target view's abs rect
       View target = rootView.findViewById(mConfiguration.mTargetViewId);
       if (target != null) {
-        maskView.setTargetRect(Common.getViewAbsRect(target, parentX, parentY));
+        mOriginRect.set(Common.getViewAbsRect(target, parentX, parentY));
       }
     }
+    maskView.setTargetRect(mOriginRect);
 
     if (mConfiguration.mOutsideTouchable) {
       maskView.setClickable(false);
@@ -201,11 +247,10 @@ public class Guide implements View.OnKeyListener, View.OnClickListener {
     }
 
     // Adds the components to the mask view.
+    maskView.removeAllViews();
     for (Component c : mComponents) {
       maskView.addView(Common.componentToView(LayoutInflater.from(rootView.getContext()), c));
     }
-
-    return maskView;
   }
 
   private void onDestroy() {
