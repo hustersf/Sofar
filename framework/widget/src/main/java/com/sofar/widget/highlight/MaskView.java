@@ -10,7 +10,9 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 
 import com.sofar.widget.Util;
@@ -49,6 +51,11 @@ class MaskView extends ViewGroup {
 
   private boolean mTargetViewRectMax = true; // 在绘制圆形高亮样式时，半径是否取view的宽高中大的一方
 
+  float mDownX = 0;
+  float mDownY = 0;
+  int mTouchSlop;
+  OnMaskClickListener mListener;
+
   public MaskView(Context context) {
     this(context, null);
   }
@@ -75,6 +82,8 @@ class MaskView extends ViewGroup {
     mDashedPaint.setStyle(Paint.Style.STROKE);
     mDashedPaint.setPathEffect(new DashPathEffect(new float[]{2 * dash, dash}, 0));
     mDashedSpace = Util.dp2px(context, 5);
+
+    mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
   }
 
   @Override
@@ -397,4 +406,38 @@ class MaskView extends ViewGroup {
     }
   }
 
+  @Override
+  public boolean onTouchEvent(MotionEvent event) {
+    switch (event.getAction()) {
+      case MotionEvent.ACTION_DOWN:
+        mDownX = event.getX();
+        mDownY = event.getY();
+        break;
+      case MotionEvent.ACTION_UP:
+        float upX = event.getX();
+        float upY = event.getY();
+        float dx = Math.abs(upX - mDownX);
+        float dy = Math.abs(upY - mDownY);
+        boolean target = mTargetRect.contains(mDownX, mDownY) && mTargetRect.contains(upX, upY);
+        if (dx <= mTouchSlop && dy <= mTouchSlop) {
+          if (mListener != null) {
+            mListener.onClick(this, target);
+          }
+        }
+        break;
+    }
+    return mListener != null ? true : super.onTouchEvent(event);
+  }
+
+  public void setOnMaskClickListener(OnMaskClickListener listener) {
+    this.mListener = listener;
+  }
+
+  public interface OnMaskClickListener {
+
+    /**
+     * target 区分是否高亮区域的点击
+     */
+    void onClick(View v, boolean target);
+  }
 }

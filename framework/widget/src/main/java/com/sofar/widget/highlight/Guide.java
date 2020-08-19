@@ -19,7 +19,7 @@ import androidx.annotation.NonNull;
  * <p>
  * Created by sufan
  */
-public class Guide implements View.OnKeyListener, View.OnClickListener {
+public class Guide implements View.OnKeyListener, MaskView.OnMaskClickListener {
 
   Guide() {
   }
@@ -34,6 +34,8 @@ public class Guide implements View.OnKeyListener, View.OnClickListener {
 
   private RectF mOriginRect = new RectF();
   private RectF mDstRect = new RectF();
+
+  private MaskView.OnMaskClickListener mProxyMaskClickListener;
 
   void setConfiguration(Configuration configuration) {
     mConfiguration = configuration;
@@ -193,6 +195,13 @@ public class Guide implements View.OnKeyListener, View.OnClickListener {
     }
   }
 
+  /**
+   * mOutsideTouchable 为false时有效
+   */
+  public void setOnMaskClickListener(MaskView.OnMaskClickListener listener) {
+    this.mProxyMaskClickListener = listener;
+  }
+
   private void initMaskView(@NonNull ViewGroup rootView, @NonNull MaskView maskView) {
     maskView.setFullingColor(
       rootView.getContext().getResources().getColor(mConfiguration.mFullingColorId));
@@ -243,7 +252,7 @@ public class Guide implements View.OnKeyListener, View.OnClickListener {
     if (mConfiguration.mOutsideTouchable) {
       maskView.setClickable(false);
     } else {
-      maskView.setOnClickListener(this);
+      maskView.setOnMaskClickListener(this);
     }
 
     // Adds the components to the mask view.
@@ -275,9 +284,12 @@ public class Guide implements View.OnKeyListener, View.OnClickListener {
   }
 
   @Override
-  public void onClick(View v) {
+  public void onClick(View v, boolean target) {
     if (mConfiguration != null && mConfiguration.mAutoDismiss) {
       dismiss();
+      if (mProxyMaskClickListener != null) {
+        mProxyMaskClickListener.onClick(v, target);
+      }
     }
   }
 }

@@ -18,6 +18,7 @@ import com.sofar.R;
 import com.sofar.base.span.SpanUtil;
 import com.sofar.utility.DeviceUtil;
 import com.sofar.utility.LogUtil;
+import com.sofar.utility.ToastUtil;
 import com.sofar.widget.highlight.BottomComponent;
 import com.sofar.widget.highlight.Component;
 import com.sofar.widget.highlight.Guide;
@@ -117,6 +118,11 @@ public class WidgetActivity extends AppCompatActivity {
       })
       .createGuide();
 
+    guide.setOnMaskClickListener((v, target) -> {
+      if (target) {
+        ToastUtil.startShort(this, "点击了高亮区域");
+      }
+    });
     guide.show(this);
 
     int width = view.getWidth();
