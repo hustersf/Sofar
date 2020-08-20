@@ -20,9 +20,9 @@ import com.sofar.widget.Util;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 /**
- * 高亮引导的遮罩层
+ * 高亮引导的遮罩层,通过{@link Guide}使用
  */
-class MaskView extends ViewGroup {
+public class MaskView extends ViewGroup {
 
   private static final String TAG = "MaskView";
 
