@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.sofar.R;
+import com.sofar.fun.badge.BadgeActivity;
 import com.sofar.fun.dialog.QueueDialogFragment1;
 import com.sofar.fun.dialog.QueueDialogFragment2;
 import com.sofar.fun.dialog.QueueDialogFragment3;
@@ -36,6 +37,12 @@ public class FunActivity extends AppCompatActivity {
     TextView play = findViewById(R.id.play);
     play.setOnClickListener(v -> {
       Intent intent = new Intent(this, AutoPlayListActivity.class);
+      startActivity(intent);
+    });
+
+    TextView badge = findViewById(R.id.badge);
+    badge.setOnClickListener(v -> {
+      Intent intent = new Intent(this, BadgeActivity.class);
       startActivity(intent);
     });
   }

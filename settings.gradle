@@ -10,3 +10,5 @@ include ':core:base'
 include ':core:skin'
 include ':core:fun'
 
+include ':external:daogenerator'
+
