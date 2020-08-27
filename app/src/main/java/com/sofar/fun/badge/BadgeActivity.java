@@ -142,7 +142,7 @@ public class BadgeActivity extends AppCompatActivity {
         }
         updateTotalBadge();
       }, throwable -> {
-        Log.d(TAG, throwable.toString());
+        Log.d(TAG, "createBadge:" + throwable.toString());
       });
   }
 
@@ -244,6 +244,8 @@ public class BadgeActivity extends AppCompatActivity {
       } else {
         findDotTv.setVisibility(View.GONE);
       }
+    }, throwable -> {
+      Log.d(TAG, "updateFindBadge:" + throwable.toString());
     });
   }
 
@@ -266,6 +268,8 @@ public class BadgeActivity extends AppCompatActivity {
       } else {
         mineDotTv.setVisibility(View.GONE);
       }
+    }, throwable -> {
+      Log.d(TAG, "updateMineBadge:" + throwable.toString());
     });
   }
 
@@ -293,6 +297,8 @@ public class BadgeActivity extends AppCompatActivity {
       } else {
         totalDotTv.setVisibility(View.GONE);
       }
+    }, throwable -> {
+      Log.d(TAG, "updateTotalBadge:" + throwable.toString());
     });
   }
 

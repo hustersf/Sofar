@@ -19,7 +19,7 @@ public class BadgeNumberCache {
    *
    * @return 返回-1表示没有命中。
    */
-  public int getBadgeNumberFromCache(int typeMin, int typeMax, int displayMode) {
+  public synchronized int getBadgeNumberFromCache(int typeMin, int typeMax, int displayMode) {
     for (Entry cacheEntry : entries) {
       if (typeMin == cacheEntry.typeMin
         && typeMax == cacheEntry.typeMax
@@ -34,7 +34,7 @@ public class BadgeNumberCache {
     return getBadgeNumberFromCache(type, type, NO_DISPLAY_MODE);
   }
 
-  public void saveBadgeNumberToCache(int typeMin, int typeMax, int displayMode, int count) {
+  public synchronized void saveBadgeNumberToCache(int typeMin, int typeMax, int displayMode, int count) {
     Entry cacheEntry = new Entry();
     cacheEntry.typeMin = typeMin;
     cacheEntry.typeMax = typeMax;
@@ -47,7 +47,7 @@ public class BadgeNumberCache {
     saveBadgeNumberToCache(type, type, NO_DISPLAY_MODE, count);
   }
 
-  public void clearBadgeNumberFromCache(int type) {
+  public synchronized void clearBadgeNumberFromCache(int type) {
     for (Iterator<Entry> iterator = entries.iterator(); iterator.hasNext(); ) {
       Entry cacheEntry = iterator.next();
       if (type >= cacheEntry.typeMin && type <= cacheEntry.typeMax) {
