@@ -2,12 +2,12 @@ package com.sofar.base.exception;
 
 import com.sofar.base.BuildConfig;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.exceptions.OnErrorNotImplementedException;
+import io.reactivex.exceptions.UndeliverableException;
 import io.reactivex.functions.Consumer;
 
 public class SofarErrorConsumer implements Consumer<Throwable> {
@@ -24,14 +24,14 @@ public class SofarErrorConsumer implements Consumer<Throwable> {
     list.add(ArithmeticException.class);
     list.add(ClassCastException.class);
     list.add(SQLException.class);
-    list.add(IOException.class);
   }
 
   @Override
   public void accept(Throwable t) throws Exception {
     if (BuildConfig.DEBUG && t instanceof Exception) {
       Exception e = (Exception) t;
-      if (t instanceof OnErrorNotImplementedException && t.getCause() instanceof Exception) {
+      if (t instanceof OnErrorNotImplementedException || t instanceof UndeliverableException
+        && t.getCause() instanceof Exception) {
         e = (Exception) t.getCause();
       }
       for (Class<? extends Exception> cls : list) {
