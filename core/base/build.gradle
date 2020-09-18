@@ -8,6 +8,7 @@ dependencies {
 
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation project(':framework:utility')
+    implementation 'androidx.lifecycle:lifecycle-process:2.2.0'
 }
 
 

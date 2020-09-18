@@ -3,6 +3,7 @@ package com.sofar;
 import android.app.Application;
 import android.util.Log;
 
+import com.sofar.base.app.AppLifeManager;
 import com.sofar.base.exception.SofarErrorConsumer;
 import com.sofar.base.location.LocationProvider;
 import com.sofar.fun.FunConfig;
@@ -36,5 +37,7 @@ public class SofarApp extends Application {
         Log.d("rx_error", sw.toString());
       }
     });
+
+    AppLifeManager.get().init(this);
   }
 }
