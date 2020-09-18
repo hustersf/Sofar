@@ -24,6 +24,24 @@ public class RCHelper {
   public RectF mLayer;                   // 画布图层大小
 
   public Path path;
+  public RectF areas;
+
+  public RCHelper() {
+    mClipPath = new Path();
+
+    mPaint = new Paint();
+    mPaint.setColor(Color.WHITE);
+    mPaint.setAntiAlias(true);
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+      mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+    } else {
+      mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
+    }
+
+    mLayer = new RectF();
+    areas = new RectF();
+    path = new Path();
+  }
 
   public void initAttrs(Context context, AttributeSet attrs) {
     TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.RCAttrs);
@@ -50,16 +68,6 @@ public class RCHelper {
 
     radii[6] = roundCornerBottomLeft;
     radii[7] = roundCornerBottomLeft;
-
-    mClipPath = new Path();
-    mPaint = new Paint();
-    mPaint.setColor(Color.WHITE);
-    mPaint.setAntiAlias(true);
-    // 混合模式为 DST_IN, 即仅显示当前绘制区域和背景区域交集的部分，并仅显示背景内容。
-    mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-
-    mLayer = new RectF();
-    path = new Path();
   }
 
   public void onSizeChanged(View view, int w, int h) {
@@ -70,11 +78,30 @@ public class RCHelper {
   private void refreshRegion(View view) {
     int w = (int) mLayer.width();
     int h = (int) mLayer.height();
-    RectF areas = new RectF();
     areas.left = view.getPaddingLeft();
     areas.top = view.getPaddingTop();
     areas.right = w - view.getPaddingRight();
     areas.bottom = h - view.getPaddingBottom();
+    setPath();
+  }
+
+  public void setRoundLayoutRadius(float roundLayoutRadius) {
+    radii[0] = roundLayoutRadius;
+    radii[1] = roundLayoutRadius;
+
+    radii[2] = roundLayoutRadius;
+    radii[3] = roundLayoutRadius;
+
+    radii[4] = roundLayoutRadius;
+    radii[5] = roundLayoutRadius;
+
+    radii[6] = roundLayoutRadius;
+    radii[7] = roundLayoutRadius;
+
+    setPath();
+  }
+
+  private void setPath() {
     mClipPath.reset();
     mClipPath.addRoundRect(areas, radii, Path.Direction.CW);
 
@@ -85,10 +112,8 @@ public class RCHelper {
 
   public void onClipDraw(Canvas canvas) {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
-      mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
       canvas.drawPath(mClipPath, mPaint);
     } else {
-      mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
       canvas.drawPath(path, mPaint);
     }
   }
