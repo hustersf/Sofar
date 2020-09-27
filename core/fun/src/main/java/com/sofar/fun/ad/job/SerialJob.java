@@ -9,6 +9,10 @@ import java.util.List;
 
 /**
  * 串行执行任务
+ * <p>
+ * 假设有3个task  t1,t2,t3
+ * 如果t1执行结果数量满足要求，则直接返回结果
+ * 反之，会继续执行t2，直到数量满足要求或者任务全部执行结束
  */
 public class SerialJob<T> extends Job<T> {
 
@@ -30,7 +34,7 @@ public class SerialJob<T> extends Job<T> {
       CountTask task = queue.poll();
       task.updateCount(count - results.size());
       executor.execute(task);
-      task.postResult(list -> {
+      task.awaitResult(list -> {
         results.addAll(list);
         checkResult();
       });

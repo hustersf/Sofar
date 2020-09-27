@@ -23,7 +23,7 @@ public class MockAdCountTask extends CountTask<MockAd> {
       Thread.sleep(2000);
       if (adInfo.adCodeId().equals("error")) {
         Log.d(MockAd.TAG, "load ad failed codeId=" + adInfo.adCodeId() + " adProvider=" + adInfo.adProvider());
-        error();
+        postError();
       } else {
         Log.d(MockAd.TAG, "load ad success codeId=" + adInfo.adCodeId() + " adProvider=" + adInfo.adProvider());
         List<MockAd> list = new ArrayList<>();
@@ -33,7 +33,7 @@ public class MockAdCountTask extends CountTask<MockAd> {
         for (int i = 0; i < list.size(); i++) {
           Log.d(MockAd.TAG, list.get(i).title);
         }
-        result(list);
+        postResult(list);
       }
     } catch (Exception e) {
       e.printStackTrace();

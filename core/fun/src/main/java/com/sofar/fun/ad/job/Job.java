@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.sofar.fun.ad.task.CountTask;
 import com.sofar.fun.ad.task.ResultCallback;
+import com.sofar.fun.ad.task.Task;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -36,8 +37,10 @@ public abstract class Job<T> {
 
   public abstract void submit(ResultCallback<T> callback);
 
-  public void cancel(){
-
+  public void cancel() {
+    for (Task task : tasks) {
+      task.cancel();
+    }
   }
 
 }
