@@ -2,6 +2,8 @@ package com.sofar.fun.ad.task;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.sofar.fun.ad.AdInfo;
 import com.sofar.fun.ad.MockAd;
 
@@ -37,7 +39,16 @@ public class MockAdCountTask extends CountTask<MockAd> {
       }
     } catch (Exception e) {
       e.printStackTrace();
-      Log.d(MockAd.TAG, "e=" + e.getMessage());
+      Log.d(MockAd.TAG, "e=" + e.toString());
+    }
+  }
+
+  @Override
+  public void abandon(@NonNull List<MockAd> list) {
+    super.abandon(list);
+    Log.d(MockAd.TAG, "此次数据被丢弃");
+    for (int i = 0; i < list.size(); i++) {
+      Log.d(MockAd.TAG, list.get(i).title);
     }
   }
 }

@@ -23,6 +23,8 @@ public abstract class Job<T> {
   protected int count;
   protected Queue<CountTask> queue = new LinkedList<>();
 
+  protected boolean canceled;
+
   protected static ExecutorService executor = Executors.newCachedThreadPool(new NameThreadFactory("Job"));
 
   @NonNull
@@ -41,6 +43,7 @@ public abstract class Job<T> {
     for (Task task : tasks) {
       task.cancel();
     }
+    canceled = true;
   }
 
 }

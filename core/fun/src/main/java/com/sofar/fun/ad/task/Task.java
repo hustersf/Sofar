@@ -20,6 +20,16 @@ public abstract class Task<T> implements Runnable {
   public abstract void onExecute();
 
   /**
+   * 因某种原因 此次结果被丢弃
+   * 如需要2条数据，但是返回了3条数据，则多余的1条数据将被丢弃
+   *
+   * @param list 此次任务被丢弃的结果
+   */
+  public void abandon(@NonNull List<T> list) {
+
+  }
+
+  /**
    * 任务被取消执行
    */
   public void cancel() {

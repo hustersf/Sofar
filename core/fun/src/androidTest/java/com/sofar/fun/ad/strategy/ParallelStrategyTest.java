@@ -46,7 +46,28 @@ public class ParallelStrategyTest {
       }
     }).subscribe(mockAds -> {
       latch.countDown();
-      Assert.assertEquals(mockAds.size(), count);
+      Assert.assertEquals(count, mockAds.size());
+    });
+
+    latch.await();
+  }
+
+  @Test
+  public void testDelayAd() throws InterruptedException {
+    CountDownLatch latch = new CountDownLatch(1);
+    int count = 4;
+    int parallelCount = 2;
+    long delay = 1000;
+    ParallelStrategy<MockAdInfo, MockAd> strategy = new ParallelStrategy<>();
+    strategy.applyDelayStrategy(adInfos, count, parallelCount, delay, new CountTaskFactory<MockAdInfo>() {
+      @NonNull
+      @Override
+      public CountTask createTask(MockAdInfo info) {
+        return new MockAdCountTask(info);
+      }
+    }).subscribe(mockAds -> {
+      latch.countDown();
+      Assert.assertEquals(count, mockAds.size());
     });
 
     latch.await();
