@@ -38,10 +38,11 @@ dependencies {
 
     implementation project(':core:base')
     implementation project(':core:skin')
-    implementation project(path: ':core:fun')
+    implementation project(':core:fun')
     implementation project(':framework:utility')
     implementation project(':framework:widget')
     implementation project(':framework:network')
+    implementation project(':framework:player')
     implementation project(':framework:download')
 
     implementation 'androidx.room:room-runtime:2.2.3'

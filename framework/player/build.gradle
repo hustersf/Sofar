@@ -1,0 +1,5 @@
+apply from: rootProject.file('library.gradle')
+
+dependencies {
+    api 'com.google.android.exoplayer:exoplayer-core:2.12.1'
+}
