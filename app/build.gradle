@@ -42,6 +42,7 @@ dependencies {
     implementation project(':framework:utility')
     implementation project(':framework:widget')
     implementation project(':framework:network')
+    implementation project(':framework:download')
 
     implementation 'androidx.room:room-runtime:2.2.3'
     annotationProcessor 'androidx.room:room-compiler:2.2.3'

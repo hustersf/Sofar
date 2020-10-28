@@ -6,6 +6,8 @@ import android.util.Log;
 import com.sofar.base.app.AppLifeManager;
 import com.sofar.base.exception.SofarErrorConsumer;
 import com.sofar.base.location.LocationProvider;
+import com.sofar.download.DownloadConfig;
+import com.sofar.download.DownloadManager;
 import com.sofar.fun.FunConfig;
 import com.sofar.skin.core.Skin;
 
@@ -39,5 +41,7 @@ public class SofarApp extends Application {
     });
 
     AppLifeManager.get().init(this);
+
+    DownloadManager.get().init(this, new DownloadConfig.Builder().build());
   }
 }

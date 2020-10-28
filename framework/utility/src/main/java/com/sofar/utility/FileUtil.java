@@ -28,7 +28,7 @@ public class FileUtil {
   /**
    * 得到手机的缓存目录
    */
-  private static File getCacheDir(@NonNull Context context) {
+  public static File getCacheDir(@NonNull Context context) {
     // 获取保存的文件夹路径
     File file;
     if (isSDCardEnable()) {
