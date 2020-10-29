@@ -44,6 +44,7 @@ dependencies {
     implementation project(':framework:network')
     implementation project(':framework:player')
     implementation project(':framework:download')
+    implementation project(':framework:audio-record')
 
     implementation 'androidx.room:room-runtime:2.2.3'
     annotationProcessor 'androidx.room:room-compiler:2.2.3'

@@ -1,7 +1,7 @@
 apply from: rootProject.file('library.gradle')
 
 dependencies {
-    implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
+    api 'com.github.tbruyelle:rxpermissions:0.10.2'
     implementation 'androidx.core:core:1.0.2'
     implementation 'androidx.fragment:fragment:1.2.4'
     api 'io.reactivex.rxjava2:rxjava:2.1.0'
