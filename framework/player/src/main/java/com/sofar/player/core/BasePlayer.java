@@ -52,6 +52,11 @@ public abstract class BasePlayer {
     }
   };
 
+  public BasePlayer(@NonNull Context context) {
+    this.context = context;
+    player = new SimpleExoPlayer.Builder(context).build();
+  }
+
   public BasePlayer(@NonNull Context context, @NonNull String uri) {
     this.context = context;
     player = new SimpleExoPlayer.Builder(context).build();
@@ -62,7 +67,7 @@ public abstract class BasePlayer {
   /**
    * 重置播放源
    */
-  public void resetUri(@NonNull String uri) {
+  public void setUri(@NonNull String uri) {
     player.clearMediaItems();
     MediaItem mediaItem = MediaItem.fromUri(uri);
     player.addMediaItem(mediaItem);

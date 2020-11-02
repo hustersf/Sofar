@@ -78,7 +78,7 @@ public class PlayerActivity extends AppCompatActivity {
     }
     String filePath = dirFile.getAbsolutePath() + "/record.3gp";
     AudioRecord audioRecord = new AudioRecord(filePath);
-    AudioPlayer audioPlayer = new AudioPlayer(this, filePath);
+    AudioPlayer audioPlayer = new AudioPlayer(this);
     audioRecordStart.setOnClickListener(v -> {
       audioRecord.start();
     });
@@ -86,7 +86,9 @@ public class PlayerActivity extends AppCompatActivity {
     audioRecordStop.setOnClickListener(v -> {
       if (audioRecord.stop()) {
         ToastUtil.startShort(this, "录音文件保存至" + filePath);
-        audioPlayer.resetUri(filePath);
+        audioPlayer.setUri(filePath);
+      } else {
+        ToastUtil.startShort(this, "请先录音");
       }
     });
 

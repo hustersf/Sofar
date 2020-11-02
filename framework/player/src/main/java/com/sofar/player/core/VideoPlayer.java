@@ -32,6 +32,12 @@ public class VideoPlayer extends BasePlayer {
     }
   };
 
+  public VideoPlayer(@NonNull TextureView textureView) {
+    super(textureView.getContext());
+    player.setVideoTextureView(textureView);
+    TAG = "VideoPlayer";
+  }
+
   public VideoPlayer(@NonNull String uri, @NonNull TextureView textureView) {
     super(textureView.getContext(), uri);
     player.setVideoTextureView(textureView);

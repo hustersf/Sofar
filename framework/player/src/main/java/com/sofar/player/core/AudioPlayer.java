@@ -9,6 +9,11 @@ import androidx.annotation.NonNull;
  */
 public class AudioPlayer extends BasePlayer {
 
+  public AudioPlayer(@NonNull Context context) {
+    super(context);
+    TAG = "AudioPlayer";
+  }
+
   public AudioPlayer(@NonNull Context context, @NonNull String uri) {
     super(context, uri);
     TAG = "AudioPlayer";

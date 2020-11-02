@@ -42,6 +42,22 @@ public class FileUtil {
   }
 
   /**
+   * 得到手机的文件目录
+   */
+  public static File getFileDir(@NonNull Context context) {
+    // 获取保存的文件夹路径
+    File file;
+    if (isSDCardEnable()) {
+      // 有SD卡就保存到sd卡
+      file = context.getExternalFilesDir(null);
+    } else {
+      // 没有就保存到内部储存
+      file = context.getFilesDir();
+    }
+    return file;
+  }
+
+  /**
    * 写文件
    */
   public static void writeToFile(@NonNull File dstFile, @NonNull InputStream dataSource) {
