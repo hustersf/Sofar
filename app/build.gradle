@@ -37,13 +37,13 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
 
     implementation project(':core:base')
-    implementation project(':core:skin')
     implementation project(':core:fun')
     implementation project(':framework:utility')
     implementation project(':framework:widget')
     implementation project(':framework:network')
     implementation project(':framework:player')
     implementation project(':framework:download')
+    implementation project(':framework:skin')
     implementation project(':framework:audio-record')
 
     implementation 'androidx.room:room-runtime:2.2.3'

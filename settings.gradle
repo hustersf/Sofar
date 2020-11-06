@@ -1,4 +1,4 @@
-rootProject.name='Sofar'
+rootProject.name = 'Sofar'
 
 include ':app'
 
@@ -7,10 +7,10 @@ include ':framework:utility'
 include ':framework:network'
 include ':framework:player'
 include ':framework:download'
+include ':framework:skin'
 include ':framework:audio-record'
 
 include ':core:base'
-include ':core:skin'
 include ':core:fun'
 
 include ':external:daogenerator'
