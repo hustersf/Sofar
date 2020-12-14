@@ -36,6 +36,7 @@ public class Guide implements View.OnKeyListener, MaskView.OnMaskClickListener {
   private RectF mDstRect = new RectF();
 
   private MaskView.OnMaskClickListener mProxyMaskClickListener;
+  private boolean mShowed;
 
   void setConfiguration(Configuration configuration) {
     mConfiguration = configuration;
@@ -83,11 +84,16 @@ public class Guide implements View.OnKeyListener, MaskView.OnMaskClickListener {
    * @param rootView 遮罩父View
    */
   public void show(@NonNull ViewGroup rootView) {
+    if (mShowed) {
+      return;
+    }
+
     mRootView = rootView;
     if (mMaskView == null) {
       mMaskView = new MaskView(rootView.getContext());
       initMaskView(rootView, mMaskView);
     }
+    mShowed = true;
     if (mMaskView.getParent() == null) {
       rootView.addView(mMaskView);
       if (mConfiguration.mEnterAnimationId != -1) {
@@ -125,6 +131,10 @@ public class Guide implements View.OnKeyListener, MaskView.OnMaskClickListener {
    * 隐藏该遮罩并回收资源相关
    */
   public void dismiss() {
+    if (!mShowed) {
+      return;
+    }
+
     if (mMaskView == null) {
       return;
     }
@@ -132,6 +142,7 @@ public class Guide implements View.OnKeyListener, MaskView.OnMaskClickListener {
     if (vp == null) {
       return;
     }
+    mShowed = false;
     if (mConfiguration.mExitAnimationId != -1) {
       // mMaskView may leak if context is null
       Context context = mMaskView.getContext();
