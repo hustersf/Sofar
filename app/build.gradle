@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 29
@@ -47,5 +49,5 @@ dependencies {
     implementation project(':framework:audio-record')
 
     implementation 'androidx.room:room-runtime:2.2.3'
-    annotationProcessor 'androidx.room:room-compiler:2.2.3'
+    kapt 'androidx.room:room-compiler:2.2.3'
 }
