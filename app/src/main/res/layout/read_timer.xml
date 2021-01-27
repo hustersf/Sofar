@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/read_time_root"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content"
+  android:gravity="center_horizontal"
+  android:orientation="vertical">
+
+  <TextView
+    android:id="@+id/read"
+    android:layout_width="50dp"
+    android:layout_height="50dp"
+    android:layout_gravity="center_horizontal"
+    android:background="@drawable/circle"
+    android:gravity="center"
+    android:text="悬浮"
+    android:textColor="@color/white"
+    android:textSize="14dp" />
+
+  <TextView
+    android:layout_width="80dp"
+    android:layout_height="20dp"
+    android:layout_marginTop="-10dp"
+    android:background="@drawable/show_time_btn"
+    android:gravity="center"
+    android:text="悬浮测试"
+    android:textColor="@color/white"
+    android:textSize="12dp" />
+
+</LinearLayout>

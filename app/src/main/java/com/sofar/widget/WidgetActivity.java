@@ -7,8 +7,10 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.SpannableString;
 import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -19,6 +21,8 @@ import com.sofar.base.span.SpanUtil;
 import com.sofar.utility.DeviceUtil;
 import com.sofar.utility.LogUtil;
 import com.sofar.utility.ToastUtil;
+import com.sofar.utility.ViewUtil;
+import com.sofar.widget.floating.FloatingWidget;
 import com.sofar.widget.highlight.BottomComponent;
 import com.sofar.widget.highlight.Component;
 import com.sofar.widget.highlight.Guide;
@@ -26,6 +30,8 @@ import com.sofar.widget.highlight.GuideBuilder;
 import com.sofar.widget.highlight.GuideDialogFragment;
 import com.sofar.widget.highlight.TopComponent;
 import com.sofar.widget.progress.VoteProgress;
+import com.sofar.widget.swipe.SwipeBack;
+import com.sofar.widget.swipe.SwipeLayout;
 
 public class WidgetActivity extends AppCompatActivity {
 
@@ -39,6 +45,8 @@ public class WidgetActivity extends AppCompatActivity {
     span1();
     span2();
     mask();
+    floatingWidget();
+    swipe();
   }
 
   private void span1() {
@@ -160,4 +168,24 @@ public class WidgetActivity extends AppCompatActivity {
     GuideDialogFragment dialog = new GuideDialogFragment();
     dialog.show(this.getSupportFragmentManager(), dialog.getTag());
   }
+
+  private void floatingWidget() {
+    FloatingWidget widget = new FloatingWidget(this);
+    ViewUtil.inflate(widget, R.layout.read_timer, true);
+    widget.findViewById(R.id.read_time_root).setOnClickListener(v -> {
+      ToastUtil.startShort(this, "FloatingWidget");
+    });
+    widget.setScreenRatio(1.0f, 1.0f);
+    new Handler().post(() -> {
+      int actionBar = getWindow().findViewById(Window.ID_ANDROID_CONTENT).getTop();
+      widget.setInsets(0, 0, 0, actionBar);
+      widget.attach();
+    });
+  }
+
+  private void swipe() {
+    SwipeBack.attach(this).setDirection(SwipeLayout.SwipeDirection.RIGHT);
+  }
+
 }
+

@@ -40,6 +40,7 @@ public class VoteProgress extends ProgressBar {
     rightColor = ta.getColor(R.styleable.VoteProgress_rightColor, rightColor);
     spaceColor = ta.getColor(R.styleable.VoteProgress_spaceColor, spaceColor);
     spaceWidth = ta.getDimension(R.styleable.VoteProgress_spaceWidth, spaceWidth);
+    ta.recycle();
 
     init();
   }

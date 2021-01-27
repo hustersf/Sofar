@@ -8,6 +8,12 @@
     <attr name="spaceWidth" format="dimension"></attr>
   </declare-styleable>
 
+  <declare-styleable name="LineProgress">
+    <attr name="reachColor" format="color"></attr>
+    <attr name="unReachColor" format="color"></attr>
+    <attr name="round" format="boolean" />
+  </declare-styleable>
+
   <!--针对圆角布局/ImageView的属性-->
   <attr name="round_as_circle" format="boolean" />
   <attr name="round_corner" format="dimension" />
