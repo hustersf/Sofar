@@ -52,11 +52,11 @@ public class LineProgress extends ProgressBar {
     int strokeWidth = height;
     float rate = getProgress() * 1.0f / getMax();
     int progressX = (int) (rate * width);
-    if (progressX >= width - strokeWidth) {
-      progressX = width - strokeWidth;
+    if (progressX >= width - strokeWidth / 2) {
+      progressX = width - strokeWidth / 2;
     }
-    if (progressX <= strokeWidth) {
-      progressX = strokeWidth;
+    if (progressX <= strokeWidth / 2) {
+      progressX = strokeWidth / 2;
     }
 
     paint.setStrokeWidth(strokeWidth);
