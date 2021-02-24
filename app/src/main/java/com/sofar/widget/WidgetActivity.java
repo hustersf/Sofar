@@ -5,10 +5,12 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.SpannableString;
+import android.text.Spanned;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
@@ -17,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.sofar.R;
+import com.sofar.base.span.RoundBackgroundSpan;
 import com.sofar.base.span.SpanUtil;
 import com.sofar.utility.DeviceUtil;
 import com.sofar.utility.LogUtil;
@@ -44,6 +47,7 @@ public class WidgetActivity extends AppCompatActivity {
     setContentView(R.layout.widget_activity);
     span1();
     span2();
+    span3();
     mask();
     floatingWidget();
     swipe();
@@ -66,6 +70,23 @@ public class WidgetActivity extends AppCompatActivity {
     Drawable drawable = getResources().getDrawable(R.drawable.ic_launcher_background);
     drawable.setBounds(0, 0, DeviceUtil.dp2px(this, 28), DeviceUtil.dp2px(this, 28));
     SpannableString spannableString = SpanUtil.getLeftImageSpan(text, drawable, padding);
+    span.setText(spannableString);
+  }
+
+  private void span3() {
+    TextView span = findViewById(R.id.span3);
+    String text = "我是前面带标签的富文本，标签=背景+文字";
+    String tag = "专题";
+    SpannableString spannableString = new SpannableString(tag + text);
+    RoundBackgroundSpan roundBackgroundSpan = new RoundBackgroundSpan();
+    roundBackgroundSpan.setBgColor(Color.RED);
+    roundBackgroundSpan.setTextColor(Color.WHITE);
+    roundBackgroundSpan.setTextPadding(DeviceUtil.dp2px(this, 5), DeviceUtil.dp2px(this, 5));
+    roundBackgroundSpan.setTextSize(DeviceUtil.dp2px(this, 11));
+    roundBackgroundSpan.setSpanHeight(DeviceUtil.dp2px(this, 18));
+    roundBackgroundSpan.setRadiusPx(DeviceUtil.dp2px(this, 3));
+    roundBackgroundSpan.setRightMarginPx(DeviceUtil.dp2px(this, 5));
+    spannableString.setSpan(roundBackgroundSpan, 0, tag.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
     span.setText(spannableString);
   }
 
