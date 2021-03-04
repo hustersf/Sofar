@@ -74,7 +74,7 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
       realPosition = holder.getAdapterPosition();
     }
     holder.setViewAdapterPosition(realPosition);
-    holder.onBindData(items.get(realPosition));
+    holder.onBindData(getItem(realPosition));
   }
 
   @Override

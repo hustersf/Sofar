@@ -54,4 +54,9 @@
     app:round="true"
     app:unReachColor="@color/greyAlpha" />
 
+  <com.sofar.widget.recycler.ParentNoScrollRecyclerView
+    android:id="@+id/over_lay_recycler"
+    android:layout_width="169dp"
+    android:layout_height="169dp" />
+
 </LinearLayout>

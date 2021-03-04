@@ -1,5 +1,8 @@
 package com.sofar.widget;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -14,9 +17,9 @@ import android.text.Spanned;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.sofar.R;
 import com.sofar.base.span.RoundBackgroundSpan;
@@ -33,6 +36,10 @@ import com.sofar.widget.highlight.GuideBuilder;
 import com.sofar.widget.highlight.GuideDialogFragment;
 import com.sofar.widget.highlight.TopComponent;
 import com.sofar.widget.progress.VoteProgress;
+import com.sofar.widget.recycler.ParentNoScrollRecyclerView;
+import com.sofar.widget.recycler.StackCardAdapter;
+import com.sofar.widget.recycler.layoutmanager.stack.StartMarginStackLayout;
+import com.sofar.widget.recycler.layoutmanager.stack.StackLayoutManager;
 import com.sofar.widget.swipe.SwipeBack;
 import com.sofar.widget.swipe.SwipeLayout;
 
@@ -51,6 +58,7 @@ public class WidgetActivity extends AppCompatActivity {
     mask();
     floatingWidget();
     swipe();
+    overLayLayoutManager();
   }
 
   private void span1() {
@@ -206,6 +214,35 @@ public class WidgetActivity extends AppCompatActivity {
 
   private void swipe() {
     SwipeBack.attach(this).setDirection(SwipeLayout.SwipeDirection.RIGHT);
+  }
+
+  private void overLayLayoutManager() {
+    ParentNoScrollRecyclerView recyclerView = findViewById(R.id.over_lay_recycler);
+    recyclerView.setDisallowOrientation(RecyclerView.HORIZONTAL);
+    int loopCount = 200;
+    StackCardAdapter adapter = new StackCardAdapter(loopCount);
+    recyclerView.setAdapter(adapter);
+
+    StackLayoutManager layoutManager = new StackLayoutManager();
+    int itemOffset = DeviceUtil.dp2px(this, 8);
+    int startMargin = DeviceUtil.dp2px(this, 15);
+    int orientation = layoutManager.getScrollOrientation();
+    int visibleItemCount = layoutManager.getVisibleItemCount();
+    layoutManager.setLayout(new StartMarginStackLayout(orientation, visibleItemCount, itemOffset)
+      .setStartMargin(startMargin));
+    layoutManager.setItemOffset(itemOffset);
+    recyclerView.setLayoutManager(layoutManager);
+
+    List<Object> list = new ArrayList<>();
+    for (int i = 0; i < 5; i++) {
+      list.add(new Object());
+    }
+    adapter.setList(list);
+    adapter.notifyDataSetChanged();
+
+    recyclerView.post(() -> {
+      recyclerView.scrollToPosition(list.size() * loopCount / 2);
+    });
   }
 
 }
