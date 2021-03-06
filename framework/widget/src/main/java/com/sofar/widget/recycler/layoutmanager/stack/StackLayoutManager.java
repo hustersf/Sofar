@@ -507,7 +507,7 @@ public class StackLayoutManager extends RecyclerView.LayoutManager {
     itemChangedListener = listener;
   }
 
-  interface ItemChangedListener {
+  public interface ItemChangedListener {
     void onItemChanged(int position);
   }
 
