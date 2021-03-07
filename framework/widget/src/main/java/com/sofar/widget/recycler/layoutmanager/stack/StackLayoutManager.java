@@ -1,5 +1,6 @@
 package com.sofar.widget.recycler.layoutmanager.stack;
 
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.IntRange;
@@ -9,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 public class StackLayoutManager extends RecyclerView.LayoutManager {
+
+  private static final String TAG = "StackLayoutManager";
 
   int mOrientation;
   int mVisibleItemCount;
@@ -148,7 +151,7 @@ public class StackLayoutManager extends RecyclerView.LayoutManager {
   @Override
   public void scrollToPosition(int position) {
     if (position < 0 || position >= getItemCount()) {
-      throw new ArrayIndexOutOfBoundsException("$position is out of bound [0..$itemCount-1]");
+      Log.e(TAG, "$position is out of bound [0..$itemCount-1]");
     }
     mScrollOffset = getPositionOffset(position);
     requestLayout();
@@ -158,7 +161,7 @@ public class StackLayoutManager extends RecyclerView.LayoutManager {
   public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state,
     int position) {
     if (position < 0 || position >= getItemCount()) {
-      throw new ArrayIndexOutOfBoundsException("$position is out of bound [0..$itemCount-1]");
+      Log.e(TAG, "$position is out of bound [0..$itemCount-1]");
     }
     mFixScrolling = true;
     scrollToCenter(position, recyclerView, true);
