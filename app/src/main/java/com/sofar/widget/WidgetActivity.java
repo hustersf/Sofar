@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
@@ -232,6 +233,9 @@ public class WidgetActivity extends AppCompatActivity {
       .setStartMargin(startMargin));
     layoutManager.setItemOffset(itemOffset);
     recyclerView.setLayoutManager(layoutManager);
+    layoutManager.setItemChangedListener(position -> {
+      Log.d("WidgetActivity", "p=" + position);
+    });
 
     List<Object> list = new ArrayList<>();
     for (int i = 0; i < 5; i++) {

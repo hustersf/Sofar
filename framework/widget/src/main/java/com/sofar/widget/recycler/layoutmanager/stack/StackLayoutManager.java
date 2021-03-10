@@ -39,9 +39,6 @@ public class StackLayoutManager extends RecyclerView.LayoutManager {
   //当前所处item对应的位置
   private int itemPosition = 0;
 
-  //判断item位置是否发生了改变
-  private boolean isItemPositionChanged = false;
-
   //item 位置发生改变的回调
   @Nullable
   private ItemChangedListener itemChangedListener;
@@ -217,7 +214,7 @@ public class StackLayoutManager extends RecyclerView.LayoutManager {
     }
 
     //尝试更新当前item的位置并通知外界
-    updatePositionRecordAndNotify(firstVisiblePosition);
+    updatePositionRecordAndNotify(firstVisiblePosition, movePercent);
 
     //重用
     if (firstVisiblePosition - 1 >= 0) {
@@ -355,16 +352,20 @@ public class StackLayoutManager extends RecyclerView.LayoutManager {
     return 0;
   }
 
-  private void updatePositionRecordAndNotify(int position) {
+  private void updatePositionRecordAndNotify(int position, float percent) {
+    int targetPosition = calculateCenterPosition(position);
+    boolean itemChange = itemPosition != targetPosition;
+    if (itemChange) {
+      itemPosition = targetPosition;
+    }
+
     if (itemChangedListener == null) {
       return;
     }
-    if (position != itemPosition) {
-      isItemPositionChanged = true;
-      itemPosition = position;
+
+    itemChangedListener.onItemScrolled(position, percent);
+    if (itemChange) {
       itemChangedListener.onItemChanged(itemPosition);
-    } else {
-      isItemPositionChanged = false;
     }
   }
 
@@ -512,6 +513,8 @@ public class StackLayoutManager extends RecyclerView.LayoutManager {
 
   public interface ItemChangedListener {
     void onItemChanged(int position);
+
+    default void onItemScrolled(int position, float percent) {}
   }
 
   private class StackOnFlingListener extends RecyclerView.OnFlingListener {
