@@ -1,9 +1,12 @@
 package com.sofar.player;
 
 import android.Manifest;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.TextureView;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +18,7 @@ import com.sofar.player.core.AudioPlayer;
 import com.sofar.player.core.VideoPlayer;
 import com.sofar.utility.FileUtil;
 import com.sofar.utility.ToastUtil;
+import com.sofar.utility.ViewUtil;
 
 import java.io.File;
 
@@ -29,11 +33,25 @@ public class PlayerActivity extends AppCompatActivity {
   Button audioRecordStop;
   Button audioRecordPlay;
 
+  ImageView shotImage;
+  Handler mHandler = new Handler();
+  int LOOP_INTERVAL = 1000;
+  Runnable shotRunnable = new Runnable() {
+    @Override
+    public void run() {
+      Bitmap bitmap = ViewUtil.getTextureViewShot(playerTexture);
+      shotImage.setImageBitmap(bitmap);
+      mHandler.postDelayed(this, LOOP_INTERVAL);
+    }
+  };
+
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.player_activity);
     setTitle("播放器测试页面");
+
+    shotImage = findViewById(R.id.shot_image);
 
     playerTexture = findViewById(R.id.player_texture);
     player = new VideoPlayer(videoUrl, playerTexture);
@@ -47,6 +65,8 @@ public class PlayerActivity extends AppCompatActivity {
         ToastUtil.startShort(this, "需要录音权限");
       }
     });
+
+    mHandler.postDelayed(shotRunnable, 1000);
   }
 
   @Override
@@ -65,6 +85,7 @@ public class PlayerActivity extends AppCompatActivity {
   protected void onDestroy() {
     super.onDestroy();
     player.stop();
+    mHandler.removeCallbacks(shotRunnable);
   }
 
   private void audio() {

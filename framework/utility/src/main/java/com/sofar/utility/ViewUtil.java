@@ -2,10 +2,12 @@ package com.sofar.utility;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.TextureView;
 import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -52,7 +54,8 @@ public class ViewUtil {
   /**
    * 扩大View的触摸和点击响应范围,最大不超过其父View范围
    */
-  public static void expandViewTouchDelegate(@NonNull final View view, final int top, final int bottom, final int left, final int right) {
+  public static void expandViewTouchDelegate(@NonNull final View view, final int top,
+    final int bottom, final int left, final int right) {
     if (view.getParent() instanceof View) {
       final View parentView = (View) view.getParent();
       parentView.post(new Runnable() {
@@ -100,5 +103,26 @@ public class ViewUtil {
     Paint paint = new Paint();
     paint.setTextSize(textSize);
     return paint.measureText(text);
+  }
+
+  /**
+   * 获取view截图
+   */
+  public static Bitmap getViewShot(@NonNull View view) {
+    view.setDrawingCacheEnabled(true);
+    view.buildDrawingCache();
+    Bitmap b1 = view.getDrawingCache();
+    int width = view.getWidth();
+    int height = view.getHeight();
+    Bitmap b = Bitmap.createBitmap(b1, 0, 0, width, height);
+    view.destroyDrawingCache();
+    return b;
+  }
+
+  /**
+   * 获取TextureView截图
+   */
+  public static Bitmap getTextureViewShot(@NonNull TextureView view) {
+    return view.getBitmap();
   }
 }
