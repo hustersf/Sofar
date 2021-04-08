@@ -51,6 +51,7 @@ dependencies {
     implementation project(':framework:audio-record')
 
     implementation project(':debug')
+    implementation project(':tool:profiler')
 
     implementation 'androidx.room:room-runtime:2.2.3'
     kapt 'androidx.room:room-compiler:2.2.3'

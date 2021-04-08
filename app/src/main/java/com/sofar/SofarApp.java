@@ -9,6 +9,7 @@ import com.sofar.base.location.LocationProvider;
 import com.sofar.download.DownloadConfig;
 import com.sofar.download.DownloadManager;
 import com.sofar.fun.FunConfig;
+import com.sofar.profiler.MonitorManager;
 import com.sofar.skin.core.Skin;
 
 import java.io.PrintWriter;
@@ -43,5 +44,8 @@ public class SofarApp extends Application {
     AppLifeManager.get().init(this);
 
     DownloadManager.get().init(this, new DownloadConfig.Builder().build());
+
+    MonitorManager.init(this);
+    MonitorManager.addAll();
   }
 }
