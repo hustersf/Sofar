@@ -8,6 +8,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.sofar.R;
 import com.sofar.base.span.RoundBackgroundSpan;
 import com.sofar.base.span.SpanUtil;
+import com.sofar.keyboard.CommentInputDialog;
 import com.sofar.utility.DeviceUtil;
 import com.sofar.utility.LogUtil;
 import com.sofar.utility.ToastUtil;
@@ -70,6 +72,11 @@ public class WidgetActivity extends AppCompatActivity {
     drawable.setBounds(0, 0, DeviceUtil.dp2px(this, 28), DeviceUtil.dp2px(this, 10));
     SpannableString spannableString = SpanUtil.getLeftImageSpan(text, drawable, padding);
     span.setText(spannableString);
+
+    span.setOnClickListener(v -> {
+      CommentInputDialog dialog = new CommentInputDialog();
+      dialog.show(getSupportFragmentManager(), "comment_input");
+    });
   }
 
   private void span2() {
@@ -80,6 +87,21 @@ public class WidgetActivity extends AppCompatActivity {
     drawable.setBounds(0, 0, DeviceUtil.dp2px(this, 28), DeviceUtil.dp2px(this, 28));
     SpannableString spannableString = SpanUtil.getLeftImageSpan(text, drawable, padding);
     span.setText(spannableString);
+
+    span.setOnClickListener(v -> {
+      setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+      setInFullScreen();
+    });
+  }
+
+  private void setInFullScreen() {
+    getWindow().getDecorView().setSystemUiVisibility(
+      View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        | View.SYSTEM_UI_FLAG_FULLSCREEN
+        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
   }
 
   private void span3() {
@@ -97,6 +119,10 @@ public class WidgetActivity extends AppCompatActivity {
     roundBackgroundSpan.setRightMarginPx(DeviceUtil.dp2px(this, 5));
     spannableString.setSpan(roundBackgroundSpan, 0, tag.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
     span.setText(spannableString);
+
+    span.setOnClickListener(v -> {
+      setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    });
   }
 
   private void mask() {
