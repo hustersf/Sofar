@@ -24,7 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sofar.R;
-import com.sofar.base.span.RoundBackgroundSpan;
+import com.sofar.widget.textview.span.RoundBackgroundSpan;
 import com.sofar.base.span.SpanUtil;
 import com.sofar.keyboard.CommentInputDialog;
 import com.sofar.utility.DeviceUtil;

@@ -1,4 +1,4 @@
-package com.sofar.base.span;
+package com.sofar.widget.textview.span;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;

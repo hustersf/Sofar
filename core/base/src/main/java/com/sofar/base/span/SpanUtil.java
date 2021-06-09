@@ -4,6 +4,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.SpannableString;
 import android.text.Spanned;
+import com.sofar.widget.textview.span.CenterImageSpan;
 
 public class SpanUtil {
 
