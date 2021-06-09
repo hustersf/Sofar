@@ -11,6 +11,7 @@ import java.lang.ref.WeakReference;
 
 /**
  * {@link android.text.style.DynamicDrawableSpan}
+ * 图片居中效果
  */
 public class CenterImageSpan extends ImageSpan {
 
