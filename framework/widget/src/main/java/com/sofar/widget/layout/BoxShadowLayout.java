@@ -6,7 +6,6 @@ import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
@@ -78,50 +77,18 @@ public class BoxShadowLayout extends FrameLayout {
 
   @Override
   protected void dispatchDraw(Canvas canvas) {
-    int paddingLeft = getPaddingLeft();
-    int paddingRight = getPaddingRight();
-    int paddingTop = getPaddingTop();
-    int paddingBottom = getPaddingBottom();
     int width = getWidth();
     int height = getHeight();
-    Path outline = getRoundCornerPath(paddingLeft, paddingTop, width - paddingLeft - paddingRight,
-      height - paddingTop - paddingBottom, mBoxShadowRadius, mBoxShadowRadius, mBoxShadowRadius,
-      mBoxShadowRadius);
-    outline.offset(mBoxShadowDx, mBoxShadowDy);
-    canvas.drawPath(outline, mBoxShadowPaint);
+    int offset = (int) mBoxShadowBlur;
+    mRectF.set(offset, offset, width - offset, height - offset);
+    canvas.save();
+    canvas.translate(mBoxShadowDx, mBoxShadowDy);
+    canvas.drawRoundRect(mRectF, mBoxShadowRadius, mBoxShadowRadius, mBoxShadowPaint);
     if (mBoxOverlayColor != Color.TRANSPARENT) {
-      canvas.drawPath(outline, mBoxOverlayPaint);
+      canvas.drawRoundRect(mRectF, mBoxShadowRadius, mBoxShadowRadius, mBoxOverlayPaint);
     }
+    canvas.restore();
     super.dispatchDraw(canvas);
-  }
-
-  private Path getRoundCornerPath(float dx, float dy, float width, float height,
-    float topLeftRadius, float topRightRadius, float bottomRightRadius, float bottomLeftRadius) {
-    Path path = new Path();
-    path.moveTo(0f, topLeftRadius);
-    if (topLeftRadius > 0) {
-      path.arcTo(
-        new RectF(0f, 0f, topLeftRadius * 2f, topLeftRadius * 2f), -180f, 90f);
-    }
-    path.lineTo(width - topRightRadius, 0f);
-    if (topRightRadius > 0) {
-      path.arcTo(
-        new RectF((width - 2f * topRightRadius), 0f, width, topRightRadius * 2f), -90f, 90f);
-    }
-    path.lineTo(width, height - bottomRightRadius);
-    if (bottomRightRadius > 0) {
-      path.arcTo(
-        new RectF((width - 2 * bottomRightRadius), (height - 2 * bottomRightRadius), width, height),
-        0f, 90f);
-    }
-    path.lineTo(bottomLeftRadius, height);
-    if (bottomLeftRadius > 0) {
-      path.arcTo(
-        new RectF(0f, height - 2f * bottomLeftRadius, bottomLeftRadius * 2f, height), 90f, 90f);
-    }
-    path.offset(dx, dy);
-    path.close();
-    return path;
   }
 
 }
