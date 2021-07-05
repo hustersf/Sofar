@@ -164,14 +164,19 @@ public class TextWithTagView extends LinearLayout {
       }
     }
 
-    float extraSpace = mTextSpace;
+    float extraSpace = 0;
     if (tagShowCount > 0) {
-      extraSpace += (tagShowCount - 1) * mTagSpace;
+      extraSpace += mTextSpace + (tagShowCount - 1) * mTagSpace;
     }
 
     boolean tagWithText = false;
-    if (mMaxLines <= mTexts.size() && mMaxLines >= 1) {
-      String text = mTexts.get(mMaxLines - 1);
+    StringBuffer sb = new StringBuffer();
+    for (int i = mMaxLines - 1; i < mTexts.size(); i++) {
+      sb.append(mTexts.get(i));
+    }
+
+    String text = sb.toString();
+    if (!TextUtils.isEmpty(text)) {
       int lastLineTextWidth =
         (int) Math.min(maxWidth - tagWidth - extraSpace, mTextPaint.measureText(text));
       ViewGroup.LayoutParams lp =
