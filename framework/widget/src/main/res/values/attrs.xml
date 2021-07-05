@@ -81,4 +81,15 @@
     <attr name="box_overlayColor" format="color" />
   </declare-styleable>
 
+  <declare-styleable name="TextWithTagView">
+    <attr name="tag_text" format="string" />
+    <attr name="tag_textColor" format="color" />
+    <attr name="tag_textSize" format="dimension" />
+    <attr name="tag_tagColor" format="color" />
+    <attr name="tag_tagSize" format="dimension" />
+    <attr name="tag_maxLines" format="integer" />
+    <attr name="tag_textSpace" format="dimension" />
+    <attr name="tag_space" format="dimension" />
+  </declare-styleable>
+
 </resources>
