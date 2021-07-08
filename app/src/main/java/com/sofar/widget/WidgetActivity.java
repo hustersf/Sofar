@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sofar.R;
+import com.sofar.widget.textview.TextTagView;
 import com.sofar.widget.textview.TextWithTagView;
 import com.sofar.widget.textview.span.RoundBackgroundSpan;
 import com.sofar.base.span.SpanUtil;
@@ -57,6 +58,7 @@ public class WidgetActivity extends AppCompatActivity {
     setTitle("控件测试页面");
     setContentView(R.layout.widget_activity);
     tagText();
+    tagText2();
     span1();
     span2();
     span3();
@@ -76,6 +78,26 @@ public class WidgetActivity extends AppCompatActivity {
     tagView.update();
     tagView.setOnTagClickListener((position, view) -> {
       ToastUtil.startShort(this, tags.get(position));
+    });
+  }
+
+  private void tagText2() {
+    TextTagView tagView = findViewById(R.id.tag_text2);
+    List<String> tags = new ArrayList<>();
+    tags.add("#标签1");
+    tags.add("#标签2");
+    tags.add("#标签3");
+    tagView.setTags(tags);
+    tagView.setTagColor(Color.BLUE);
+    tagView.setTagBold(true);
+    tagView.setTagSpace(DeviceUtil.dp2px(this, 5));
+    tagView.setTextSpace(DeviceUtil.dp2px(this, 10));
+    tagView.update();
+    tagView.setOnTagClickListener((position) -> {
+      ToastUtil.startShort(this, tags.get(position));
+    });
+    tagView.setOnClickListener(v -> {
+      ToastUtil.startShort(this, "标题");
     });
   }
 
