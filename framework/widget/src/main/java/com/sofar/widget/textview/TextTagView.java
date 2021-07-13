@@ -67,6 +67,7 @@ public class TextTagView extends AppCompatTextView {
 
   public void setContent(String text) {
     mText = text;
+    setText(text);
   }
 
   public void setTagBold(boolean bold) {
@@ -104,6 +105,7 @@ public class TextTagView extends AppCompatTextView {
 
   private void calculate() {
     int maxWidth = getWidth();
+    Log.d(TAG, "maxWidth=" + maxWidth);
     float tagWidth = 0;
     int tagShowCount = 0;
     for (int i = 0; i < mTags.size(); i++) {
