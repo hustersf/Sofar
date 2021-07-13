@@ -87,8 +87,11 @@ public class WidgetActivity extends AppCompatActivity {
     tags.add("#标签1");
     tags.add("#标签2");
     tags.add("#标签3");
-    tagView.setTags(tags);
-    tagView.setTagColor(Color.BLUE);
+    tagView.setContent(tagView.getText().toString());
+    tagView.clearTags();
+    for (String item : tags) {
+      tagView.addTag(item, Color.BLUE);
+    }
     tagView.setTagBold(true);
     tagView.setTagSpace(DeviceUtil.dp2px(this, 5));
     tagView.setTextSpace(DeviceUtil.dp2px(this, 10));

@@ -37,7 +37,7 @@ public class TextTagView extends AppCompatTextView {
   private List<String> mTexts = new ArrayList<>();
   private float mTextSpace;
 
-  private int mTagColor;
+  private List<Integer> mTagColors = new ArrayList<>();
   private List<String> mTags = new ArrayList<>();
   private float mTagSpace;
   private OnTagClickListener mTagClickListener;
@@ -55,17 +55,18 @@ public class TextTagView extends AppCompatTextView {
     super(context, attrs, defStyleAttr);
   }
 
-  public void setTags(@NonNull List<String> tags) {
+  public void clearTags() {
     mTags.clear();
-    mTags.addAll(tags);
+    mTagColors.clear();
+  }
+
+  public void addTag(String tag, int tagColor) {
+    mTags.add(tag);
+    mTagColors.add(tagColor);
   }
 
   public void setContent(String text) {
     mText = text;
-  }
-
-  public void setTagColor(int color) {
-    mTagColor = color;
   }
 
   public void setTagBold(boolean bold) {
@@ -84,7 +85,6 @@ public class TextTagView extends AppCompatTextView {
    * 调用此方法刷新内容
    */
   public void update() {
-    mText = getText().toString();
     if (mText == null) {
       return;
     }
@@ -185,7 +185,7 @@ public class TextTagView extends AppCompatTextView {
       int tagEnd = spannableString.length();
       ProtocolSpan span = new ProtocolSpan();
       span.setFakeBoldText(mTagBold);
-      span.setLinkColor(mTagColor);
+      span.setLinkColor(mTagColors.get(i));
       final int position = i;
       span.setOnProtocolClickListener(() -> {
         if (mTagClickListener != null) {
@@ -271,5 +271,15 @@ public class TextTagView extends AppCompatTextView {
       }
     }
     return super.onTouchEvent(event);
+  }
+
+
+  @Override
+  protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+    super.onSizeChanged(w, h, oldw, oldh);
+    Log.d(TAG, "onSizeChanged w=" + w + " h=" + h + " oldw=" + oldw + " oldh=" + oldh);
+    if (oldw != 0 && oldh != 0) {
+      update();
+    }
   }
 }
