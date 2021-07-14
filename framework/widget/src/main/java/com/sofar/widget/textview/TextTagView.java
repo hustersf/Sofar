@@ -113,6 +113,8 @@ public class TextTagView extends AppCompatTextView {
       if (tagWidth + getPaint().measureText(tag) <= maxWidth - extraSpace(mTags.size())) {
         tagShowCount++;
         tagWidth += getPaint().measureText(tag);
+      } else {
+        break;
       }
     }
 
