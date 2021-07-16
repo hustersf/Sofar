@@ -57,6 +57,22 @@ public class FileUtil {
     return file;
   }
 
+  public static void writeToFile(@NonNull File dstFile, @NonNull String text) {
+    FileOutputStream fos = null;
+    try {
+      if (!dstFile.exists()) {
+        dstFile.createNewFile();
+      }
+      fos = new FileOutputStream(dstFile);
+      fos.write(text.getBytes());
+      fos.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } finally {
+      closeQuietly(fos);
+    }
+  }
+
   /**
    * 写文件
    */

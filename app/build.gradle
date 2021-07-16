@@ -19,9 +19,28 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    //签名信息配置
+    signingConfigs {
+        myConfig {
+            storeFile file("$rootDir/sofar.keystore")
+            storePassword "123456"
+            keyAlias "sofar"
+            keyPassword "123456"
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+    }
+
     buildTypes {
-        release {
+        debug {
+            signingConfig signingConfigs.myConfig
             minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        release {
+            signingConfig signingConfigs.myConfig
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
