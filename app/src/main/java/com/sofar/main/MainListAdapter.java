@@ -3,6 +3,7 @@ package com.sofar.main;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sofar.R;
+import com.sofar.preload.PreLoadActivity;
 import com.sofar.utility.ToastUtil;
 import com.sofar.utility.ViewUtil;
 
@@ -61,6 +63,10 @@ public class MainListAdapter extends RecyclerView.Adapter {
   }
 
   private void jump(Context context, PageData pageData) {
+    if (TextUtils.equals(pageData.name, "预加载库")) {
+      PreLoadActivity.launch(context);
+      return;
+    }
     try {
       Intent intent = new Intent();
       intent.setData(Uri.parse(pageData.uri));

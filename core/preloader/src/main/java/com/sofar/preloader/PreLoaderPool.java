@@ -56,22 +56,22 @@ public class PreLoaderPool {
     return id;
   }
 
-  public boolean exists(int id) {
+  public boolean exists(long id) {
     return workerMap.containsKey(id);
   }
 
 
-  public boolean listenData(int id) {
+  public boolean listenData(long id) {
     IWorker worker = workerMap.get(id);
     return worker != null && worker.listenData();
   }
 
-  public <T> boolean listenData(int id, DataListener<T> dataListener) {
+  public <T> boolean listenData(long id, DataListener<T> dataListener) {
     IWorker worker = workerMap.get(id);
     return worker != null && worker.listenData(dataListener);
   }
 
-  public boolean listenData(int id, GroupedDataListener... listeners) {
+  public boolean listenData(long id, GroupedDataListener... listeners) {
     IWorker worker = workerMap.get(id);
     if (worker != null) {
       for (GroupedDataListener listener : listeners) {
@@ -81,22 +81,22 @@ public class PreLoaderPool {
     return true;
   }
 
-  public <T> boolean removeListener(int id, DataListener<T> dataListener) {
+  public <T> boolean removeListener(long id, DataListener<T> dataListener) {
     IWorker worker = workerMap.get(id);
     return worker != null && worker.removeListener(dataListener);
   }
 
-  public boolean refresh(int id) {
+  public boolean refresh(long id) {
     IWorker worker = workerMap.get(id);
     return worker != null && worker.refresh();
   }
 
-  public boolean refresh(int id, String key) {
+  public boolean refresh(long id, String key) {
     IWorker worker = workerMap.get(id);
     return worker != null && worker.refresh(key);
   }
 
-  public boolean destroy(int id) {
+  public boolean destroy(long id) {
     IWorker worker = workerMap.remove(id);
     return worker != null && worker.destroy();
   }

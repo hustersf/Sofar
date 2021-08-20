@@ -6,7 +6,7 @@ import io.reactivex.Observable;
 import retrofit2.http.GET;
 
 public interface ApiService {
-
+  
   @GET("/banner/json")
   Observable<String> getBannerData();
 

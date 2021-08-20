@@ -61,6 +61,10 @@ dependencies {
 
     implementation project(':core:base')
     implementation project(':core:fun')
+    implementation project(':core:preloader')
+    implementation project(':core:preloader-annotation')
+    kapt project(':core:preloader-compiler')
+
     implementation project(':framework:utility')
     implementation project(':framework:widget')
     implementation project(':framework:network')

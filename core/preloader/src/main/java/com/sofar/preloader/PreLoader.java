@@ -63,11 +63,11 @@ public class PreLoader {
     return PreLoaderPool.getDefault().preLoadGroup(loaders);
   }
 
-  public static boolean listenData(int id) {
+  public static boolean listenData(long id) {
     return PreLoaderPool.getDefault().listenData(id);
   }
 
-  public static <T> boolean listenData(int id, DataListener<T> dataListener) {
+  public static <T> boolean listenData(long id, DataListener<T> dataListener) {
     return PreLoaderPool.getDefault().listenData(id, dataListener);
   }
 
@@ -75,23 +75,23 @@ public class PreLoader {
    * 通过id，可复用任务
    * 通过 {@link GroupedDataListener#keyInGroup()}，关联子任务
    */
-  public static boolean listenData(int id, GroupedDataListener... listeners) {
+  public static boolean listenData(long id, GroupedDataListener... listeners) {
     return PreLoaderPool.getDefault().listenData(id, listeners);
   }
 
-  public static <T> boolean removeListener(int id, DataListener<T> dataListener) {
+  public static <T> boolean removeListener(long id, DataListener<T> dataListener) {
     return PreLoaderPool.getDefault().removeListener(id, dataListener);
   }
 
-  public static boolean exists(int id) {
+  public static boolean exists(long id) {
     return PreLoaderPool.getDefault().exists(id);
   }
 
-  public static boolean refresh(int id) {
+  public static boolean refresh(long id) {
     return PreLoaderPool.getDefault().refresh(id);
   }
 
-  public static boolean refresh(int id, String key) {
+  public static boolean refresh(long id, String key) {
     return PreLoaderPool.getDefault().refresh(id, key);
   }
 

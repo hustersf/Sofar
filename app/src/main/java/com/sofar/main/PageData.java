@@ -18,6 +18,7 @@ public class PageData {
     list.add(PageData.createPageData("github仓库", "sofar://github"));
     list.add(PageData.createPageData("播放器", "sofar://player"));
     list.add(PageData.createPageData("下载库", "sofar://download"));
+    list.add(PageData.createPageData("预加载库", "sofar://preload"));
     return list;
   }
 

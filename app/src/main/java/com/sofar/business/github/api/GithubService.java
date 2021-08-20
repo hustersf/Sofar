@@ -10,7 +10,12 @@ public interface GithubService {
 
   @GET("search/repositories?sort=stars")
   Observable<RepoSearchResponse> searchRepos(@Query("q") String query,
-                                             @Query("page") int page,
-                                             @Query("per_page") int itemsPerPage);
+    @Query("page") int page,
+    @Query("per_page") int itemsPerPage);
+
+  @GET("search/repositories?sort=stars")
+  Observable<String> searchReposStr(@Query("q") String query,
+    @Query("page") int page,
+    @Query("per_page") int itemsPerPage);
 
 }

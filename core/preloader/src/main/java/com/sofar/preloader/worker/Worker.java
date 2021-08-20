@@ -31,6 +31,7 @@ public class Worker<T> implements IWorker {
   private Disposable disposable;
   private volatile State state;
   private String key;
+  private long start;
 
   public Worker(DataLoader<T> loader, DataListener<T> listener) {
     init(loader);
@@ -192,6 +193,11 @@ public class Worker<T> implements IWorker {
       }
       this.state = state;
       Logger.debug("set state to:" + state.name());
+      if (state instanceof StateLoading) {
+        start = System.currentTimeMillis();
+      } else if (state instanceof StateLoadCompleted || state instanceof StateDone) {
+        Logger.debug("data load time=" + (System.currentTimeMillis() - start));
+      }
     }
   }
 
