@@ -9,6 +9,7 @@ include ':framework:player'
 include ':framework:download'
 include ':framework:skin'
 include ':framework:audio-record'
+include ':framework:image'
 
 include ':core:base'
 include ':core:fun'

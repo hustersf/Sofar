@@ -1,0 +1,9 @@
+apply from: rootProject.file('library.gradle')
+
+dependencies {
+    api 'com.facebook.fresco:fresco:2.5.0'
+}
+
+
+
+
