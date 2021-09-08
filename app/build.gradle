@@ -58,6 +58,7 @@ dependencies {
 
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
 
     implementation project(':core:base')
     implementation project(':core:fun')
@@ -72,6 +73,7 @@ dependencies {
     implementation project(':framework:download')
     implementation project(':framework:skin')
     implementation project(':framework:audio-record')
+    implementation project(':framework:image')
 
     implementation project(':debug')
     implementation project(':tool:profiler')

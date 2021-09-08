@@ -35,6 +35,13 @@ public class ViewBinder<T> {
     }
   }
 
+  public final void unbind() {
+    onUnbind();
+    for (ViewBinder viewBinder : viewBinders) {
+      viewBinder.unbind();
+    }
+  }
+
 
   public final void destroy() {
     onDestroy();
@@ -52,6 +59,10 @@ public class ViewBinder<T> {
   }
 
   protected void onBind(T data) {
+
+  }
+
+  protected void onUnbind() {
 
   }
 

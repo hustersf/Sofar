@@ -9,6 +9,7 @@ import com.sofar.base.location.LocationProvider;
 import com.sofar.download.DownloadConfig;
 import com.sofar.download.DownloadManager;
 import com.sofar.fun.FunConfig;
+import com.sofar.image.ImageManager;
 import com.sofar.profiler.MonitorManager;
 import com.sofar.skin.core.Skin;
 
@@ -47,5 +48,7 @@ public class SofarApp extends Application {
 
     MonitorManager.init(this);
     MonitorManager.addAll();
+
+    ImageManager.get().init(this);
   }
 }

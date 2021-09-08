@@ -80,6 +80,7 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
   @Override
   public void onViewRecycled(RecyclerViewHolder holder) {
     super.onViewRecycled(holder);
+    holder.viewBinder.unbind();
   }
 
   @Override

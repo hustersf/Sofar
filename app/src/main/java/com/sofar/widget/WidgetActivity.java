@@ -8,6 +8,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -24,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sofar.R;
+import com.sofar.widget.recycler.RecyclerActivity;
 import com.sofar.widget.textview.TextTagView;
 import com.sofar.widget.textview.TextWithTagView;
 import com.sofar.widget.textview.span.RoundBackgroundSpan;
@@ -269,7 +271,8 @@ public class WidgetActivity extends AppCompatActivity {
     FloatingWidget widget = new FloatingWidget(this);
     ViewUtil.inflate(widget, R.layout.read_timer, true);
     widget.findViewById(R.id.read_time_root).setOnClickListener(v -> {
-      ToastUtil.startShort(this, "FloatingWidget");
+      Intent intent = new Intent(this, RecyclerActivity.class);
+      startActivity(intent);
     });
     widget.setScreenRatio(1.0f, 1.0f);
     new Handler().post(() -> {
