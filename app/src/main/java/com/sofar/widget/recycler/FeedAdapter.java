@@ -1,6 +1,7 @@
 package com.sofar.widget.recycler;
 
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,15 +11,17 @@ import com.sofar.base.recycler.RecyclerAdapter;
 import com.sofar.base.recycler.RecyclerViewHolder;
 import com.sofar.base.viewbinder.RecyclerViewBinder;
 import com.sofar.fun.play.Feed;
+import com.sofar.utility.ViewUtil;
 import com.sofar.widget.recycler.viewbinder.FeedViewBinder;
 
 public class FeedAdapter extends RecyclerAdapter<Feed> {
 
   private static final String TAG = "FeedAdapter";
 
+  @NonNull
   @Override
-  protected int getItemLayoutId(int viewType) {
-    return R.layout.feed_item;
+  protected View onCreateView(ViewGroup parent, int viewType) {
+    return ViewUtil.inflate(parent, R.layout.feed_image_big_card_item);
   }
 
   @NonNull

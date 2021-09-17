@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class ViewUtil {
 
@@ -122,7 +123,33 @@ public class ViewUtil {
   /**
    * 获取TextureView截图
    */
-  public static Bitmap getTextureViewShot(@NonNull TextureView view) {
-    return view.getBitmap();
+  @Nullable
+  public static Bitmap getTextureViewShot(@NonNull TextureView textureView) {
+    if (textureView.isAvailable() && textureView.getWidth() > 0 && textureView.getHeight() > 0) {
+      Bitmap bitmap = textureView.getBitmap(Bitmap
+        .createBitmap(textureView.getResources().getDisplayMetrics(), textureView.getWidth(),
+          textureView.getHeight(), Bitmap.Config.RGB_565));
+      return bitmap;
+    }
+    return null;
   }
+
+  /**
+   * 获取view展示比例
+   */
+  public static float getViewShowRatio(@NonNull View view) {
+    if (!view.isShown()) {
+      return 0;
+    }
+
+    Rect rect = new Rect();
+    if (view.getGlobalVisibleRect(rect)) {
+      long visibleArea = (long) rect.height() * (long) rect.width();
+      long viewArea = (long) view.getHeight() * (long) view.getWidth();
+      float ratio = 1.0f * visibleArea / viewArea;
+      return ratio;
+    }
+    return 0;
+  }
+
 }

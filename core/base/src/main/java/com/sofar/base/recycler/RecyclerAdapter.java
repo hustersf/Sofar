@@ -59,7 +59,7 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
 
   @Override
   public RecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    View view = ViewUtil.inflate(parent, getItemLayoutId(viewType), false);
+    View view = onCreateView(parent, viewType);
     RecyclerViewBinder viewBinder = onCreateViewBinder(viewType);
     viewBinders.add(viewBinder);
     return new RecyclerViewHolder(view, viewBinder);
@@ -74,7 +74,11 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
       realPosition = holder.getAdapterPosition();
     }
     holder.setViewAdapterPosition(realPosition);
-    holder.onBindData(getItem(realPosition));
+    holder.onBindData(getItem(realPosition), getCallerContext(holder.getItemViewType()));
+  }
+
+  protected Object getCallerContext(int viewType) {
+    return null;
   }
 
   @Override
@@ -101,9 +105,10 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
   }
 
   /**
-   * 子类提供布局id
+   * 子类创建布局
    */
-  protected abstract int getItemLayoutId(int viewType);
+  @NonNull
+  protected abstract View onCreateView(ViewGroup parent, int viewType);
 
   /**
    * 子类创建具体的ViewBinder

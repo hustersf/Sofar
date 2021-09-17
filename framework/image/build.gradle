@@ -2,6 +2,13 @@ apply from: rootProject.file('library.gradle')
 
 dependencies {
     api 'com.facebook.fresco:fresco:2.5.0'
+    //支持 GIF 动图
+    api 'com.facebook.fresco:animated-gif:2.5.0'
+    // 支持 WebP （静态图+动图），需要添加
+    api 'com.facebook.fresco:animated-webp:2.5.0'
+    api 'com.facebook.fresco:webpsupport:2.5.0'
+
+    api 'com.facebook.fresco:animated-drawable:2.5.0'
 }
 
 

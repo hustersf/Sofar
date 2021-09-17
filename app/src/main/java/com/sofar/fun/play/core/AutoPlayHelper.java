@@ -1,4 +1,4 @@
-package com.sofar.fun.play;
+package com.sofar.fun.play.core;
 
 import android.graphics.Rect;
 import android.util.Log;

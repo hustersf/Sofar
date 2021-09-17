@@ -21,8 +21,7 @@ public abstract class BasePlayer {
 
   @NonNull
   SimpleExoPlayer player;
-  @NonNull
-  final Context context;
+  @NonNull final Context context;
 
   boolean prepared;
   boolean completed;
@@ -127,6 +126,18 @@ public abstract class BasePlayer {
 
   public void setOnPlayerListener(OnPlayerListener listener) {
     this.playerListener = listener;
+  }
+
+  public long getDuration() {
+    return player.getDuration();
+  }
+
+  public long getCurrent() {
+    return player.getCurrentPosition();
+  }
+
+  public void seekTo(long positionMs) {
+    player.seekTo(positionMs);
   }
 
 }

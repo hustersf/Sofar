@@ -1,9 +1,12 @@
 package com.sofar.base.viewbinder;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 
 import java.util.ArrayList;
@@ -27,11 +30,21 @@ public class ViewBinder<T> {
     }
   }
 
+  public final <T extends View> T bindView(@IdRes int id) {
+    return view.findViewById(id);
+  }
 
   public final void bind(T data) {
     onBind(data);
     for (ViewBinder viewBinder : viewBinders) {
       viewBinder.bind(data);
+    }
+  }
+
+  public final void bindExtra(Object extra) {
+    onBindExtra(extra);
+    for (ViewBinder viewBinder : viewBinders) {
+      viewBinder.bindExtra(extra);
     }
   }
 
@@ -62,6 +75,10 @@ public class ViewBinder<T> {
 
   }
 
+  protected void onBindExtra(Object extra) {
+
+  }
+
   protected void onUnbind() {
 
   }
@@ -69,6 +86,14 @@ public class ViewBinder<T> {
 
   protected void onDestroy() {
 
+  }
+
+  @Nullable
+  public Activity getActivity() {
+    if (context instanceof Activity) {
+      return ((Activity) context);
+    }
+    return null;
   }
 
 }

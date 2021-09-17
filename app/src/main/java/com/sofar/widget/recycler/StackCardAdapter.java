@@ -1,5 +1,7 @@
 package com.sofar.widget.recycler;
 
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -10,6 +12,7 @@ import com.sofar.R;
 import com.sofar.base.recycler.RecyclerAdapter;
 import com.sofar.base.viewbinder.RecyclerViewBinder;
 import com.sofar.utility.ToastUtil;
+import com.sofar.utility.ViewUtil;
 
 public class StackCardAdapter extends RecyclerAdapter {
 
@@ -19,9 +22,10 @@ public class StackCardAdapter extends RecyclerAdapter {
     this.loopCount = loopCount;
   }
 
+  @NonNull
   @Override
-  protected int getItemLayoutId(int viewType) {
-    return R.layout.stack_card_item;
+  protected View onCreateView(ViewGroup parent, int viewType) {
+    return ViewUtil.inflate(parent, R.layout.stack_card_item);
   }
 
   @NonNull

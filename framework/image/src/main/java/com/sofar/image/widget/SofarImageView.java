@@ -66,7 +66,8 @@ public class SofarImageView extends SimpleDraweeView {
    * @param url    图片地址
    * @param rgb565 是否使用rgb565 （更省内存）
    */
-  public void bindUrl(@Nullable String url, ControllerListener<ImageInfo> listener, boolean rgb565) {
+  public void bindUrl(@Nullable String url, ControllerListener<ImageInfo> listener,
+    boolean rgb565) {
     if (url == null) {
       setController(null);
     } else {
@@ -84,7 +85,7 @@ public class SofarImageView extends SimpleDraweeView {
    * @param rgb565       是否使用rgb565
    */
   public void bindUri(@NonNull Uri uri, int resizeWidth, int resizeHeight, Postprocessor processor,
-                      ControllerListener<ImageInfo> listener, boolean rgb565) {
+    ControllerListener<ImageInfo> listener, boolean rgb565) {
     ImageRequestBuilder builder = ImageRequestBuilder.newBuilderWithSource(uri);
     builder.setPostprocessor(processor);
     if (resizeWidth > 0 && resizeHeight > 0) {

@@ -20,4 +20,8 @@
   <color name="titleColor">#1F75FE</color>
   <color name="titleColorAlpha">#551F75FE</color>
   <color name="greyAlpha">#55999999</color>
+
+  <color name="pgc_seekbar_background">#33FFFFFF</color>
+  <color name="pgc_seekbar_secondary_progress">#4CFFFFFF</color>
+  <color name="pgc_seekbar_progress">#FFFFFF</color>
 </resources>

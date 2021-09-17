@@ -2,15 +2,15 @@ package com.sofar.player.core;
 
 public interface OnPlayerListener {
 
-  void onPlayerStart();
+  default void onPlayerStart() {}
 
-  void onPlayerResume();
+  default void onPlayerResume() {}
 
-  void onPlayerPause();
+  default void onPlayerPause() {}
 
-  void onPlayerStop();
+  default void onPlayerStop() {}
 
-  void onPlayerCompleted();
+  default void onPlayerCompleted() {}
 
-  void onPlayerError();
+  default void onPlayerError() {}
 }

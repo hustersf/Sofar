@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/video_root"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content">
+
+  <FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <TextureView
+      android:id="@+id/player_texture"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent" />
+
+  </FrameLayout>
+
+  <include layout="@layout/layout_feed_video_control_playing" />
+
+</RelativeLayout>

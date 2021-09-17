@@ -18,8 +18,11 @@ public class RecyclerViewHolder<T> extends RecyclerView.ViewHolder {
     viewBinder.create(itemView);
   }
 
-  protected void onBindData(T item) {
+  protected void onBindData(T item, Object obj) {
     viewBinder.bind(item);
+    if (obj != null) {
+      viewBinder.bindExtra(obj);
+    }
   }
 
   public void setViewAdapterPosition(int position) {
