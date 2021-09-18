@@ -2,20 +2,17 @@ package com.sofar.utility;
 
 import java.lang.reflect.Method;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * 获取设备信息
@@ -173,6 +170,14 @@ public class DeviceUtil {
       }
     }
     return false;
+  }
+
+  /**
+   * 是否在分屏模式下
+   */
+  public static boolean isInMultiWindowMode(@Nullable Activity activity) {
+    return activity != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+      && activity.isInMultiWindowMode();
   }
 
 }
