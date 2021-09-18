@@ -1,7 +1,10 @@
 package com.sofar.utility;
 
+import java.lang.reflect.Method;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -9,6 +12,7 @@ import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 
 import androidx.annotation.NonNull;
@@ -78,7 +82,8 @@ public class DeviceUtil {
    * 2.有些设备返回null
    */
   private static String getUUid(@NonNull Context context) {
-    String uuid = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+    String uuid =
+      Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
     return uuid;
   }
 
@@ -129,12 +134,14 @@ public class DeviceUtil {
 
 
   public static int dp2px(@NonNull Context context, float dpVal) {
-    int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpVal, context.getResources().getDisplayMetrics());
+    int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpVal,
+      context.getResources().getDisplayMetrics());
     return value;
   }
 
   public static int sp2px(@NonNull Context context, float spVal) {
-    int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, spVal, context.getResources().getDisplayMetrics());
+    int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, spVal,
+      context.getResources().getDisplayMetrics());
     return value;
   }
 
@@ -146,6 +153,26 @@ public class DeviceUtil {
   public static float px2sp(@NonNull Context context, float pxVal) {
     float scale = context.getResources().getDisplayMetrics().scaledDensity;
     return (pxVal / scale);
+  }
+
+  /**
+   * 判断是否是小窗模式
+   */
+  public static boolean isFreeFormWindowMode(Activity activity) {
+    if (Build.VERSION.SDK_INT >= 29 && RomUtil.isMiui()) {
+      try {
+        Class clazz = activity.getClass();
+        Method method = clazz.getMethod("getWindowingMode", null);
+        method.setAccessible(true);
+        int windowMode = (int) method.invoke(activity, null);
+        //WindowConfiguration#WINDOWING_MODE_FREEFORM
+        int WINDOWING_MODE_FREEFORM = 5;//多窗口模式
+        return windowMode == WINDOWING_MODE_FREEFORM;
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    return false;
   }
 
 }
