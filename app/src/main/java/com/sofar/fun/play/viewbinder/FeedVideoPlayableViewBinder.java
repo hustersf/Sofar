@@ -2,13 +2,13 @@ package com.sofar.fun.play.viewbinder;
 
 import android.util.Log;
 import android.view.ViewGroup;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.sofar.R;
 import com.sofar.base.exception.SofarErrorConsumer;
 import com.sofar.fun.play.Feed;
 import com.sofar.fun.play.VideoContext;
 import com.sofar.fun.play.core.FeedPlayer;
+import com.sofar.fun.play.core.PlayableRecyclerViewBinder;
 import com.sofar.fun.play.core.PlayableViewBinder;
 import com.sofar.fun.play.singal.VideoControlSignal;
 import com.sofar.fun.play.singal.VideoStateSignal;
@@ -25,6 +25,7 @@ public class FeedVideoPlayableViewBinder extends PlayableViewBinder<Feed> {
   ViewGroup videoRootView;
 
   FeedPlayer mFeedPlayer;
+  PlayableRecyclerViewBinder parent;
 
   PublishSubject<VideoControlSignal> videoControlPublisher;
   PublishSubject<VideoStateSignal> videoStatePublisher;
@@ -36,15 +37,16 @@ public class FeedVideoPlayableViewBinder extends PlayableViewBinder<Feed> {
     switch (videoStateSignal) {
       case COMPLETE:
         if (mFeedPlayer != null) {
-          mFeedPlayer.playFinished(FeedVideoPlayableViewBinder.this);
+          mFeedPlayer.playFinished(parent);
         }
         break;
     }
   };
 
 
-  public FeedVideoPlayableViewBinder(FeedPlayer feedPlayer) {
+  public FeedVideoPlayableViewBinder(FeedPlayer feedPlayer, PlayableRecyclerViewBinder parent) {
     this.mFeedPlayer = feedPlayer;
+    this.parent = parent;
   }
 
   @Override
@@ -63,11 +65,6 @@ public class FeedVideoPlayableViewBinder extends PlayableViewBinder<Feed> {
       mAutoDisposables.add(
         videoStatePublisher.subscribe(mVideoStateSignalConsumer, new SofarErrorConsumer()));
     }
-  }
-
-  @Override
-  public boolean canPlay(RecyclerView.ViewHolder holder, int adapterPosition) {
-    return true;
   }
 
   @Override

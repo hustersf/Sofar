@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.sofar.R;
 import com.sofar.fun.play.card.FeedItemCard;
 import com.sofar.fun.play.core.FeedPlayer;
+import com.sofar.fun.play.core.ItemScroll;
 import com.sofar.fun.play.core.RecyclerViewPlayer;
 import com.sofar.widget.DataProvider;
 
@@ -33,6 +34,7 @@ public class AutoPlayListActivity extends AppCompatActivity {
     FeedPlayer feedPlayer = FeedPlayer.create();
     RecyclerViewPlayer player = new RecyclerViewPlayer(feedPlayer);
     player.attachToRecyclerView(playRecycler);
+    player.setItemScroll(ItemScroll.TOP);
 
     Map<FeedViewType, FeedItemCard> cardMap = FeedViewType.createCardMap();
     FeedItemInject feedItemInject = new FeedItemInject(cardMap);
@@ -43,6 +45,8 @@ public class AutoPlayListActivity extends AppCompatActivity {
     AutoPlayAdapter adapter = new AutoPlayAdapter(cardMap);
     adapter.setList(DataProvider.feeds());
     playRecycler.setAdapter(adapter);
+
+    playRecycler.post(() -> player.recapture());
 
   }
 }

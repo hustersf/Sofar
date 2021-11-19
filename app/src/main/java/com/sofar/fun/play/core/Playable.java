@@ -6,5 +6,12 @@ public interface Playable {
 
   void stop();
 
-  boolean canPlay();
+  default boolean canPlay() {
+    return true;
+  }
+
+  default float getViewShowRatio() {
+    return 0;
+  }
+
 }

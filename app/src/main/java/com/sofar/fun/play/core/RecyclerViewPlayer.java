@@ -19,10 +19,13 @@ public class RecyclerViewPlayer implements PlayCallback {
   protected boolean enable = true;
   protected FeedPlayer mPlayer;
 
+  protected int itemScroll = ItemScroll.UNKNOWN;
+
   RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
     @Override
     public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
       super.onScrollStateChanged(recyclerView, newState);
+      Log.d(TAG, "newState=" + newState);
       if (newState == RecyclerView.SCROLL_STATE_IDLE) {
         recapture();
       }
@@ -41,9 +44,10 @@ public class RecyclerViewPlayer implements PlayCallback {
 
     mRecyclerView = recyclerView;
     mRecyclerView.addOnScrollListener(scrollListener);
-    recyclerView.post(() -> {
-      recapture();
-    });
+  }
+
+  public void setItemScroll(@ItemScroll int itemScroll) {
+    this.itemScroll = itemScroll;
   }
 
   @NonNull
@@ -60,7 +64,7 @@ public class RecyclerViewPlayer implements PlayCallback {
           (PlayableRecyclerViewBinder) ((RecyclerViewHolder<?>) vh).viewBinder;
         int position = mRecyclerView.getChildAdapterPosition(childView);
         float ratio = viewBinder.getViewShowRatio();
-        if (viewBinder.canPlay(vh, position) && ratio > maxRatio) {
+        if (viewBinder.canPlay() && ratio > maxRatio) {
           maxRatio = ratio;
           maxRatioPlayable = viewBinder;
         }
@@ -124,6 +128,7 @@ public class RecyclerViewPlayer implements PlayCallback {
   @Override
   public void onPlayFinished(Playable playable) {
     Log.d(TAG, "onPlayFinished");
+    scrollWhenPlayFinish(playable);
   }
 
   @Override
@@ -139,6 +144,34 @@ public class RecyclerViewPlayer implements PlayCallback {
   @Override
   public void onPlayStop() {
     Log.d(TAG, "onPlayStop");
+  }
+
+  private void scrollWhenPlayFinish(Playable playable) {
+    Log.d(TAG, "item scroll=" + itemScroll);
+    if (itemScroll == ItemScroll.UNKNOWN) {
+      return;
+    }
+
+    if (!mRecyclerView.canScrollVertically(1)) {
+      Log.d(TAG, "can not scroll");
+      return;
+    }
+
+    if (playable instanceof PlayableRecyclerViewBinder &&
+      ((PlayableRecyclerViewBinder) playable).getItemView() != null) {
+      View itemView = ((PlayableRecyclerViewBinder) playable).getItemView();
+      int dy = 0;
+      if (itemView.getTop() < 0 || itemScroll == ItemScroll.TOP) {
+        dy = itemView.getBottom();
+      }
+      if (itemScroll == ItemScroll.ONE_ITEM) {
+        dy = itemView.getBottom() - itemView.getTop();
+      }
+      Log.d(TAG, "scroll dy=" + dy);
+      mRecyclerView.smoothScrollBy(0, dy);
+    } else {
+      Log.d(TAG, "check playable is PlayableRecyclerViewBinder");
+    }
   }
 
 }

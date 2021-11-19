@@ -23,7 +23,7 @@ public class FeedImageThreePlayCard extends FeedPlayableCard {
   @Override
   public RecyclerViewBinder createViewBinder() {
     PlayableRecyclerViewBinder viewBinder = new PlayableRecyclerViewBinder();
-    viewBinder.setPlayViewBinder(new FeedThreeImagePlayableViewBinder(mFeedPlayer));
+    viewBinder.setPlayViewBinder(new FeedThreeImagePlayableViewBinder(mFeedPlayer, viewBinder));
     return viewBinder;
   }
 }

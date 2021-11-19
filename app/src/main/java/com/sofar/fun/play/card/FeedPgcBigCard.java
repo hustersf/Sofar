@@ -26,7 +26,7 @@ public class FeedPgcBigCard extends FeedPlayableCard {
   @Override
   public RecyclerViewBinder createViewBinder() {
     PlayableRecyclerViewBinder viewBinder = new PlayableRecyclerViewBinder();
-    viewBinder.setPlayViewBinder(new FeedVideoPlayableViewBinder(mFeedPlayer));
+    viewBinder.setPlayViewBinder(new FeedVideoPlayableViewBinder(mFeedPlayer, viewBinder));
     viewBinder.addViewBinder(new FeedVideoSizeViewBinder());
     viewBinder.addViewBinder(new FeedVideoCoreViewBinder());
     viewBinder.addViewBinder(new FeedVideoPlayPanelViewBinder());

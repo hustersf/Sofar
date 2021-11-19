@@ -4,13 +4,13 @@ import java.util.List;
 
 import android.util.Log;
 import android.view.ViewGroup;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.sofar.R;
 import com.sofar.fun.play.Feed;
 import com.sofar.fun.play.core.FeedPlayer;
 import com.sofar.fun.play.core.ImageArrayPlayer;
 import com.sofar.fun.play.core.PlayCallback;
+import com.sofar.fun.play.core.PlayableRecyclerViewBinder;
 import com.sofar.fun.play.core.PlayableViewBinder;
 import com.sofar.image.widget.SofarImageView;
 import com.sofar.utility.CollectionUtil;
@@ -31,18 +31,21 @@ public class FeedThreeImagePlayableViewBinder extends PlayableViewBinder<Feed> {
   FeedPlayer innerFeedPlayer;
   FeedPlayer outerFeedPlayer;
 
+  PlayableRecyclerViewBinder parent;
+
   PlayCallback innerPlayCallback = new PlayCallback() {
     @Override
     public void onAllFinished() {
       Log.d(TAG, "onAllFinished");
       if (outerFeedPlayer != null) {
-        outerFeedPlayer.playFinished(FeedThreeImagePlayableViewBinder.this);
+        outerFeedPlayer.playFinished(parent);
       }
     }
   };
 
-  public FeedThreeImagePlayableViewBinder(FeedPlayer player) {
-    outerFeedPlayer = player;
+  public FeedThreeImagePlayableViewBinder(FeedPlayer player, PlayableRecyclerViewBinder parent) {
+    this.outerFeedPlayer = player;
+    this.parent = parent;
   }
 
   @Override
@@ -75,11 +78,6 @@ public class FeedThreeImagePlayableViewBinder extends PlayableViewBinder<Feed> {
         }
       }
     }
-  }
-
-  @Override
-  public boolean canPlay(RecyclerView.ViewHolder holder, int adapterPosition) {
-    return true;
   }
 
   @Override
