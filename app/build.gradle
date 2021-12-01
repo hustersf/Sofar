@@ -74,10 +74,13 @@ dependencies {
     implementation project(':framework:skin')
     implementation project(':framework:audio-record')
     implementation project(':framework:image')
+    implementation project(':framework:shared-preferences')
 
     implementation project(':debug')
     implementation project(':tool:profiler')
 
     implementation 'androidx.room:room-runtime:2.2.3'
     kapt 'androidx.room:room-compiler:2.2.3'
+
+    implementation 'com.getkeepsafe.relinker:relinker:1.4.4'
 }

@@ -1,6 +1,7 @@
 package com.sofar.utility;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Environment;
 
 import androidx.annotation.NonNull;
@@ -23,6 +24,18 @@ public class FileUtil {
    */
   public static boolean isSDCardEnable() {
     return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
+  }
+
+  public static File getDataDir(@NonNull Context context) {
+    File dataDir = null;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      dataDir = context.getDataDir();
+    }
+
+    if (dataDir == null) {
+      dataDir = new File(Environment.getDataDirectory().getPath() + "/data/" + context.getPackageName());
+    }
+    return dataDir;
   }
 
   /**
