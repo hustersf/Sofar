@@ -75,6 +75,7 @@ dependencies {
     implementation project(':framework:audio-record')
     implementation project(':framework:image')
     implementation project(':framework:shared-preferences')
+    implementation project(':framework:config')
 
     implementation project(':debug')
     implementation project(':tool:profiler')

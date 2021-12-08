@@ -1,0 +1,12 @@
+{
+    "stockEnable":false,
+    "readTimerDuration":30000,
+    "abtest":{
+        "userInterestSelect":1,
+        "enterLastTab":1
+    },
+    "feed":{
+        "title":"测试Confige Object解析",
+        "styleType":1
+    }
+}

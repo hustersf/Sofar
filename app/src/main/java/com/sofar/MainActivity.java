@@ -9,11 +9,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.sofar.base.location.LocationProvider;
+import com.sofar.config.ConfigManager;
+import com.sofar.fun.play.Feed;
 import com.sofar.main.MainItemDecoration;
 import com.sofar.main.MainListAdapter;
 import com.sofar.profiler.MonitorCallback;
 import com.sofar.profiler.MonitorManager;
+import com.sofar.utility.FileUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
     MonitorManager.register(callback);
     MonitorManager.start();
+    readConfig();
   }
 
   @Override
@@ -68,5 +74,19 @@ public class MainActivity extends AppCompatActivity {
     super.onDestroy();
     MonitorManager.unregister(callback);
     MonitorManager.stop();
+    writeConfig();
+  }
+
+  private void readConfig() {
+    int readTimerDuration = ConfigManager.get().getInt("readTimerDuration", -1);
+    Log.d("sufan222", "readTimerDuration=" + readTimerDuration);
+  }
+
+  private void writeConfig() {
+    String jsonStr = FileUtil.getTextFromAssets(this, "json/config_test.json");
+    ConfigManager.get().update(new Gson().fromJson(jsonStr, JsonObject.class));
+
+    Feed feed = ConfigManager.get().getValue("feed", Feed.class, new Feed());
+    Log.d("sufan222", "feed title=" + feed.title);
   }
 }

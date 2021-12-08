@@ -9,11 +9,13 @@ import com.google.gson.Gson;
 import com.sofar.base.app.AppLifeManager;
 import com.sofar.base.exception.SofarErrorConsumer;
 import com.sofar.base.location.LocationProvider;
+import com.sofar.config.ConfigManager;
 import com.sofar.download.DownloadConfig;
 import com.sofar.download.DownloadManager;
 import com.sofar.fun.FunConfig;
 import com.sofar.image.ImageManager;
 import com.sofar.preferences.PreferenceConfigHolder;
+import com.sofar.preferences.SofarSharedPreferences;
 import com.sofar.profiler.MonitorManager;
 import com.sofar.skin.core.Skin;
 import com.sofar.utility.FileUtil;
@@ -89,5 +91,7 @@ public class SofarApp extends Application {
 
       }
     };
+
+    ConfigManager.get().init(this, SofarSharedPreferences::obtain);
   }
 }

@@ -11,6 +11,7 @@ include ':framework:skin'
 include ':framework:audio-record'
 include ':framework:image'
 include ':framework:shared-preferences'
+include ':framework:config'
 
 include ':core:base'
 include ':core:fun'
