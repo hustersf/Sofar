@@ -1,12 +1,12 @@
 {
-    "stockEnable":false,
-    "readTimerDuration":30000,
-    "abtest":{
-        "userInterestSelect":1,
-        "enterLastTab":1
-    },
-    "feed":{
-        "title":"测试Confige Object解析",
-        "styleType":1
-    }
+  "stockEnable": false,
+  "readTimerDuration": 30000,
+  "abtest": {
+    "userInterestSelect": 1,
+    "enterLastTab": 2
+  },
+  "feed": {
+    "title": "测试[Config Object]解析",
+    "styleType": 1
+  }
 }

@@ -71,4 +71,12 @@ public class ConfigManager implements IConfig {
     mStorage.update(jsonObject);
   }
 
+  public ConfigStorage getStorage() {
+    return mStorage;
+  }
+
+  public Gson getGson() {
+    return mGson;
+  }
+
 }
