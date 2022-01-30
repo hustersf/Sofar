@@ -18,6 +18,8 @@ import androidx.core.view.ViewCompat;
 public class NestedArticleDetailLayout extends ViewGroup implements NestedScrollingParent3 {
   private static String TAG = "NestedArticleDetailLayout";
 
+  final int[] mReusableIntPair = new int[2];
+
   private final NestedScrollingParentHelper mParentHelper;
   private int mScrollThreshold;
   private int mChildTotalHeight;
@@ -89,14 +91,56 @@ public class NestedArticleDetailLayout extends ViewGroup implements NestedScroll
   @Override
   public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed,
     int dyUnconsumed, int type, @NonNull int[] consumed) {
-    onNestedScrollInternal(dyUnconsumed, type, consumed);
+    onNestedScrollInternal(target, dyUnconsumed, type, consumed);
   }
 
-  private void onNestedScrollInternal(int dyUnconsumed, int type, @Nullable int[] consumed) {
+  private void onNestedScrollInternal(@NonNull View target, int dyUnconsumed, int type,
+    @Nullable int[] consumed) {
     if (dyUnconsumed != 0) {
-      Log.d(TAG, "onNestedScroll parent start scroll");
-      scrollByInternal(dyUnconsumed, type, consumed);
+      mReusableIntPair[0] = 0;
+      mReusableIntPair[1] = 0;
+      scrollStep(dyUnconsumed, mReusableIntPair);
+      final int myConsumed = mReusableIntPair[1];
+      if (consumed != null) {
+        consumed[1] += myConsumed;
+      }
+      final int myUnconsumed = dyUnconsumed - myConsumed;
+      Log.d(TAG, "onNestedScroll parent start scroll myUnconsumed=" + myUnconsumed);
+     // findPreOrNextChildScroll(target, myUnconsumed);
     }
+  }
+
+  /**
+   * 尝试解决子View之间 fling 操作戛然而止的问题
+   *
+   * @param target
+   * @param dyUnconsumed >0 上滑(手指从下到上)
+   */
+  private void findPreOrNextChildScroll(@NonNull View target, int dyUnconsumed) {
+    View childView = null;
+    if (dyUnconsumed > 0) {
+      for (int i = 0; i < getChildCount(); i++) {
+        View child = getChildAt(i);
+        if (child == target) {
+          childView = getChildAt(i + 1);
+          break;
+        }
+      }
+    }
+    if (dyUnconsumed < 0) {
+      for (int i = 0; i < getChildCount(); i++) {
+        View child = getChildAt(i);
+        if (child == target) {
+          childView = getChildAt(i - 1);
+          break;
+        }
+      }
+    }
+    if (childView == null || dyUnconsumed == 0) {
+      return;
+    }
+
+    childView.scrollBy(0, dyUnconsumed);
   }
 
   // NestedScrollingParent2
@@ -121,7 +165,7 @@ public class NestedArticleDetailLayout extends ViewGroup implements NestedScroll
   @Override
   public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed,
     int dyUnconsumed, int type) {
-    onNestedScrollInternal(dyUnconsumed, type, null);
+    onNestedScrollInternal(target, dyUnconsumed, type, null);
   }
 
   /**
@@ -138,7 +182,11 @@ public class NestedArticleDetailLayout extends ViewGroup implements NestedScroll
     boolean scrollBottom = !target.canScrollVertically(1);
     if (getScrollY() > 0 && getScrollY() < mScrollThreshold) {
       Log.d(TAG, "onNestedPreScroll parent start scroll");
-      scrollByInternal(dy, type, consumed);
+      mReusableIntPair[0] = 0;
+      mReusableIntPair[1] = 0;
+      scrollStep(dy, mReusableIntPair);
+      final int myConsumed = mReusableIntPair[1];
+      consumed[1] += myConsumed;
     }
   }
 
@@ -159,7 +207,7 @@ public class NestedArticleDetailLayout extends ViewGroup implements NestedScroll
     return mParentHelper.getNestedScrollAxes();
   }
 
-  private void scrollByInternal(int dy, int type, @Nullable int[] consumed) {
+  void scrollStep(int dy, @Nullable int[] consumed) {
     final int oldScrollY = getScrollY();
     int preScroll = dy + oldScrollY;
     if (preScroll < 0) {
