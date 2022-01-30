@@ -5,12 +5,12 @@
   android:layout_height="wrap_content"
   android:background="@color/background">
 
-  <com.sofar.widget.nested.NestedWebView
+  <com.sofar.widget.nested.NestedLinkWebView
     android:id="@+id/web_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />
 
-  <androidx.recyclerview.widget.RecyclerView
+  <com.sofar.widget.nested.NestedLinkRecyclerView
     android:id="@+id/recycler_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" />

@@ -4,7 +4,10 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.animation.Interpolator;
+import android.widget.OverScroller;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.NestedScrollingParent3;
@@ -24,6 +27,21 @@ public class NestedArticleDetailLayout extends ViewGroup implements NestedScroll
   private int mScrollThreshold;
   private int mChildTotalHeight;
 
+  private final int mMinFlingVelocity;
+  private final int mMaxFlingVelocity;
+  /**
+   * 记录子View 的 fling 逻辑
+   * 解决子View之间 fling 操作戛然而止的问题
+   */
+  ViewFlinger mChildTrackFlinger = new ViewFlinger(true);
+  static final Interpolator sQuinticInterpolator = new Interpolator() {
+    @Override
+    public float getInterpolation(float t) {
+      t -= 1.0f;
+      return t * t * t * t * t + 1.0f;
+    }
+  };
+
   public NestedArticleDetailLayout(Context context) {
     this(context, null);
   }
@@ -35,6 +53,10 @@ public class NestedArticleDetailLayout extends ViewGroup implements NestedScroll
   public NestedArticleDetailLayout(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
     mParentHelper = new NestedScrollingParentHelper(this);
+
+    final ViewConfiguration vc = ViewConfiguration.get(context);
+    mMinFlingVelocity = vc.getScaledMinimumFlingVelocity();
+    mMaxFlingVelocity = vc.getScaledMaximumFlingVelocity();
   }
 
   @Override
@@ -86,6 +108,12 @@ public class NestedArticleDetailLayout extends ViewGroup implements NestedScroll
     }
   }
 
+  @Override
+  protected void onDetachedFromWindow() {
+    super.onDetachedFromWindow();
+    mChildTrackFlinger.stop();
+  }
+
   // NestedScrollingParent3
 
   @Override
@@ -106,7 +134,7 @@ public class NestedArticleDetailLayout extends ViewGroup implements NestedScroll
       }
       final int myUnconsumed = dyUnconsumed - myConsumed;
       Log.d(TAG, "onNestedScroll parent start scroll myUnconsumed=" + myUnconsumed);
-     // findPreOrNextChildScroll(target, myUnconsumed);
+      findLinkChildScroll(target, myUnconsumed);
     }
   }
 
@@ -116,7 +144,7 @@ public class NestedArticleDetailLayout extends ViewGroup implements NestedScroll
    * @param target
    * @param dyUnconsumed >0 上滑(手指从下到上)
    */
-  private void findPreOrNextChildScroll(@NonNull View target, int dyUnconsumed) {
+  private void findLinkChildScroll(@NonNull View target, int dyUnconsumed) {
     View childView = null;
     if (dyUnconsumed > 0) {
       for (int i = 0; i < getChildCount(); i++) {
@@ -140,7 +168,21 @@ public class NestedArticleDetailLayout extends ViewGroup implements NestedScroll
       return;
     }
 
-    childView.scrollBy(0, dyUnconsumed);
+    int curVelocity = (int) mChildTrackFlinger.mOverScroller.getCurrVelocity();
+    if (dyUnconsumed < 0) {
+      curVelocity = -curVelocity;
+    }
+
+    if (curVelocity == 0) {
+      //todo 偶现curVelocity==0的情况，此时 fling 仍然是戛然而止，待解决
+      Log.e(TAG, "findLinkChildScroll curVelocity==0 issue");
+    }
+
+    if (childView instanceof NestedLinkScrollChild) {
+      Log.d(TAG, "findLinkChildScroll velocityY=" + curVelocity
+        + " child=" + childView.getClass().getSimpleName());
+      ((NestedLinkScrollChild) childView).fling(curVelocity);
+    }
   }
 
   // NestedScrollingParent2
@@ -197,8 +239,19 @@ public class NestedArticleDetailLayout extends ViewGroup implements NestedScroll
     return super.onNestedFling(target, velocityX, velocityY, consumed);
   }
 
+  /**
+   * {@link androidx.recyclerview.widget.RecyclerView#fling(int, int)}
+   * 与 RecyclerView fling 用的同样的 OverScroller
+   */
+  private void trackChildFling(int velocityY) {
+    velocityY = Math.max(-mMaxFlingVelocity, Math.min(velocityY, mMaxFlingVelocity));
+    Log.d(TAG, "trackChildFling velocityY=" + velocityY);
+    mChildTrackFlinger.fling(0, velocityY);
+  }
+
   @Override
   public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
+    trackChildFling((int) velocityY);
     return super.onNestedPreFling(target, velocityX, velocityY);
   }
 
@@ -228,6 +281,96 @@ public class NestedArticleDetailLayout extends ViewGroup implements NestedScroll
   @Override
   public LayoutParams generateLayoutParams(AttributeSet attrs) {
     return new MarginLayoutParams(getContext(), attrs);
+  }
+
+  /**
+   * {@link androidx.recyclerview.widget.RecyclerView#fling(int, int)}
+   */
+  class ViewFlinger implements Runnable {
+
+    private int mLastFlingX;
+    private int mLastFlingY;
+    final OverScroller mOverScroller;
+
+    //true，表示仅仅跟踪fling值的变化，而不去真正滚动
+    boolean mTrack;
+
+    // When set to true, postOnAnimation callbacks are delayed until the run method completes
+    private boolean mEatRunOnAnimationRequest = false;
+
+    // Tracks if postAnimationCallback should be re-attached when it is done
+    private boolean mReSchedulePostAnimationCallback = false;
+
+    ViewFlinger(boolean track) {
+      mOverScroller = new OverScroller(getContext(), sQuinticInterpolator);
+      mTrack = track;
+    }
+
+    @Override
+    public void run() {
+      mReSchedulePostAnimationCallback = false;
+      mEatRunOnAnimationRequest = true;
+
+      final OverScroller scroller = mOverScroller;
+      if (scroller.computeScrollOffset()) {
+        final int x = scroller.getCurrX();
+        final int y = scroller.getCurrY();
+        int unconsumedX = x - mLastFlingX;
+        int unconsumedY = y - mLastFlingY;
+        mLastFlingX = x;
+        mLastFlingY = y;
+
+        boolean scrollerFinishedY = scroller.getCurrY() == scroller.getFinalY();
+        boolean scrollerFinished = scroller.isFinished();
+        final boolean doneScrolling;
+        if (mTrack) {
+          doneScrolling = scrollerFinished || scrollerFinishedY;
+        } else {
+          doneScrolling = scrollerFinished || (scrollerFinishedY || unconsumedY != 0);
+        }
+        if (!doneScrolling) {
+          postOnAnimation();
+        }
+      }
+
+      mEatRunOnAnimationRequest = false;
+      if (mReSchedulePostAnimationCallback) {
+        internalPostOnAnimation();
+      } else {
+        internalStop();
+      }
+    }
+
+    public void fling(int velocityX, int velocityY) {
+      mLastFlingX = mLastFlingY = 0;
+      mOverScroller.fling(0, 0, velocityX, velocityY,
+        Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE);
+      postOnAnimation();
+    }
+
+    void postOnAnimation() {
+      if (mEatRunOnAnimationRequest) {
+        mReSchedulePostAnimationCallback = true;
+      } else {
+        internalPostOnAnimation();
+      }
+    }
+
+    private void internalPostOnAnimation() {
+      removeCallbacks(this);
+      ViewCompat.postOnAnimation(NestedArticleDetailLayout.this, this);
+    }
+
+    private void internalStop() {
+      if (mTrack) {
+        stop();
+      }
+    }
+
+    public void stop() {
+      removeCallbacks(this);
+      mOverScroller.abortAnimation();
+    }
   }
 
 }

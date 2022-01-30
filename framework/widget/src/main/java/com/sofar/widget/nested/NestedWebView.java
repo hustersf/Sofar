@@ -385,6 +385,16 @@ public class NestedWebView extends WebView implements NestedScrollingChild3 {
     return getScrollingChildHelper().isNestedScrollingEnabled();
   }
 
+  @Override
+  public boolean dispatchNestedFling(float velocityX, float velocityY, boolean consumed) {
+    return getScrollingChildHelper().dispatchNestedFling(velocityX, velocityY, consumed);
+  }
+
+  @Override
+  public boolean dispatchNestedPreFling(float velocityX, float velocityY) {
+    return getScrollingChildHelper().dispatchNestedPreFling(velocityX, velocityY);
+  }
+
   private NestedScrollingChildHelper getScrollingChildHelper() {
     if (mScrollingChildHelper == null) {
       mScrollingChildHelper = new NestedScrollingChildHelper(this);
