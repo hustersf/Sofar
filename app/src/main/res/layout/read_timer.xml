@@ -23,7 +23,7 @@
     android:layout_marginTop="-10dp"
     android:background="@drawable/show_time_btn"
     android:gravity="center"
-    android:text="recycler测试"
+    android:text="嵌套滑动测试"
     android:textColor="@color/white"
     android:textSize="12dp" />
 

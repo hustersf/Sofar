@@ -25,7 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sofar.R;
-import com.sofar.widget.recycler.RecyclerActivity;
+import com.sofar.widget.scroll.NestedScrollActivity;
 import com.sofar.widget.textview.TextTagView;
 import com.sofar.widget.textview.TextWithTagView;
 import com.sofar.widget.textview.span.RoundBackgroundSpan;
@@ -271,7 +271,7 @@ public class WidgetActivity extends AppCompatActivity {
     FloatingWidget widget = new FloatingWidget(this);
     ViewUtil.inflate(widget, R.layout.read_timer, true);
     widget.findViewById(R.id.read_time_root).setOnClickListener(v -> {
-      Intent intent = new Intent(this, RecyclerActivity.class);
+      Intent intent = new Intent(this, NestedScrollActivity.class);
       startActivity(intent);
     });
     widget.setScreenRatio(1.0f, 1.0f);

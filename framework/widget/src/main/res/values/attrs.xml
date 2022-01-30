@@ -11,7 +11,7 @@
   <declare-styleable name="LineProgress">
     <attr name="reachColor" format="color"></attr>
     <attr name="unReachColor" format="color"></attr>
-    <attr name="round" format="boolean" />
+    <attr name="sideRound" format="boolean" />
   </declare-styleable>
 
   <!--针对圆角布局/ImageView的属性-->

@@ -29,7 +29,7 @@ public class LineProgress extends ProgressBar {
     TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.LineProgress);
     reachColor = ta.getColor(R.styleable.LineProgress_reachColor, reachColor);
     unReachColor = ta.getColor(R.styleable.LineProgress_unReachColor, unReachColor);
-    round = ta.getBoolean(R.styleable.LineProgress_round, round);
+    round = ta.getBoolean(R.styleable.LineProgress_sideRound, round);
     ta.recycle();
 
     init();
