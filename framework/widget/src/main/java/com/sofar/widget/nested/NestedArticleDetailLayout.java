@@ -8,6 +8,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.widget.OverScroller;
+import android.widget.Scroller;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.NestedScrollingParent3;
@@ -168,13 +169,22 @@ public class NestedArticleDetailLayout extends ViewGroup implements NestedScroll
       return;
     }
 
-    int curVelocity = (int) mChildTrackFlinger.mOverScroller.getCurrVelocity();
+    int curVelocity = (int) mChildTrackFlinger.mScroller.getCurrVelocity();
     if (dyUnconsumed < 0) {
       curVelocity = -curVelocity;
     }
 
     if (curVelocity == 0) {
-      //todo 偶现curVelocity==0的情况，此时 fling 仍然是戛然而止，待解决
+      /**
+       * 偶现问题说明：
+       * 获取当前速度 float 对应的值是NaN，转换成int 就是0
+       * 当curVelocity==0时， fling 仍然是戛然而止
+       * 29的SDK版本 OverScroller 无此问题（复制了一份29的源码）
+       * 测试手机是28的SDK才有此问题
+       *
+       * 解决方案 {@link ViewFlinger#mScroller}
+       * 由{@link Scroller} 替换掉 {@link OverScroller}
+       */
       Log.e(TAG, "findLinkChildScroll curVelocity==0 issue");
     }
 
@@ -290,7 +300,7 @@ public class NestedArticleDetailLayout extends ViewGroup implements NestedScroll
 
     private int mLastFlingX;
     private int mLastFlingY;
-    final OverScroller mOverScroller;
+    final Scroller mScroller;
 
     //true，表示仅仅跟踪fling值的变化，而不去真正滚动
     boolean mTrack;
@@ -302,7 +312,7 @@ public class NestedArticleDetailLayout extends ViewGroup implements NestedScroll
     private boolean mReSchedulePostAnimationCallback = false;
 
     ViewFlinger(boolean track) {
-      mOverScroller = new OverScroller(getContext(), sQuinticInterpolator);
+      mScroller = new Scroller(getContext(), sQuinticInterpolator);
       mTrack = track;
     }
 
@@ -311,7 +321,7 @@ public class NestedArticleDetailLayout extends ViewGroup implements NestedScroll
       mReSchedulePostAnimationCallback = false;
       mEatRunOnAnimationRequest = true;
 
-      final OverScroller scroller = mOverScroller;
+      final Scroller scroller = mScroller;
       if (scroller.computeScrollOffset()) {
         final int x = scroller.getCurrX();
         final int y = scroller.getCurrY();
@@ -343,7 +353,7 @@ public class NestedArticleDetailLayout extends ViewGroup implements NestedScroll
 
     public void fling(int velocityX, int velocityY) {
       mLastFlingX = mLastFlingY = 0;
-      mOverScroller.fling(0, 0, velocityX, velocityY,
+      mScroller.fling(0, 0, velocityX, velocityY,
         Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE);
       postOnAnimation();
     }
@@ -369,7 +379,7 @@ public class NestedArticleDetailLayout extends ViewGroup implements NestedScroll
 
     public void stop() {
       removeCallbacks(this);
-      mOverScroller.abortAnimation();
+      mScroller.abortAnimation();
     }
   }
 
