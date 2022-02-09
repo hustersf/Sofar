@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.sofar.widget.nested.NestedArticleScrollLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:background="@color/background">
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.sofar.widget.nested.NestedLinkWebView
+      android:id="@+id/web_view"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent" />
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="100dp"
+      android:background="@color/colorAccent"
+      android:clickable="true" />
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="100dp"
+      android:background="@color/colorPrimaryDark" />
+
+    <com.sofar.widget.nested.NestedLinkRecyclerView
+      android:id="@+id/recycler_view"
+      android:layout_width="match_parent"
+      android:layout_height="1960px" />
+
+    <androidx.recyclerview.widget.RecyclerView
+      android:id="@+id/recycler_view2"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+      android:id="@+id/recycler_view3"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:visibility="gone" />
+
+  </LinearLayout>
+
+</com.sofar.widget.nested.NestedArticleScrollLayout>
+
+

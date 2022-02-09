@@ -140,7 +140,7 @@ public class NestedArticleDetailLayout extends ViewGroup implements NestedScroll
   }
 
   /**
-   * 尝试解决子View之间 fling 操作戛然而止的问题
+   * 解决子View之间 fling 操作戛然而止的问题
    *
    * @param target
    * @param dyUnconsumed >0 上滑(手指从下到上)

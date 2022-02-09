@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/refresh_layout"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:background="@color/background">
+
+  <include layout="@layout/nest_scroll_activity2" />
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+

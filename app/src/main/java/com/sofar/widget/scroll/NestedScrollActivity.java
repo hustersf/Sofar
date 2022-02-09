@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.sofar.R;
 import com.sofar.base.recycler.RecyclerAdapter;
@@ -38,10 +39,8 @@ public class NestedScrollActivity extends AppCompatActivity {
 
   private static final String TAG = "NestedScrollActivity";
 
-  ViewGroup root;
   NestedWebView webView;
   RecyclerView recyclerView;
-  RecyclerView recyclerView2;
 
   WebViewClient mWebViewClient = new WebViewClient() {
     @Override
@@ -72,12 +71,23 @@ public class NestedScrollActivity extends AppCompatActivity {
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.nest_scroll_activity);
-    root = findViewById(R.id.root);
+    setContentView(R.layout.nest_scroll_activity2);
+    initRefreshLayout();
     initWebView();
     initRecyclerView();
     initRecyclerView2();
     initRecyclerView3();
+  }
+
+  private void initRefreshLayout() {
+    SwipeRefreshLayout refreshLayout = findViewById(R.id.refresh_layout);
+    if (refreshLayout == null) {
+      return;
+    }
+
+    refreshLayout.setOnRefreshListener(() -> refreshLayout.postDelayed(() -> {
+      refreshLayout.setRefreshing(false);
+    }, 2000));
   }
 
   private void initWebView() {
@@ -105,18 +115,24 @@ public class NestedScrollActivity extends AppCompatActivity {
   }
 
   private void initRecyclerView2() {
-    recyclerView2 = findViewById(R.id.recycler_view2);
-    recyclerView2.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+    RecyclerView recyclerView = findViewById(R.id.recycler_view2);
+    if (recyclerView == null) {
+      return;
+    }
+    recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
     CommentAdapter adapter = new CommentAdapter();
-    recyclerView2.setAdapter(adapter);
+    recyclerView.setAdapter(adapter);
     setCommentData(adapter);
-    recyclerView2.post(() -> {
-      Log.d(TAG, "recyclerView2 h=" + recyclerView2.getHeight());
+    recyclerView.post(() -> {
+      Log.d(TAG, "recyclerView2 h=" + recyclerView.getHeight());
     });
   }
 
   private void initRecyclerView3() {
     RecyclerView recyclerView = findViewById(R.id.recycler_view3);
+    if (recyclerView == null) {
+      return;
+    }
     recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
     FeedAdapter adapter = new FeedAdapter();
     recyclerView.setAdapter(adapter);
