@@ -27,4 +27,13 @@ public class NestedLinkRecyclerView extends RecyclerView implements NestedLinkSc
     return fling(0, velocityY);
   }
 
+  @Override
+  public void scrollToTop() {
+    scrollToPosition(0);
+  }
+
+  @Override
+  public void scrollToBottom() {
+    scrollToPosition(getAdapter().getItemCount() - 1);
+  }
 }

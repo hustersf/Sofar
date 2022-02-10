@@ -28,10 +28,13 @@ import com.sofar.utility.reflect.FieldUtil;
  * 2.支持 WebView + RecyclerView  中间插入 任意普通控件
  * <p>
  * 注意：
- * 不支持 嵌套多个RecyclerView
+ * 不支持 嵌套多个 RecyclerView
+ * RecyclerView 需要设置确定高度，否则复用会失效(NestedScrollView特性)
  */
 public class NestedArticleScrollLayout extends NestedScrollView {
   private static String TAG = "NestedArticleScroll";
+
+  private static final int DEFAULT_DURATION = 250;
 
   private final int[] mParentScrollConsumed = new int[2];
   private final int[] mScrollConsumed = new int[2];
@@ -45,8 +48,9 @@ public class NestedArticleScrollLayout extends NestedScrollView {
   private View mTargetChild;
 
   private int mTrackStartVelocityY;
-  ViewFlinger mChildTrackFlinger = new ViewFlinger(true);
-  ViewFlinger mFlinger = new ViewFlinger(false);
+  ViewScroller mChildTrackFlinger = new ViewScroller();
+  ViewScroller mFlinger = new ViewScroller();
+  ViewScroller mScroller = new ViewScroller();
   static final Interpolator sQuinticInterpolator = new Interpolator() {
     @Override
     public float getInterpolation(float t) {
@@ -96,6 +100,44 @@ public class NestedArticleScrollLayout extends NestedScrollView {
     }
   }
 
+  public void scrollToTarget(@NonNull View target) {
+    scrollToTarget(target, DEFAULT_DURATION);
+  }
+
+  /**
+   * 滑动指定View到顶部
+   *
+   * @param target   孙子View
+   * @param duration 滑动时间
+   */
+  public void scrollToTarget(@NonNull View target, int duration) {
+    mFlinger.stop();
+
+    View child = getChildAt(0);
+    if (child instanceof ViewGroup) {
+      int top = target.getTop() - getScrollY();
+      mScroller.startScroll(0, top, duration);
+
+      ViewGroup parent = (ViewGroup) child;
+      postDelayed(() -> {
+        int targetIndex = parent.indexOfChild(target);
+        for (int i = 0; i < targetIndex; i++) {
+          View grandson = parent.getChildAt(i);
+          if (grandson instanceof NestedLinkScrollChild) {
+            ((NestedLinkScrollChild) grandson).scrollToBottom();
+          }
+        }
+
+        for (int i = targetIndex; i < parent.getChildCount(); i++) {
+          View grandson = parent.getChildAt(i);
+          if (grandson instanceof NestedLinkScrollChild) {
+            ((NestedLinkScrollChild) grandson).scrollToTop();
+          }
+        }
+      }, duration);
+    }
+  }
+
   @Override
   public boolean dispatchTouchEvent(MotionEvent ev) {
     if (ev.getAction() == MotionEvent.ACTION_DOWN) {
@@ -112,16 +154,16 @@ public class NestedArticleScrollLayout extends NestedScrollView {
     if (child instanceof ViewGroup) {
       ViewGroup parent = (ViewGroup) child;
       for (int i = 0; i < parent.getChildCount(); i++) {
-        View itemView = parent.getChildAt(i);
-        if (itemView == null) {
+        View grandson = parent.getChildAt(i);
+        if (grandson == null) {
           break;
         }
 
-        int top = itemView.getTop() - getScrollY();
-        int bottom = itemView.getBottom() - getScrollY();
+        int top = grandson.getTop() - getScrollY();
+        int bottom = grandson.getBottom() - getScrollY();
         if (y >= top && y <= bottom) {
-          target = itemView;
-          Log.d(TAG, "find target view=" + itemView.toString());
+          target = grandson;
+          Log.d(TAG, "find target view=" + grandson.toString());
         }
       }
     }
@@ -174,7 +216,7 @@ public class NestedArticleScrollLayout extends NestedScrollView {
     final int myUnconsumed = dyUnconsumed - myConsumed;
     Log.d(TAG, "onNestedScroll parent start scroll myUnconsumed=" + myUnconsumed);
 
-    boolean find = findNestedLinkChildScroll(myUnconsumed, target);
+    boolean find = findNestedLinkChildFling(myUnconsumed, target);
     if (!find && mSuperClsChildHelper != null) {
       mSuperClsChildHelper.dispatchNestedScroll(0, myConsumed,
         0, myUnconsumed, null, type, consumed);
@@ -187,7 +229,7 @@ public class NestedArticleScrollLayout extends NestedScrollView {
    * @param target
    * @param dyUnconsumed >0 上滑(手指从下到上)
    */
-  private boolean findNestedLinkChildScroll(int dyUnconsumed, @NonNull View target) {
+  private boolean findNestedLinkChildFling(int dyUnconsumed, @NonNull View target) {
     View parent = getChildAt(0);
     if (dyUnconsumed == 0) {
       return false;
@@ -424,7 +466,7 @@ public class NestedArticleScrollLayout extends NestedScrollView {
     velocityY = Math.max(-mMaxFlingVelocity, Math.min(velocityY, mMaxFlingVelocity));
     Log.d(TAG, "trackChildFling velocityY=" + velocityY);
     mTrackStartVelocityY = velocityY;
-    mChildTrackFlinger.fling(0, velocityY);
+    mChildTrackFlinger.trackFling(0, velocityY);
   }
 
   @Override
@@ -436,13 +478,17 @@ public class NestedArticleScrollLayout extends NestedScrollView {
    * {@link androidx.recyclerview.widget.RecyclerView#fling(int, int)}
    * {@link NestedScrollView#computeScroll()}
    */
-  class ViewFlinger implements Runnable {
+  class ViewScroller implements Runnable {
 
-    private int mLastFlingY;
+    private static final int TYPE_FLING = 0;
+    private static final int TYPE_SCROLL = 1;
+
+    private int mLastY;
     final Scroller mScroller;
+    private int mType;
 
     //true，表示仅仅跟踪fling值的变化，而不去真正滚动
-    boolean mTrack;
+    boolean mTrackFling;
 
     // When set to true, postOnAnimation callbacks are delayed until the run method completes
     private boolean mEatRunOnAnimationRequest = false;
@@ -450,9 +496,8 @@ public class NestedArticleScrollLayout extends NestedScrollView {
     // Tracks if postAnimationCallback should be re-attached when it is done
     private boolean mReSchedulePostAnimationCallback = false;
 
-    ViewFlinger(boolean track) {
+    ViewScroller() {
       mScroller = new Scroller(getContext(), sQuinticInterpolator);
-      mTrack = track;
     }
 
     @Override
@@ -463,10 +508,10 @@ public class NestedArticleScrollLayout extends NestedScrollView {
       final Scroller scroller = mScroller;
       if (scroller.computeScrollOffset()) {
         final int y = scroller.getCurrY();
-        int unconsumedY = y - mLastFlingY;
-        mLastFlingY = y;
+        int unconsumedY = y - mLastY;
+        mLastY = y;
 
-        if (!mTrack) {
+        if (!mTrackFling) {
           // Nested Scrolling Pre Pass
           mScrollConsumed[1] = 0;
           dispatchNestedPreScroll(0, unconsumedY, mScrollConsumed, null,
@@ -485,9 +530,9 @@ public class NestedArticleScrollLayout extends NestedScrollView {
             dispatchNestedScroll(0, scrolledByMe, 0, unconsumedY, null,
               ViewCompat.TYPE_NON_TOUCH, mScrollConsumed);
             unconsumedY -= mScrollConsumed[1];
-            if (unconsumedY != 0 && mTargetChild != null) {
+            if (unconsumedY != 0 && mTargetChild != null && mType == TYPE_FLING) {
               Log.d(TAG, "NestedArticleScrollLayout fling unconsumedY=" + unconsumedY);
-              findNestedLinkChildScroll(unconsumedY, mTargetChild);
+              findNestedLinkChildFling(unconsumedY, mTargetChild);
             }
           }
         }
@@ -495,7 +540,7 @@ public class NestedArticleScrollLayout extends NestedScrollView {
         boolean scrollerFinishedY = scroller.getCurrY() == scroller.getFinalY();
         boolean scrollerFinished = scroller.isFinished();
         final boolean doneScrolling;
-        if (mTrack) {
+        if (mTrackFling) {
           doneScrolling = scrollerFinished || scrollerFinishedY;
         } else {
           doneScrolling = scrollerFinished || (scrollerFinishedY || unconsumedY != 0);
@@ -513,10 +558,23 @@ public class NestedArticleScrollLayout extends NestedScrollView {
       }
     }
 
+    public void trackFling(int velocityX, int velocityY) {
+      mTrackFling = true;
+      fling(velocityX, velocityY);
+    }
+
     public void fling(int velocityX, int velocityY) {
-      mLastFlingY = 0;
+      mLastY = 0;
+      mType = TYPE_FLING;
       mScroller.fling(0, 0, velocityX, velocityY,
         Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE);
+      postOnAnimation();
+    }
+
+    public void startScroll(int dx, int dy, int duration) {
+      mLastY = 0;
+      mType = TYPE_SCROLL;
+      mScroller.startScroll(0, 0, dx, dy, duration);
       postOnAnimation();
     }
 
@@ -535,7 +593,7 @@ public class NestedArticleScrollLayout extends NestedScrollView {
 
     private void internalStop() {
       stop();
-      if (!mTrack) {
+      if (!mTrackFling) {
         stopNestedScroll(TYPE_NON_TOUCH);
       }
     }

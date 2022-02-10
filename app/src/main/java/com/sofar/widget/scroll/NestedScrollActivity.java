@@ -7,10 +7,12 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.net.http.SslError;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -28,7 +30,10 @@ import com.sofar.base.recycler.RecyclerAdapter;
 import com.sofar.base.viewbinder.RecyclerViewBinder;
 import com.sofar.fun.play.Feed;
 import com.sofar.utility.DeviceUtil;
+import com.sofar.utility.ViewUtil;
 import com.sofar.widget.DataProvider;
+import com.sofar.widget.floating.FloatingWidget;
+import com.sofar.widget.nested.NestedArticleScrollLayout;
 import com.sofar.widget.nested.NestedWebView;
 import com.sofar.widget.recycler.FeedAdapter;
 
@@ -72,11 +77,37 @@ public class NestedScrollActivity extends AppCompatActivity {
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.nest_scroll_activity2);
+    floatingWidget();
     initRefreshLayout();
     initWebView();
     initRecyclerView();
     initRecyclerView2();
     initRecyclerView3();
+  }
+
+  private void floatingWidget() {
+    NestedArticleScrollLayout scrollLayout = findViewById(R.id.article_layout);
+    if (scrollLayout == null) {
+      return;
+    }
+    FloatingWidget widget = new FloatingWidget(this);
+    ViewUtil.inflate(widget, R.layout.nested_float_layout, true);
+    widget.findViewById(R.id.scroll_to_web).setOnClickListener(v -> {
+      if (webView != null) {
+        scrollLayout.scrollToTarget(webView);
+      }
+    });
+    widget.findViewById(R.id.scroll_to_recycler).setOnClickListener(v -> {
+      if (recyclerView != null) {
+        scrollLayout.scrollToTarget(recyclerView);
+      }
+    });
+    widget.setScreenRatio(1.0f, 1.0f);
+    new Handler().post(() -> {
+      int actionBar = getWindow().findViewById(Window.ID_ANDROID_CONTENT).getTop();
+      widget.setInsets(0, 0, 0, actionBar);
+      widget.attach();
+    });
   }
 
   private void initRefreshLayout() {

@@ -22,4 +22,17 @@ public class NestedLinkWebView extends NestedWebView implements NestedLinkScroll
     return super.fling(velocityY);
   }
 
+  @Override
+  public void scrollToTop() {
+    final int oldScrollY = getScrollY();
+    scrollBy(0, -oldScrollY);
+  }
+
+  @Override
+  public void scrollToBottom() {
+    final int oldScrollY = getScrollY();
+    final int range = getWebViewContentHeight() - getHeight();
+    int dy = range - oldScrollY;
+    scrollBy(0, dy);
+  }
 }

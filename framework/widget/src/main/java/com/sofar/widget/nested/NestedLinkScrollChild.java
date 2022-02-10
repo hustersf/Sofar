@@ -11,4 +11,8 @@ public interface NestedLinkScrollChild {
    */
   boolean fling(int velocityY);
 
+  void scrollToTop();
+
+  void scrollToBottom();
+
 }
