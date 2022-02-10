@@ -226,10 +226,12 @@ public class NestedArticleScrollLayout extends NestedScrollView {
 
       if (Math.abs(mTrackStartVelocityY) < Math.abs(curVelocity)) {
         /**
-         * 偶现问题待解决
+         * 当前速度>起始速度{@link Scroller#Scroller(Context, Interpolator, boolean)}
+         * 第三个参数 flywheel 默认是  ture，会累计之前的速度
+         * {@link Scroller#fling(int, int, int, int, int, int, int, int)}
          */
-        Log.e(TAG, "findNestedLinkChildScroll curVelocity(" + curVelocity
-          + ") > mTrackStartVelocityY(" + mTrackStartVelocityY + ") issue");
+        Log.i(TAG, "findNestedLinkChildScroll curVelocity(" + curVelocity
+          + ") > mTrackStartVelocityY(" + mTrackStartVelocityY + ")");
       }
 
       if (childView instanceof NestedLinkScrollChild) {
