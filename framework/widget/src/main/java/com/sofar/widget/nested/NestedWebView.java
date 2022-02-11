@@ -3,6 +3,9 @@ package com.sofar.widget.nested;
 import static androidx.core.view.ViewCompat.TYPE_NON_TOUCH;
 import static androidx.core.view.ViewCompat.TYPE_TOUCH;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -29,6 +32,7 @@ public class NestedWebView extends WebView implements NestedScrollingChild3 {
   private final int[] mNestedOffsets = new int[2];
   final int[] mReusableIntPair = new int[2];
 
+  private List<OnScrollListener> mScrollListeners;
   private int mScrollState = SCROLL_STATE_IDLE;
   public static final int SCROLL_STATE_IDLE = 0;
   public static final int SCROLL_STATE_DRAGGING = 1;
@@ -210,10 +214,6 @@ public class NestedWebView extends WebView implements NestedScrollingChild3 {
     mNestedOffsets[0] += mScrollOffset[0];
     mNestedOffsets[1] += mScrollOffset[1];
 
-    if (consumedX != 0 || consumedY != 0) {
-      dispatchOnScrolled(consumedX, consumedY);
-    }
-
     return consumedNestedScroll || consumedX != 0 || consumedY != 0;
   }
 
@@ -328,12 +328,24 @@ public class NestedWebView extends WebView implements NestedScrollingChild3 {
     setScrollState(SCROLL_STATE_IDLE);
   }
 
-  void dispatchOnScrolled(int hresult, int vresult) {
-
+  @Override
+  protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+    super.onScrollChanged(l, t, oldl, oldt);
+    if (mScrollListeners != null) {
+      for (int i = mScrollListeners.size() - 1; i >= 0; i--) {
+        int dx = l - oldl;
+        int dy = t - oldt;
+        mScrollListeners.get(i).onScrolled(dx, dy);
+      }
+    }
   }
 
   void dispatchOnScrollStateChanged(int state) {
-
+    if (mScrollListeners != null) {
+      for (int i = mScrollListeners.size() - 1; i >= 0; i--) {
+        mScrollListeners.get(i).onScrollStateChanged(state);
+      }
+    }
   }
 
   // NestedScrollingChild3
@@ -464,10 +476,6 @@ public class NestedWebView extends WebView implements NestedScrollingChild3 {
         unconsumedX -= mReusableIntPair[0];
         unconsumedY -= mReusableIntPair[1];
 
-        if (consumedX != 0 || consumedY != 0) {
-          dispatchOnScrolled(consumedX, consumedY);
-        }
-
         boolean scrollerFinishedX = scroller.getCurrX() == scroller.getFinalX();
         boolean scrollerFinishedY = scroller.getCurrY() == scroller.getFinalY();
         final boolean doneScrolling = scroller.isFinished()
@@ -516,6 +524,28 @@ public class NestedWebView extends WebView implements NestedScrollingChild3 {
       removeCallbacks(this);
       mOverScroller.abortAnimation();
     }
+  }
+
+  public void addOnScrollListener(@NonNull OnScrollListener listener) {
+    if (mScrollListeners == null) {
+      mScrollListeners = new ArrayList<>();
+    }
+    mScrollListeners.add(listener);
+  }
+
+  public void removeOnScrollListener(@NonNull OnScrollListener listener) {
+    if (mScrollListeners != null) {
+      mScrollListeners.remove(listener);
+    }
+  }
+
+  /**
+   * 监听滚动变化
+   */
+  public abstract static class OnScrollListener {
+    public void onScrollStateChanged(int newState) {}
+
+    public void onScrolled(int dx, int dy) {}
   }
 
 }

@@ -2,10 +2,14 @@ package com.sofar.widget.nested;
 
 import static androidx.core.view.ViewCompat.TYPE_NON_TOUCH;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
@@ -19,6 +23,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.widget.NestedScrollView;
 
 import com.sofar.utility.reflect.FieldUtil;
+import com.sofar.widget.BuildConfig;
 
 /**
  * 文章详情页嵌套滑动升级版
@@ -38,11 +43,20 @@ public class NestedArticleScrollLayout extends NestedScrollView {
 
   private final int[] mParentScrollConsumed = new int[2];
   private final int[] mScrollConsumed = new int[2];
-
   private int mScrollThreshold;
+
+  private VelocityTracker mVelocityTracker;
+  private int mLastTouchY;
+
+  private List<OnScrollListener> mScrollListeners;
+  private int mScrollState = SCROLL_STATE_IDLE;
+  public static final int SCROLL_STATE_IDLE = 0;
+  public static final int SCROLL_STATE_DRAGGING = 1;
+  public static final int SCROLL_STATE_SETTLING = 2;
 
   private final int mMinFlingVelocity;
   private final int mMaxFlingVelocity;
+  private final int mTouchSlop;
 
   private NestedScrollingChildHelper mSuperClsChildHelper;
   private View mTargetChild;
@@ -76,6 +90,7 @@ public class NestedArticleScrollLayout extends NestedScrollView {
     final ViewConfiguration vc = ViewConfiguration.get(context);
     mMinFlingVelocity = vc.getScaledMinimumFlingVelocity();
     mMaxFlingVelocity = vc.getScaledMaximumFlingVelocity();
+    mTouchSlop = vc.getScaledTouchSlop();
   }
 
   /**
@@ -89,7 +104,6 @@ public class NestedArticleScrollLayout extends NestedScrollView {
       Log.e(TAG, "injectChildHelper error=" + e.toString());
     }
   }
-
 
   @Override
   protected void onLayout(boolean changed, int l, int t, int r, int b) {
@@ -178,19 +192,115 @@ public class NestedArticleScrollLayout extends NestedScrollView {
     return intercepted;
   }
 
+  /**
+   * 增加判断滚动状态的逻辑
+   */
   @Override
   public boolean onTouchEvent(MotionEvent ev) {
-    if (ev.getAction() == MotionEvent.ACTION_DOWN) {
-      Log.d(TAG, "onTouchEvent ACTION_DOWN y=" + ev.getY());
+    if (mVelocityTracker == null) {
+      mVelocityTracker = VelocityTracker.obtain();
     }
+    boolean eventAddedToVelocityTracker = false;
+    final MotionEvent vtev = MotionEvent.obtain(ev);
+
+    switch (ev.getAction()) {
+      case MotionEvent.ACTION_DOWN:
+        mLastTouchY = (int) (ev.getY() + 0.5f);
+        break;
+      case MotionEvent.ACTION_MOVE:
+        final int y = (int) (ev.getY() + 0.5f);
+        int dy = mLastTouchY - y;
+        if (mScrollState != SCROLL_STATE_DRAGGING) {
+          if (Math.abs(dy) > mTouchSlop) {
+            setScrollState(SCROLL_STATE_DRAGGING);
+          }
+        }
+        if (mScrollState == SCROLL_STATE_DRAGGING) {
+          mLastTouchY = y;
+        }
+        break;
+      case MotionEvent.ACTION_UP:
+        mVelocityTracker.addMovement(vtev);
+        eventAddedToVelocityTracker = true;
+        mVelocityTracker.computeCurrentVelocity(1000, mMaxFlingVelocity);
+        final int yvel = (int) -mVelocityTracker.getYVelocity();
+        if (Math.abs(yvel) <= mMinFlingVelocity) {
+          setScrollState(SCROLL_STATE_IDLE);
+        }
+        clearVelocityTracker();
+        break;
+      case MotionEvent.ACTION_CANCEL:
+        setScrollState(SCROLL_STATE_IDLE);
+        clearVelocityTracker();
+        break;
+    }
+    if (!eventAddedToVelocityTracker) {
+      mVelocityTracker.addMovement(vtev);
+    }
+    vtev.recycle();
+
     return super.onTouchEvent(ev);
+  }
+
+  private void clearVelocityTracker() {
+    if (mVelocityTracker != null) {
+      mVelocityTracker.clear();
+    }
   }
 
   @Override
   protected void onDetachedFromWindow() {
     super.onDetachedFromWindow();
+    stopScroll();
+  }
+
+  public void stopScroll() {
+    setScrollState(SCROLL_STATE_IDLE);
+    stopScrollerInternal();
+  }
+
+  private void stopScrollerInternal() {
     mChildTrackFlinger.stop();
     mFlinger.stop();
+    mScroller.stop();
+  }
+
+  public int getScrollState() {
+    return mScrollState;
+  }
+
+  void setScrollState(int state) {
+    if (state == mScrollState) {
+      return;
+    }
+    if (BuildConfig.DEBUG) {
+      Log.i(TAG, "setting scroll state to " + state + " from " + mScrollState);
+    }
+    mScrollState = state;
+    if (state != SCROLL_STATE_SETTLING) {
+      stopScrollerInternal();
+    }
+    dispatchOnScrollStateChanged(mScrollState);
+  }
+
+  @Override
+  protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+    super.onScrollChanged(l, t, oldl, oldt);
+    if (mScrollListeners != null) {
+      for (int i = mScrollListeners.size() - 1; i >= 0; i--) {
+        int dx = l - oldl;
+        int dy = t - oldt;
+        mScrollListeners.get(i).onScrolled(dx, dy);
+      }
+    }
+  }
+
+  void dispatchOnScrollStateChanged(int state) {
+    if (mScrollListeners != null) {
+      for (int i = mScrollListeners.size() - 1; i >= 0; i--) {
+        mScrollListeners.get(i).onScrollStateChanged(state);
+      }
+    }
   }
 
   // NestedScrollingParent3
@@ -346,6 +456,7 @@ public class NestedArticleScrollLayout extends NestedScrollView {
   @Override
   public void fling(int velocityY) {
     // super.fling(velocityY);
+    mScroller.stop();
     mFlinger.fling(0, velocityY);
     trackChildFling(velocityY);
   }
@@ -554,7 +665,10 @@ public class NestedArticleScrollLayout extends NestedScrollView {
       if (mReSchedulePostAnimationCallback) {
         internalPostOnAnimation();
       } else {
-        internalStop();
+        setScrollState(SCROLL_STATE_IDLE);
+        if (!mTrackFling) {
+          stopNestedScroll(TYPE_NON_TOUCH);
+        }
       }
     }
 
@@ -564,6 +678,9 @@ public class NestedArticleScrollLayout extends NestedScrollView {
     }
 
     public void fling(int velocityX, int velocityY) {
+      if (!mTrackFling) {
+        setScrollState(SCROLL_STATE_SETTLING);
+      }
       mLastY = 0;
       mType = TYPE_FLING;
       mScroller.fling(0, 0, velocityX, velocityY,
@@ -572,6 +689,7 @@ public class NestedArticleScrollLayout extends NestedScrollView {
     }
 
     public void startScroll(int dx, int dy, int duration) {
+      setScrollState(SCROLL_STATE_SETTLING);
       mLastY = 0;
       mType = TYPE_SCROLL;
       mScroller.startScroll(0, 0, dx, dy, duration);
@@ -591,16 +709,31 @@ public class NestedArticleScrollLayout extends NestedScrollView {
       ViewCompat.postOnAnimation(NestedArticleScrollLayout.this, this);
     }
 
-    private void internalStop() {
-      stop();
-      if (!mTrackFling) {
-        stopNestedScroll(TYPE_NON_TOUCH);
-      }
-    }
-
     public void stop() {
       removeCallbacks(this);
       mScroller.abortAnimation();
     }
+  }
+
+  public void addOnScrollListener(@NonNull OnScrollListener listener) {
+    if (mScrollListeners == null) {
+      mScrollListeners = new ArrayList<>();
+    }
+    mScrollListeners.add(listener);
+  }
+
+  public void removeOnScrollListener(@NonNull OnScrollListener listener) {
+    if (mScrollListeners != null) {
+      mScrollListeners.remove(listener);
+    }
+  }
+
+  /**
+   * 监听滚动变化
+   */
+  public abstract static class OnScrollListener {
+    public void onScrollStateChanged(int newState) {}
+
+    public void onScrolled(int dx, int dy) {}
   }
 }
