@@ -73,6 +73,20 @@ public class NestedArticleScrollLayout extends NestedScrollView {
     }
   };
 
+  NestedLinkScrollChild.OnNestedScrollListener mNestedScrollListener =
+    new NestedLinkScrollChild.OnNestedScrollListener() {
+      @Override
+      public void onNestedScrollStateChanged(@NonNull View target, int newState) {
+        Log.i(TAG, target.toString() + " state=" + newState);
+        dispatchOnNestedScrollStateChanged(target, newState);
+      }
+
+      @Override
+      public void onNestedScrolled(@NonNull View target, int dx, int dy) {
+        dispatchOnNestedScrolled(target, dx, dy);
+      }
+    };
+
   public NestedArticleScrollLayout(@NonNull Context context) {
     this(context, null);
   }
@@ -111,6 +125,23 @@ public class NestedArticleScrollLayout extends NestedScrollView {
     mScrollThreshold = computeVerticalScrollRange() - getMeasuredHeight();
     if (mScrollThreshold < 0) {
       mScrollThreshold = 0;
+    }
+    setNestedScrollListener();
+  }
+
+  /**
+   * 设置子View的滑动状态监听
+   */
+  private void setNestedScrollListener() {
+    View child = getChildAt(0);
+    if (child instanceof ViewGroup) {
+      ViewGroup parent = (ViewGroup) child;
+      for (int i = 0; i < parent.getChildCount(); i++) {
+        View grandson = parent.getChildAt(i);
+        if (grandson instanceof NestedLinkScrollChild) {
+          ((NestedLinkScrollChild) grandson).setOnNestedScrollListener(mNestedScrollListener);
+        }
+      }
     }
   }
 
@@ -299,6 +330,22 @@ public class NestedArticleScrollLayout extends NestedScrollView {
     if (mScrollListeners != null) {
       for (int i = mScrollListeners.size() - 1; i >= 0; i--) {
         mScrollListeners.get(i).onScrollStateChanged(state);
+      }
+    }
+  }
+
+  void dispatchOnNestedScrolled(@NonNull View target, int dx, int dy) {
+    if (mScrollListeners != null) {
+      for (int i = mScrollListeners.size() - 1; i >= 0; i--) {
+        mScrollListeners.get(i).onNestedScrolled(target, dx, dy);
+      }
+    }
+  }
+
+  void dispatchOnNestedScrollStateChanged(@NonNull View target, int state) {
+    if (mScrollListeners != null) {
+      for (int i = mScrollListeners.size() - 1; i >= 0; i--) {
+        mScrollListeners.get(i).onNestedScrollStateChanged(target, state);
       }
     }
   }
@@ -735,5 +782,9 @@ public class NestedArticleScrollLayout extends NestedScrollView {
     public void onScrollStateChanged(int newState) {}
 
     public void onScrolled(int dx, int dy) {}
+
+    public void onNestedScrollStateChanged(@NonNull View target, int newState) {}
+
+    public void onNestedScrolled(@NonNull View target, int dx, int dy) {}
   }
 }

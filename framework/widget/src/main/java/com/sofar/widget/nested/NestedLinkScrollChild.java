@@ -1,5 +1,8 @@
 package com.sofar.widget.nested;
 
+import android.view.View;
+import androidx.annotation.NonNull;
+
 /**
  * 处理嵌套滑动子View之间的联动
  */
@@ -11,8 +14,27 @@ public interface NestedLinkScrollChild {
    */
   boolean fling(int velocityY);
 
+  /**
+   * 滚动到顶部
+   */
   void scrollToTop();
 
+  /**
+   * 滚动到底部
+   */
   void scrollToBottom();
+
+  /**
+   * 联动滚动监听
+   */
+  interface OnNestedScrollListener {
+
+    void onNestedScrollStateChanged(@NonNull View target, int newState);
+
+    void onNestedScrolled(@NonNull View target, int dx, int dy);
+
+  }
+
+  void setOnNestedScrollListener(@NonNull OnNestedScrollListener listener);
 
 }

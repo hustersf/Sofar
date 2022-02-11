@@ -73,6 +73,22 @@ public class NestedScrollActivity extends AppCompatActivity {
       }
     };
 
+  NestedArticleScrollLayout.OnScrollListener mOnScrollListener =
+    new NestedArticleScrollLayout.OnScrollListener() {
+      @Override
+      public void onScrollStateChanged(int newState) {
+        super.onScrollStateChanged(newState);
+        Log.i(TAG, "newState=" + newState);
+      }
+
+
+      @Override
+      public void onNestedScrollStateChanged(@NonNull View target, int newState) {
+        super.onNestedScrollStateChanged(target, newState);
+        Log.i(TAG, "newState=" + newState + " " + target.toString());
+      }
+    };
+
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -90,6 +106,8 @@ public class NestedScrollActivity extends AppCompatActivity {
     if (scrollLayout == null) {
       return;
     }
+
+    scrollLayout.addOnScrollListener(mOnScrollListener);
     FloatingWidget widget = new FloatingWidget(this);
     ViewUtil.inflate(widget, R.layout.nested_float_layout, true);
     widget.findViewById(R.id.scroll_to_web).setOnClickListener(v -> {

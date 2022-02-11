@@ -8,6 +8,26 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class NestedLinkRecyclerView extends RecyclerView implements NestedLinkScrollChild {
 
+  private OnNestedScrollListener mNestedScrollListener;
+
+  private RecyclerView.OnScrollListener mScrollListener = new OnScrollListener() {
+    @Override
+    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+      super.onScrollStateChanged(recyclerView, newState);
+      if (mNestedScrollListener != null) {
+        mNestedScrollListener.onNestedScrollStateChanged(recyclerView, newState);
+      }
+    }
+
+    @Override
+    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+      super.onScrolled(recyclerView, dx, dy);
+      if (mNestedScrollListener != null) {
+        mNestedScrollListener.onNestedScrolled(recyclerView, dx, dy);
+      }
+    }
+  };
+
   public NestedLinkRecyclerView(@NonNull Context context) {
     super(context);
   }
@@ -35,5 +55,22 @@ public class NestedLinkRecyclerView extends RecyclerView implements NestedLinkSc
   @Override
   public void scrollToBottom() {
     scrollToPosition(getAdapter().getItemCount() - 1);
+  }
+
+  @Override
+  public void setOnNestedScrollListener(@NonNull OnNestedScrollListener listener) {
+    mNestedScrollListener = listener;
+  }
+
+  @Override
+  protected void onAttachedToWindow() {
+    super.onAttachedToWindow();
+    addOnScrollListener(mScrollListener);
+  }
+
+  @Override
+  protected void onDetachedFromWindow() {
+    super.onDetachedFromWindow();
+    removeOnScrollListener(mScrollListener);
   }
 }
