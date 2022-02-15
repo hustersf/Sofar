@@ -182,8 +182,8 @@
     <activity
       android:name=".widget.scroll.NestedScrollActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
-      android:screenOrientation="portrait"></activity>
-
+      android:screenOrientation="portrait"
+      android:theme="@style/AppTheme.NoActionBar"></activity>
   </application>
 
 </manifest>

@@ -31,9 +31,11 @@ import com.sofar.base.viewbinder.RecyclerViewBinder;
 import com.sofar.fun.play.Feed;
 import com.sofar.utility.DeviceUtil;
 import com.sofar.utility.ViewUtil;
+import com.sofar.utility.statusbar.StatusBarUtil;
 import com.sofar.widget.DataProvider;
 import com.sofar.widget.floating.FloatingWidget;
 import com.sofar.widget.nested.NestedArticleScrollLayout;
+import com.sofar.widget.nested.NestedLinkRecyclerView;
 import com.sofar.widget.nested.NestedWebView;
 import com.sofar.widget.recycler.FeedAdapter;
 
@@ -44,8 +46,9 @@ public class NestedScrollActivity extends AppCompatActivity {
 
   private static final String TAG = "NestedScrollActivity";
 
+  private int height;
   NestedWebView webView;
-  RecyclerView recyclerView;
+  NestedLinkRecyclerView recyclerView;
 
   WebViewClient mWebViewClient = new WebViewClient() {
     @Override
@@ -93,6 +96,7 @@ public class NestedScrollActivity extends AppCompatActivity {
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.nest_scroll_activity2);
+    height = DeviceUtil.getMetricsHeight(this) - StatusBarUtil.getStatusBarHeight(this);
     floatingWidget();
     initRefreshLayout();
     initWebView();
@@ -141,6 +145,9 @@ public class NestedScrollActivity extends AppCompatActivity {
 
   private void initWebView() {
     webView = findViewById(R.id.web_view);
+    ViewGroup.LayoutParams lp = webView.getLayoutParams();
+    lp.height = height;
+    webView.setLayoutParams(lp);
     WebSettings webSettings = webView.getSettings();
     webSettings.setJavaScriptEnabled(true);
     webSettings.setDomStorageEnabled(true);
@@ -150,6 +157,7 @@ public class NestedScrollActivity extends AppCompatActivity {
 
   private void initRecyclerView() {
     recyclerView = findViewById(R.id.recycler_view);
+    recyclerView.setMaxHeight(height);
     recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
     FeedAdapter adapter = new FeedAdapter();
     recyclerView.setAdapter(adapter);
@@ -157,9 +165,6 @@ public class NestedScrollActivity extends AppCompatActivity {
     recyclerView.addOnChildAttachStateChangeListener(mOnChildAttachStateChangeListener);
     recyclerView.post(() -> {
       Log.d(TAG, "recyclerView h=" + recyclerView.getHeight());
-      ViewGroup.LayoutParams lp = webView.getLayoutParams();
-      lp.height = recyclerView.getHeight();
-      webView.setLayoutParams(lp);
     });
   }
 

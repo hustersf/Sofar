@@ -546,7 +546,7 @@ public class NestedArticleScrollLayout extends NestedScrollView {
   @Override
   public void onNestedPreScroll(@NonNull View target, int dx, int dy, @NonNull int[] consumed,
     int type) {
-    if (getScrollY() > 0 && getScrollY() < mScrollThreshold) {
+    if (getScrollY() > 0 && getScrollY() <= mScrollThreshold) {
       Log.d(TAG, "onNestedPreScroll parent start scroll");
       final int oldScrollY = getScrollY();
       scrollBy(0, dy);

@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class NestedLinkRecyclerView extends RecyclerView implements NestedLinkScrollChild {
 
+  private int maxHeight;
+
   private OnNestedScrollListener mNestedScrollListener;
 
   private RecyclerView.OnScrollListener mScrollListener = new OnScrollListener() {
@@ -73,4 +75,17 @@ public class NestedLinkRecyclerView extends RecyclerView implements NestedLinkSc
     super.onDetachedFromWindow();
     removeOnScrollListener(mScrollListener);
   }
+
+  public void setMaxHeight(int maxHeight) {
+    this.maxHeight = maxHeight;
+  }
+
+  @Override
+  protected void onMeasure(int widthSpec, int heightSpec) {
+    if (maxHeight > 0) {
+      heightSpec = MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST);
+    }
+    super.onMeasure(widthSpec, heightSpec);
+  }
+
 }
