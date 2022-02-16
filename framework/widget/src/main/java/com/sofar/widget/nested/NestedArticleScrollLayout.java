@@ -60,6 +60,7 @@ public class NestedArticleScrollLayout extends NestedScrollView {
 
   private NestedScrollingChildHelper mSuperClsChildHelper;
   private View mTargetChild;
+  private List<NestedLinkScrollChild> mNestedChildren = new ArrayList<>();
 
   private int mTrackStartVelocityY;
   ViewScroller mChildTrackFlinger = new ViewScroller();
@@ -133,6 +134,7 @@ public class NestedArticleScrollLayout extends NestedScrollView {
    * 设置子View的滑动状态监听
    */
   private void setNestedScrollListener() {
+    mNestedChildren.clear();
     View child = getChildAt(0);
     if (child instanceof ViewGroup) {
       ViewGroup parent = (ViewGroup) child;
@@ -140,6 +142,7 @@ public class NestedArticleScrollLayout extends NestedScrollView {
         View grandson = parent.getChildAt(i);
         if (grandson instanceof NestedLinkScrollChild) {
           ((NestedLinkScrollChild) grandson).setOnNestedScrollListener(mNestedScrollListener);
+          mNestedChildren.add((NestedLinkScrollChild) grandson);
         }
       }
     }
@@ -546,7 +549,11 @@ public class NestedArticleScrollLayout extends NestedScrollView {
   @Override
   public void onNestedPreScroll(@NonNull View target, int dx, int dy, @NonNull int[] consumed,
     int type) {
-    if (getScrollY() > 0 && getScrollY() < mScrollThreshold) {
+    boolean parentScroll = getScrollY() > 0 && getScrollY() < mScrollThreshold;
+    if (mNestedChildren.indexOf(target) == 0 && getScrollY() == mScrollThreshold) {
+      parentScroll = true;
+    }
+    if (parentScroll) {
       Log.d(TAG, "onNestedPreScroll parent start scroll");
       final int oldScrollY = getScrollY();
       scrollBy(0, dy);
