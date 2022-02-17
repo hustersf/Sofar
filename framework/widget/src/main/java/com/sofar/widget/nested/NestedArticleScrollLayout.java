@@ -58,6 +58,9 @@ public class NestedArticleScrollLayout extends NestedScrollView {
   private final int mMaxFlingVelocity;
   private final int mTouchSlop;
 
+  @Nullable
+  private Runnable mScrollTargetAction;
+
   private NestedScrollingChildHelper mSuperClsChildHelper;
   private View mTargetChild;
   private List<NestedLinkScrollChild> mNestedChildren = new ArrayList<>();
@@ -148,6 +151,24 @@ public class NestedArticleScrollLayout extends NestedScrollView {
     }
   }
 
+  /**
+   * @return 返回是否滑到该view的顶部
+   * 1，刚好滑动到顶部
+   * 2，parent已经滑到底，view的顶部依旧>scrollY
+   */
+  public boolean isTargetScrolledTop(@NonNull View target) {
+    int top = target.getTop();
+    int scrollY = getScrollY();
+    return top == scrollY || top > scrollY && scrollY >= mScrollThreshold;
+  }
+
+  /**
+   * 监听 {{@link #scrollToTarget(View)}} 滑动动作结束
+   */
+  public void postScrollToTarget(Runnable action) {
+    mScrollTargetAction = action;
+  }
+
   public void scrollToTarget(@NonNull View target) {
     scrollToTarget(target, DEFAULT_DURATION);
   }
@@ -181,6 +202,10 @@ public class NestedArticleScrollLayout extends NestedScrollView {
           if (grandson instanceof NestedLinkScrollChild) {
             ((NestedLinkScrollChild) grandson).scrollToTop();
           }
+        }
+
+        if (mScrollTargetAction != null) {
+          mScrollTargetAction.run();
         }
       }, duration);
     }
