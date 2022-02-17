@@ -58,9 +58,6 @@ public class NestedArticleScrollLayout extends NestedScrollView {
   private final int mMaxFlingVelocity;
   private final int mTouchSlop;
 
-  @Nullable
-  private Runnable mScrollTargetAction;
-
   private NestedScrollingChildHelper mSuperClsChildHelper;
   private View mTargetChild;
   private List<NestedLinkScrollChild> mNestedChildren = new ArrayList<>();
@@ -162,15 +159,12 @@ public class NestedArticleScrollLayout extends NestedScrollView {
     return top == scrollY || top > scrollY && scrollY >= mScrollThreshold;
   }
 
-  /**
-   * 监听 {{@link #scrollToTarget(View)}} 滑动动作结束
-   */
-  public void postScrollToTarget(Runnable action) {
-    mScrollTargetAction = action;
+  public void scrollToTarget(@NonNull View target) {
+    scrollToTarget(target, true);
   }
 
-  public void scrollToTarget(@NonNull View target) {
-    scrollToTarget(target, DEFAULT_DURATION);
+  public void scrollToTarget(@NonNull View target, boolean selfScroll) {
+    scrollToTarget(target, DEFAULT_DURATION, selfScroll);
   }
 
   /**
@@ -179,7 +173,7 @@ public class NestedArticleScrollLayout extends NestedScrollView {
    * @param target   孙子View
    * @param duration 滑动时间
    */
-  public void scrollToTarget(@NonNull View target, int duration) {
+  public void scrollToTarget(@NonNull View target, int duration, boolean selfScroll) {
     mFlinger.stop();
 
     View child = getChildAt(0);
@@ -197,15 +191,12 @@ public class NestedArticleScrollLayout extends NestedScrollView {
           }
         }
 
-        for (int i = targetIndex; i < parent.getChildCount(); i++) {
+        int start = selfScroll ? targetIndex : targetIndex + 1;
+        for (int i = start; i < parent.getChildCount(); i++) {
           View grandson = parent.getChildAt(i);
           if (grandson instanceof NestedLinkScrollChild) {
             ((NestedLinkScrollChild) grandson).scrollToTop();
           }
-        }
-
-        if (mScrollTargetAction != null) {
-          mScrollTargetAction.run();
         }
       }, duration);
     }
