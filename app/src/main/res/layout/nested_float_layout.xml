@@ -28,7 +28,7 @@
       android:layout_marginLeft="10dp"
       android:layout_marginRight="10dp"
       android:gravity="center"
-      android:text="滚动到列表页"
+      android:text="滚动到列表页(pos=1)"
       android:textColor="@color/white" />
 
   </LinearLayout>

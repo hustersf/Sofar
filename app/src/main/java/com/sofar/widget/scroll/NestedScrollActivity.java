@@ -121,7 +121,9 @@ public class NestedScrollActivity extends AppCompatActivity {
     });
     widget.findViewById(R.id.scroll_to_recycler).setOnClickListener(v -> {
       if (recyclerView != null) {
-        scrollLayout.scrollToTarget(recyclerView);
+        scrollLayout.scrollToTarget(recyclerView, false);
+        LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        layoutManager.scrollToPositionWithOffset(1, 0);
       }
     });
     widget.setScreenRatio(1.0f, 1.0f);
