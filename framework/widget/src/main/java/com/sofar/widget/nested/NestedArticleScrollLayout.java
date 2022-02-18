@@ -34,7 +34,9 @@ import com.sofar.widget.BuildConfig;
  * <p>
  * 注意：
  * 不支持 嵌套多个 RecyclerView
+ * <p>
  * RecyclerView 需要设置确定高度，否则复用会失效(NestedScrollView特性)
+ * 配合 {@link NestedArticleScrollChildLayout} 使用，可以解决上述问题
  */
 public class NestedArticleScrollLayout extends NestedScrollView {
   private static String TAG = "NestedArticleScroll";
@@ -117,6 +119,27 @@ public class NestedArticleScrollLayout extends NestedScrollView {
       Log.d(TAG, "injectChildHelper id=" + mSuperClsChildHelper.toString());
     } catch (Exception e) {
       Log.e(TAG, "injectChildHelper error=" + e.toString());
+    }
+  }
+
+  @Override
+  protected void measureChildWithMargins(View child, int parentWidthMeasureSpec, int widthUsed,
+    int parentHeightMeasureSpec, int heightUsed) {
+    if (child instanceof NestedArticleScrollChildLayout) {
+      final MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+      final int childWidthMeasureSpec = getChildMeasureSpec(parentWidthMeasureSpec,
+        getPaddingLeft() + getPaddingRight() + lp.leftMargin + lp.rightMargin
+          + widthUsed, lp.width);
+
+      int space = getPaddingTop() + getPaddingBottom()
+        + lp.topMargin + lp.bottomMargin + heightUsed;
+      int childHeight = MeasureSpec.getSize(parentHeightMeasureSpec) - space;
+      final int childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(
+        childHeight, MeasureSpec.UNSPECIFIED);
+      child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+    } else {
+      super.measureChildWithMargins(child, parentWidthMeasureSpec, widthUsed,
+        parentHeightMeasureSpec, heightUsed);
     }
   }
 

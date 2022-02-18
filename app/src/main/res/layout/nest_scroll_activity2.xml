@@ -5,10 +5,9 @@
   android:layout_height="wrap_content"
   android:background="@color/background">
 
-  <LinearLayout
+  <com.sofar.widget.nested.NestedArticleScrollChildLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
     <com.sofar.widget.nested.NestedLinkWebView
       android:id="@+id/web_view"
@@ -43,7 +42,7 @@
       android:layout_height="wrap_content"
       android:visibility="gone" />
 
-  </LinearLayout>
+  </com.sofar.widget.nested.NestedArticleScrollChildLayout>
 
 </com.sofar.widget.nested.NestedArticleScrollLayout>
 

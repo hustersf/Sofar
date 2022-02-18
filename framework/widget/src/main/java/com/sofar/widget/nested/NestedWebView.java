@@ -100,6 +100,12 @@ public class NestedWebView extends WebView implements NestedScrollingChild3 {
     return mWebViewContentHeight;
   }
 
+  @Override
+  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    Log.d(TAG, "height=" + getMeasuredHeight());
+  }
+
   /**
    * {@link androidx.recyclerview.widget.RecyclerView#onTouchEvent(MotionEvent)}
    */

@@ -147,9 +147,6 @@ public class NestedScrollActivity extends AppCompatActivity {
 
   private void initWebView() {
     webView = findViewById(R.id.web_view);
-    ViewGroup.LayoutParams lp = webView.getLayoutParams();
-    lp.height = height;
-    webView.setLayoutParams(lp);
     WebSettings webSettings = webView.getSettings();
     webSettings.setJavaScriptEnabled(true);
     webSettings.setDomStorageEnabled(true);
@@ -159,7 +156,6 @@ public class NestedScrollActivity extends AppCompatActivity {
 
   private void initRecyclerView() {
     recyclerView = findViewById(R.id.recycler_view);
-    recyclerView.setMaxHeight(height);
     recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
     FeedAdapter adapter = new FeedAdapter();
     recyclerView.setAdapter(adapter);

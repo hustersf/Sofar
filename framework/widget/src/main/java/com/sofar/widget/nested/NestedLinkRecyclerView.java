@@ -2,13 +2,13 @@ package com.sofar.widget.nested;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class NestedLinkRecyclerView extends RecyclerView implements NestedLinkScrollChild {
-
-  private int maxHeight;
+  private static final String TAG = "NestedLinkRecyclerView";
 
   private OnNestedScrollListener mNestedScrollListener;
 
@@ -76,16 +76,10 @@ public class NestedLinkRecyclerView extends RecyclerView implements NestedLinkSc
     removeOnScrollListener(mScrollListener);
   }
 
-  public void setMaxHeight(int maxHeight) {
-    this.maxHeight = maxHeight;
-  }
-
   @Override
-  protected void onMeasure(int widthSpec, int heightSpec) {
-    if (maxHeight > 0) {
-      heightSpec = MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST);
-    }
-    super.onMeasure(widthSpec, heightSpec);
+  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    Log.d(TAG, "height=" + getMeasuredHeight());
   }
 
 }
