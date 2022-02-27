@@ -170,6 +170,9 @@ public class NestedWebView extends WebView implements NestedScrollingChild3 {
         }
         break;
       case MotionEvent.ACTION_UP:
+        if (mScrollState == SCROLL_STATE_DRAGGING) {
+          event.setAction(MotionEvent.ACTION_CANCEL);
+        }
         mVelocityTracker.addMovement(vtev);
         eventAddedToVelocityTracker = true;
         mVelocityTracker.computeCurrentVelocity(1000, mMaxFlingVelocity);

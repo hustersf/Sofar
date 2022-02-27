@@ -45,16 +45,13 @@ public class NestedLinkWebView extends NestedWebView implements NestedLinkScroll
 
   @Override
   public void scrollToTop() {
-    final int oldScrollY = getScrollY();
-    scrollBy(0, -oldScrollY);
+    scrollTo(0, 0);
   }
 
   @Override
   public void scrollToBottom() {
-    final int oldScrollY = getScrollY();
     final int range = getWebViewContentHeight() - getHeight();
-    int dy = range - oldScrollY;
-    scrollBy(0, dy);
+    scrollTo(0, range);
   }
 
   @Override

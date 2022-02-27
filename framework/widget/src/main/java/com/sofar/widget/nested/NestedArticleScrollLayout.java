@@ -33,9 +33,8 @@ import com.sofar.widget.BuildConfig;
  * 2.支持 WebView + RecyclerView  中间插入 任意普通控件
  * <p>
  * 注意：
- * 不支持 嵌套多个 RecyclerView
- * <p>
- * RecyclerView 需要设置确定高度，否则复用会失效(NestedScrollView特性)
+ * 1.不支持 嵌套多个 RecyclerView
+ * 2.RecyclerView 需要设置确定高度，否则复用会失效(NestedScrollView特性)
  * 配合 {@link NestedArticleScrollChildLayout} 使用，可以解决上述问题
  */
 public class NestedArticleScrollLayout extends NestedScrollView {
@@ -80,7 +79,7 @@ public class NestedArticleScrollLayout extends NestedScrollView {
     new NestedLinkScrollChild.OnNestedScrollListener() {
       @Override
       public void onNestedScrollStateChanged(@NonNull View target, int newState) {
-        Log.i(TAG, target.toString() + " state=" + newState);
+        Log.i(TAG, target.getClass().getSimpleName() + " state=" + newState);
         dispatchOnNestedScrollStateChanged(target, newState);
       }
 
@@ -169,6 +168,10 @@ public class NestedArticleScrollLayout extends NestedScrollView {
         }
       }
     }
+  }
+
+  public int getMaxScrollHeight() {
+    return mScrollThreshold;
   }
 
   /**
@@ -413,7 +416,6 @@ public class NestedArticleScrollLayout extends NestedScrollView {
       consumed[1] += myConsumed;
     }
     final int myUnconsumed = dyUnconsumed - myConsumed;
-    Log.d(TAG, "onNestedScroll parent start scroll myUnconsumed=" + myUnconsumed);
 
     boolean find = findNestedLinkChildFling(myUnconsumed, target);
     if (!find && mSuperClsChildHelper != null) {
@@ -476,8 +478,19 @@ public class NestedArticleScrollLayout extends NestedScrollView {
       }
 
       if (childView instanceof NestedLinkScrollChild) {
-        Log.d(TAG, "findNestedLinkChildScroll child fling velocityY=" + curVelocity
-          + " child=" + childView.getClass().getSimpleName());
+        if (BuildConfig.DEBUG) {
+          StringBuffer sb = new StringBuffer();
+          sb.append("findNestedLinkChildScroll success");
+          sb.append("[");
+          sb.append("dyUnconsumed=" + dyUnconsumed);
+          sb.append(" fling velocityY=" + curVelocity);
+          sb.append("]");
+          sb.append("[");
+          sb.append("target=" + target.getClass().getSimpleName());
+          sb.append(" child=" + childView.getClass().getSimpleName());
+          sb.append("]");
+          Log.d(TAG, sb.toString());
+        }
         ((NestedLinkScrollChild) childView).fling(curVelocity);
         return true;
       }
@@ -593,7 +606,6 @@ public class NestedArticleScrollLayout extends NestedScrollView {
       parentScroll = true;
     }
     if (parentScroll) {
-      Log.d(TAG, "onNestedPreScroll parent start scroll");
       final int oldScrollY = getScrollY();
       scrollBy(0, dy);
       final int myConsumed = getScrollY() - oldScrollY;
