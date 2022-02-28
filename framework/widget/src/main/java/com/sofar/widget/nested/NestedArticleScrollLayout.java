@@ -602,7 +602,8 @@ public class NestedArticleScrollLayout extends NestedScrollView {
   public void onNestedPreScroll(@NonNull View target, int dx, int dy, @NonNull int[] consumed,
     int type) {
     boolean parentScroll = getScrollY() > 0 && getScrollY() < mScrollThreshold;
-    if (mNestedChildren.indexOf(target) == 0 && getScrollY() == mScrollThreshold) {
+    if ((mNestedChildren.indexOf(target) == 0 && getScrollY() == mScrollThreshold)
+      || (mNestedChildren.indexOf(target) == 1 && getScrollY() == 0)) {
       parentScroll = true;
     }
     if (parentScroll) {
