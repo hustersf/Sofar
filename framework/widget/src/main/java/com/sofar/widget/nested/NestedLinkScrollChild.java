@@ -25,6 +25,11 @@ public interface NestedLinkScrollChild {
   void scrollToBottom();
 
   /**
+   * 停止滚动
+   */
+  void stopScroll();
+
+  /**
    * 联动滚动监听
    */
   interface OnNestedScrollListener {

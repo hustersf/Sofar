@@ -116,11 +116,13 @@ public class NestedScrollActivity extends AppCompatActivity {
     ViewUtil.inflate(widget, R.layout.nested_float_layout, true);
     widget.findViewById(R.id.scroll_to_web).setOnClickListener(v -> {
       if (webView != null) {
+        scrollLayout.stopAllScroll();
         scrollLayout.scrollToTarget(webView);
       }
     });
     widget.findViewById(R.id.scroll_to_recycler).setOnClickListener(v -> {
       if (recyclerView != null) {
+        scrollLayout.stopAllScroll();
         scrollLayout.scrollToTarget(recyclerView, false);
         LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
         layoutManager.scrollToPositionWithOffset(1, 0);

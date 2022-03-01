@@ -341,6 +341,17 @@ public class NestedArticleScrollLayout extends NestedScrollView {
     mScroller.stop();
   }
 
+  public void stopAllScroll() {
+    stopScroll();
+    stopChildScroll();
+  }
+
+  public void stopChildScroll() {
+    for (NestedLinkScrollChild child : mNestedChildren) {
+      child.stopScroll();
+    }
+  }
+
   public int getScrollState() {
     return mScrollState;
   }
