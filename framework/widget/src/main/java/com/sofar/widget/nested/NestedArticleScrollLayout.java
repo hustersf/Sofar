@@ -85,6 +85,7 @@ public class NestedArticleScrollLayout extends NestedScrollView {
 
       @Override
       public void onNestedScrolled(@NonNull View target, int dx, int dy) {
+        awakenScrollBars();
         dispatchOnNestedScrolled(target, dx, dy);
       }
     };
@@ -145,7 +146,7 @@ public class NestedArticleScrollLayout extends NestedScrollView {
   @Override
   protected void onLayout(boolean changed, int l, int t, int r, int b) {
     super.onLayout(changed, l, t, r, b);
-    mScrollThreshold = computeVerticalScrollRange() - getMeasuredHeight();
+    mScrollThreshold = computeChildHeight() - getMeasuredHeight();
     if (mScrollThreshold < 0) {
       mScrollThreshold = 0;
     }
@@ -406,6 +407,62 @@ public class NestedArticleScrollLayout extends NestedScrollView {
     }
   }
 
+  private int computeChildHeight() {
+    final int count = getChildCount();
+    if (count == 0) {
+      return 0;
+    }
+
+    View child = getChildAt(0);
+    return child.getMeasuredHeight();
+  }
+
+  @Override
+  public int computeVerticalScrollOffset() {
+    int offset = 0;
+    View child = getChildAt(0);
+    if (child instanceof ViewGroup) {
+      ViewGroup parent = (ViewGroup) child;
+      for (int i = 0; i < parent.getChildCount(); i++) {
+        View grandson = parent.getChildAt(i);
+        if (grandson == null) {
+          break;
+        }
+        if (grandson instanceof NestedLinkScrollChild) {
+          offset += ((NestedLinkScrollChild) grandson).computeVerticalScrollOffset();
+        }
+      }
+    }
+    offset += getScrollY();
+    return offset;
+  }
+
+  @Override
+  public int computeVerticalScrollExtent() {
+    return getHeight();
+  }
+
+  @Override
+  public int computeVerticalScrollRange() {
+    int range = 0;
+    View child = getChildAt(0);
+    if (child instanceof ViewGroup) {
+      ViewGroup parent = (ViewGroup) child;
+      for (int i = 0; i < parent.getChildCount(); i++) {
+        View grandson = parent.getChildAt(i);
+        if (grandson == null) {
+          break;
+        }
+        if (grandson instanceof NestedLinkScrollChild) {
+          range += ((NestedLinkScrollChild) grandson).computeVerticalScrollRange();
+        } else {
+          range += grandson.getHeight();
+        }
+      }
+    }
+    return range;
+  }
+
   // NestedScrollingParent3
 
   @Override
@@ -627,28 +684,6 @@ public class NestedArticleScrollLayout extends NestedScrollView {
     final int[] parentConsumed = mParentScrollConsumed;
     super.onNestedPreScroll(target, dx, dy - consumed[1], parentConsumed, type);
     consumed[1] += parentConsumed[1];
-  }
-
-  @Override
-  public int computeVerticalScrollRange() {
-    final int count = getChildCount();
-    final int parentSpace = getHeight() - getPaddingBottom() - getPaddingTop();
-    if (count == 0) {
-      return parentSpace;
-    }
-
-    View child = getChildAt(0);
-    NestedScrollView.LayoutParams lp = (LayoutParams) child.getLayoutParams();
-    int scrollRange = child.getBottom() + lp.bottomMargin;
-    final int scrollY = getScrollY();
-    final int overscrollBottom = Math.max(0, scrollRange - parentSpace);
-    if (scrollY < 0) {
-      scrollRange -= scrollY;
-    } else if (scrollY > overscrollBottom) {
-      scrollRange += scrollY - overscrollBottom;
-    }
-
-    return scrollRange;
   }
 
   // NestedScrollingParent

@@ -29,6 +29,10 @@ public interface NestedLinkScrollChild {
    */
   void stopScroll();
 
+  int computeVerticalScrollRange();
+
+  int computeVerticalScrollOffset();
+
   /**
    * 联动滚动监听
    */

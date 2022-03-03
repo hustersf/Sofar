@@ -357,6 +357,21 @@ public class NestedWebView extends WebView implements NestedScrollingChild3 {
     }
   }
 
+  @Override
+  public int computeVerticalScrollOffset() {
+    return super.computeVerticalScrollOffset();
+  }
+
+  @Override
+  public int computeHorizontalScrollExtent() {
+    return super.computeHorizontalScrollExtent();
+  }
+
+  @Override
+  public int computeVerticalScrollRange() {
+    return super.computeVerticalScrollRange();
+  }
+
   // NestedScrollingChild3
   @Override
   public void dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed,
