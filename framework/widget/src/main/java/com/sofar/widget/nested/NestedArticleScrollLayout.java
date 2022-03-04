@@ -5,6 +5,7 @@ import static androidx.core.view.ViewCompat.TYPE_NON_TOUCH;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -39,6 +40,7 @@ import com.sofar.widget.BuildConfig;
  */
 public class NestedArticleScrollLayout extends NestedScrollView {
   private static String TAG = "NestedArticleScroll";
+  private static String TAG2 = "NestedScrollBar";
 
   private static final int DEFAULT_DURATION = 250;
 
@@ -417,6 +419,7 @@ public class NestedArticleScrollLayout extends NestedScrollView {
     return child.getMeasuredHeight();
   }
 
+  @SuppressLint("RestrictedApi")
   @Override
   public int computeVerticalScrollOffset() {
     int offset = 0;
@@ -430,18 +433,22 @@ public class NestedArticleScrollLayout extends NestedScrollView {
         }
         if (grandson instanceof NestedLinkScrollChild) {
           offset += ((NestedLinkScrollChild) grandson).computeVerticalScrollOffset();
+          Log.d(TAG2, "offset=" + offset + " child=" + grandson.getClass().getSimpleName());
         }
       }
     }
     offset += getScrollY();
+    Log.d(TAG2, "total offset=" + offset);
     return offset;
   }
 
+  @SuppressLint("RestrictedApi")
   @Override
   public int computeVerticalScrollExtent() {
     return getHeight();
   }
 
+  @SuppressLint("RestrictedApi")
   @Override
   public int computeVerticalScrollRange() {
     int range = 0;
@@ -455,11 +462,13 @@ public class NestedArticleScrollLayout extends NestedScrollView {
         }
         if (grandson instanceof NestedLinkScrollChild) {
           range += ((NestedLinkScrollChild) grandson).computeVerticalScrollRange();
+          Log.d(TAG2, "range=" + range + " child=" + grandson.getClass().getSimpleName());
         } else {
           range += grandson.getHeight();
         }
       }
     }
+    Log.d(TAG2, "total range=" + range);
     return range;
   }
 
