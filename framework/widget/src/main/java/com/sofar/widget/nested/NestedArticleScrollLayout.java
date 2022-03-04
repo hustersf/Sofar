@@ -432,8 +432,9 @@ public class NestedArticleScrollLayout extends NestedScrollView {
           break;
         }
         if (grandson instanceof NestedLinkScrollChild) {
-          offset += ((NestedLinkScrollChild) grandson).computeVerticalScrollOffset();
-          Log.d(TAG2, "offset=" + offset + " child=" + grandson.getClass().getSimpleName());
+          int childOffset = ((NestedLinkScrollChild) grandson).computeVerticalScrollOffset();
+          offset += childOffset;
+          Log.d(TAG2, "child offset=" + childOffset + "  " + grandson.getClass().getSimpleName());
         }
       }
     }
@@ -461,8 +462,9 @@ public class NestedArticleScrollLayout extends NestedScrollView {
           break;
         }
         if (grandson instanceof NestedLinkScrollChild) {
-          range += ((NestedLinkScrollChild) grandson).computeVerticalScrollRange();
-          Log.d(TAG2, "range=" + range + " child=" + grandson.getClass().getSimpleName());
+          int childRange = ((NestedLinkScrollChild) grandson).computeVerticalScrollRange();
+          range += childRange;
+          Log.d(TAG2, "child range=" + childRange + " " + grandson.getClass().getSimpleName());
         } else {
           range += grandson.getHeight();
         }
