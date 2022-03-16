@@ -60,7 +60,7 @@ public class NestedLinkRecyclerView extends RecyclerView implements NestedLinkSc
   }
 
   @Override
-  public void setOnNestedScrollListener(@NonNull OnNestedScrollListener listener) {
+  public void setOnNestedScrollListener(OnNestedScrollListener listener) {
     mNestedScrollListener = listener;
   }
 

@@ -44,6 +44,6 @@ public interface NestedLinkScrollChild {
 
   }
 
-  void setOnNestedScrollListener(@NonNull OnNestedScrollListener listener);
+  void setOnNestedScrollListener(OnNestedScrollListener listener);
 
 }

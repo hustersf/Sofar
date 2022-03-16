@@ -328,8 +328,19 @@ public class NestedArticleScrollLayout extends NestedScrollView {
   }
 
   @Override
+  public void onAttachedToWindow() {
+    super.onAttachedToWindow();
+    for (NestedLinkScrollChild child : mNestedChildren) {
+      child.setOnNestedScrollListener(mNestedScrollListener);
+    }
+  }
+
+  @Override
   protected void onDetachedFromWindow() {
     super.onDetachedFromWindow();
+    for (NestedLinkScrollChild child : mNestedChildren) {
+      child.setOnNestedScrollListener(null);
+    }
     stopScroll();
   }
 

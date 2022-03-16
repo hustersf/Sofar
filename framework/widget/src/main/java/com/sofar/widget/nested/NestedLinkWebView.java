@@ -55,7 +55,7 @@ public class NestedLinkWebView extends NestedWebView implements NestedLinkScroll
   }
 
   @Override
-  public void setOnNestedScrollListener(@NonNull OnNestedScrollListener listener) {
+  public void setOnNestedScrollListener(OnNestedScrollListener listener) {
     mNestedScrollListener = listener;
   }
 
