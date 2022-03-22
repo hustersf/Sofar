@@ -457,7 +457,19 @@ public class NestedArticleScrollLayout extends NestedScrollView {
   @SuppressLint("RestrictedApi")
   @Override
   public int computeVerticalScrollExtent() {
-    return getHeight();
+    int height = 0;
+    View child = getChildAt(0);
+    if (child instanceof ViewGroup) {
+      ViewGroup parent = (ViewGroup) child;
+      for (int i = 0; i < parent.getChildCount(); i++) {
+        View grandson = parent.getChildAt(i);
+        if (grandson == null) {
+          break;
+        }
+        height += grandson.getHeight();
+      }
+    }
+    return height;
   }
 
   @SuppressLint("RestrictedApi")
@@ -481,6 +493,7 @@ public class NestedArticleScrollLayout extends NestedScrollView {
         }
       }
     }
+    range += mScrollThreshold;
     Log.d(TAG2, "total range=" + range);
     return range;
   }
