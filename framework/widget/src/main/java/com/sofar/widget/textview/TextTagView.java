@@ -42,6 +42,8 @@ public class TextTagView extends AppCompatTextView {
   private float mTagSpace;
   private OnTagClickListener mTagClickListener;
   private boolean mTagBold;
+  private int mTagShowCount = 0;
+  private boolean mTagNewLine = true; //tag是否需要换行
 
   public TextTagView(Context context) {
     this(context, null);
@@ -68,6 +70,14 @@ public class TextTagView extends AppCompatTextView {
   public void setContent(String text) {
     mText = text;
     setText(text);
+  }
+
+  public int getTagShowCount() {
+    return mTagShowCount;
+  }
+
+  public void setTagNewLine(boolean flag) {
+    mTagNewLine = flag;
   }
 
   public void setTagBold(boolean bold) {
@@ -118,6 +128,7 @@ public class TextTagView extends AppCompatTextView {
       }
     }
 
+    mTagShowCount = tagShowCount;
     int maxLine = getMaxLines();
     if (maxLine < 1) {
       maxLine = 1;
@@ -152,7 +163,8 @@ public class TextTagView extends AppCompatTextView {
     }
 
     boolean tagSingleLine = false;
-    if (maxLine > mTexts.size() || getPaint().measureText(title) < getWidth()) {
+    if (mTagNewLine && mTags.size() > 0
+      && (maxLine > mTexts.size() || getPaint().measureText(title) < getWidth())) {
       title += "\n";
       tagSingleLine = true;
     }
