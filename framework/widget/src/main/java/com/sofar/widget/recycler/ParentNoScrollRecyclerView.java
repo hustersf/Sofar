@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
+import android.view.ViewParent;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,11 +16,11 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public class ParentNoScrollRecyclerView extends RecyclerView {
 
-  private static final String TAG = "ParentNoScrollRecyclerView";
+  private static final String TAG = "ParentNoScroll";
 
   private int touchSlop;
   private PointF downPoint = new PointF();
-  private int orientation;
+  private int orientation = RecyclerView.HORIZONTAL;
 
   public ParentNoScrollRecyclerView(@NonNull Context context) {
     this(context, null);
@@ -68,8 +69,44 @@ public class ParentNoScrollRecyclerView extends RecyclerView {
         disallow = false;
         break;
     }
-    Log.d(TAG, "disallow=" + disallow);
-    getParent().requestDisallowInterceptTouchEvent(disallow);
+    Log.d(TAG, "onInterceptTouchEvent disallow=" + disallow + " action=" + action);
+    ViewParent parent = getParent();
+    if (parent != null) {
+      parent.requestDisallowInterceptTouchEvent(disallow);
+    }
     return super.onInterceptTouchEvent(ev);
   }
+
+  @Override
+  public boolean onTouchEvent(MotionEvent ev) {
+    boolean disallow = true;
+    int action = ev.getAction();
+    switch (action) {
+      case MotionEvent.ACTION_DOWN:
+        downPoint.set(ev.getX(), ev.getY());
+        break;
+      case MotionEvent.ACTION_MOVE:
+        float x = ev.getX();
+        float y = ev.getY();
+        float dx = x - downPoint.x;
+        float dy = y - downPoint.y;
+        if (orientation == RecyclerView.HORIZONTAL) {
+          disallow = Math.abs(dx) > Math.abs(dy);
+        } else {
+          disallow = Math.abs(dy) > Math.abs(dx);
+        }
+        break;
+      case MotionEvent.ACTION_UP:
+      case MotionEvent.ACTION_CANCEL:
+        disallow = false;
+        break;
+    }
+    Log.d(TAG, "onTouchEvent disallow=" + disallow + " action=" + action);
+    ViewParent parent = getParent();
+    if (parent != null) {
+      parent.requestDisallowInterceptTouchEvent(disallow);
+    }
+    return super.onTouchEvent(ev);
+  }
+
 }
