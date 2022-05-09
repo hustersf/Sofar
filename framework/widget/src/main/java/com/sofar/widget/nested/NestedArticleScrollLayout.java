@@ -235,6 +235,7 @@ public class NestedArticleScrollLayout extends NestedScrollView {
   public boolean dispatchTouchEvent(MotionEvent ev) {
     if (ev.getAction() == MotionEvent.ACTION_DOWN) {
       Log.d(TAG, "dispatchTouchEvent ACTION_DOWN y=" + ev.getY());
+      stopAllScroll();
       mTargetChild = findTargetView(ev);
     }
     return super.dispatchTouchEvent(ev);
