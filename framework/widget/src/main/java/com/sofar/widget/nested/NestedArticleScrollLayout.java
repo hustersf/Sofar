@@ -762,6 +762,8 @@ public class NestedArticleScrollLayout extends NestedScrollView {
   }
 
   private void trackChildFling(int velocityY) {
+    //解决临界处突然加速问题
+    mChildTrackFlinger.mScroller.abortAnimation();
     velocityY = Math.max(-mMaxFlingVelocity, Math.min(velocityY, mMaxFlingVelocity));
     Log.d(TAG, "trackChildFling velocityY=" + velocityY);
     mTrackStartVelocityY = velocityY;
