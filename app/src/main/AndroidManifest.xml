@@ -11,7 +11,9 @@
     android:roundIcon="@mipmap/ic_launcher_round"
     android:supportsRtl="true"
     android:theme="@style/AppTheme">
-    <activity android:name=".MainActivity">
+    <activity
+      android:name=".MainActivity"
+      android:exported="true">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
 
@@ -22,6 +24,7 @@
     <activity
       android:name=".skin.SkinActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
+      android:exported="true"
       android:screenOrientation="portrait">
 
       <intent-filter>
@@ -40,6 +43,7 @@
     <activity
       android:name=".widget.WidgetActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
+      android:exported="true"
       android:screenOrientation="portrait">
 
       <intent-filter>
@@ -58,6 +62,7 @@
     <activity
       android:name=".network.NetworkActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
+      android:exported="true"
       android:screenOrientation="portrait">
 
       <intent-filter>
@@ -76,6 +81,7 @@
     <activity
       android:name=".business.github.ui.SearchRepoActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
+      android:exported="true"
       android:screenOrientation="portrait">
 
       <intent-filter>
@@ -94,6 +100,7 @@
     <activity
       android:name=".fun.FunActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
+      android:exported="true"
       android:screenOrientation="portrait">
 
       <intent-filter>
@@ -112,16 +119,19 @@
     <activity
       android:name=".fun.play.AutoPlayListActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
+      android:exported="true"
       android:screenOrientation="portrait" />
 
     <activity
       android:name=".fun.badge.BadgeActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
+      android:exported="true"
       android:screenOrientation="portrait" />
 
     <activity
       android:name=".player.PlayerActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
+      android:exported="true"
       android:screenOrientation="portrait">
 
       <intent-filter>
@@ -139,6 +149,7 @@
     <activity
       android:name=".download.DownloadActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
+      android:exported="true"
       android:screenOrientation="portrait">
 
       <intent-filter>
@@ -157,6 +168,7 @@
     <activity
       android:name=".preload.PreLoadActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
+      android:exported="true"
       android:screenOrientation="portrait">
 
       <intent-filter>
@@ -175,6 +187,7 @@
     <activity
       android:name=".widget.recycler.RecyclerActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
+      android:exported="false"
       android:screenOrientation="portrait">
 
     </activity>
@@ -182,6 +195,7 @@
     <activity
       android:name=".widget.scroll.NestedScrollActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
+      android:exported="false"
       android:screenOrientation="portrait"
       android:theme="@style/AppTheme.NoActionBar"></activity>
   </application>

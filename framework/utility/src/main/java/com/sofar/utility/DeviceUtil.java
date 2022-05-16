@@ -159,9 +159,9 @@ public class DeviceUtil {
     if (Build.VERSION.SDK_INT >= 29 && RomUtil.isMiui()) {
       try {
         Class clazz = activity.getClass();
-        Method method = clazz.getMethod("getWindowingMode", null);
+        Method method = clazz.getMethod("getWindowingMode", new  Class[0]);
         method.setAccessible(true);
-        int windowMode = (int) method.invoke(activity, null);
+        int windowMode = (int) method.invoke(activity, new  Object[0]);
         //WindowConfiguration#WINDOWING_MODE_FREEFORM
         int WINDOWING_MODE_FREEFORM = 5;//多窗口模式
         return windowMode == WINDOWING_MODE_FREEFORM;
