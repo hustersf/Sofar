@@ -10,10 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.sofar.R;
 import com.sofar.preloader.PreLoader;
-import com.sofar.preloader.annotation.PreLoad;
 import com.sofar.preloader.interfaces.PreloadListener;
 
-@PreLoad
 public class PreLoadActivity extends AppCompatActivity {
 
   private static String KEY_PRELOAD_ID = "preloadId";
