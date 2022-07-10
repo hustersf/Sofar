@@ -66,6 +66,7 @@ dependencies {
     implementation project(':core:base')
     implementation project(':core:fun')
     implementation project(':core:preloader')
+    implementation project(':core:ad')
 
     implementation project(':framework:utility')
     implementation project(':framework:widget')

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@color/background"
+  android:orientation="vertical"
+  android:paddingLeft="15dp"
+  android:paddingRight="15dp">
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="广告条数" />
+
+    <EditText
+      android:id="@+id/ad_request_count"
+      android:layout_width="match_parent"
+      android:layout_height="40dp"
+      android:hint="请输入需要几条广告"
+      android:inputType="number"
+      android:text="2" />
+
+  </LinearLayout>
+
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="并行请求数" />
+
+    <EditText
+      android:id="@+id/ad_parallel_count"
+      android:layout_width="match_parent"
+      android:layout_height="40dp"
+      android:hint="请输入并行请求数"
+      android:inputType="number" />
+
+  </LinearLayout>
+
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="预加载条数" />
+
+    <EditText
+      android:id="@+id/ad_preload_count"
+      android:layout_width="match_parent"
+      android:layout_height="40dp"
+      android:hint="请输入预加载广告请求数量"
+      android:inputType="number" />
+
+  </LinearLayout>
+
+  <Button
+    android:id="@+id/ad_start"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:layout_marginTop="15dp"
+    android:text="拉取广告" />
+
+  <TextView
+    android:id="@+id/ad_result"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="广告请求结果:" />
+
+</LinearLayout>

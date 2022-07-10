@@ -16,6 +16,7 @@ include ':framework:config'
 include ':core:base'
 include ':core:fun'
 include ':core:preloader'
+include ':core:ad'
 
 include ':external:daogenerator'
 
