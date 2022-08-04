@@ -22,3 +22,5 @@ include ':external:daogenerator'
 
 include ':debug'
 include ':tool:profiler'
+
+include ':demo:aidl'

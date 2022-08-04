@@ -1,0 +1,18 @@
+<manifest package="com.sofar.aidl"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <application>
+
+    <activity
+      android:name=".AIDLActivity"
+      android:configChanges="orientation|keyboardHidden|screenSize"
+      android:exported="false"
+      android:screenOrientation="portrait" />
+
+    <service
+      android:name=".AIDLService"
+      android:process=":service" />
+
+  </application>
+
+</manifest>
