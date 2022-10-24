@@ -2,12 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:background="@color/background">
+  android:background="@color/background"
+  android:orientation="vertical">
 
   <Button
     android:id="@+id/aidl_btn"
     android:layout_width="match_parent"
     android:layout_height="44dp"
     android:text="aidl测试" />
+
+  <Button
+    android:id="@+id/datastore_btn"
+    android:layout_width="match_parent"
+    android:layout_height="44dp"
+    android:text="datastore测试" />
 
 </LinearLayout>
