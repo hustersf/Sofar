@@ -60,6 +60,12 @@
     </activity>
 
     <activity
+      android:name=".widget.bar.SettingsActivity"
+      android:configChanges="orientation|keyboardHidden|screenSize"
+      android:exported="true"
+      android:screenOrientation="portrait" />
+
+    <activity
       android:name=".network.NetworkActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
       android:exported="true"

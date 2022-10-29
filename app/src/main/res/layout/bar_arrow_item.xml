@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:paddingLeft="15dp"
+  android:paddingRight="15dp"
+  tools:layout_height="44dp">
+
+  <TextView
+    android:id="@+id/left_text"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:textColor="@color/main_text_color"
+    android:textSize="14dp"
+    tools:text="红包个数" />
+
+  <TextView
+    android:id="@+id/right_text"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerVertical="true"
+    android:layout_marginLeft="10dp"
+    android:layout_toLeftOf="@+id/right_icon"
+    android:layout_toRightOf="@+id/left_text"
+    android:gravity="center_vertical|end"
+    android:textColor="@color/main_text_color"
+    android:textColorHint="@color/gray"
+    android:textSize="14dp"
+    tools:hint="点击选择红包个数" />
+
+  <ImageView
+    android:id="@+id/right_icon"
+    android:layout_width="16dp"
+    android:layout_height="16dp"
+    android:layout_alignParentRight="true"
+    android:layout_centerVertical="true"
+    android:src="@drawable/icon_arrow"
+    app:tint="@color/main_text_color" />
+
+</RelativeLayout>
