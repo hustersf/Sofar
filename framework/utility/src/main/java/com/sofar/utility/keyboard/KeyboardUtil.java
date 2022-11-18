@@ -16,7 +16,8 @@ public class KeyboardUtil {
    * 关闭键盘
    */
   public static void hideKeyboard(@NonNull View view) {
-    InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+    InputMethodManager imm =
+      (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
   }
 
@@ -30,18 +31,20 @@ public class KeyboardUtil {
     }
   }
 
+  public static void openKeyboard(@NonNull final View view) {
+    openKeyboard(view, 0);
+  }
 
   /**
    * 打开键盘
    */
-  public static void openKeyboard(@NonNull final View view) {
-    view.post(new Runnable() {
-      @Override
-      public void run() {
-        InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
-      }
-    });
+  public static void openKeyboard(@NonNull final View view, long delay) {
+    view.postDelayed(() -> {
+      view.requestFocus();
+      InputMethodManager imm =
+        (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+      imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+    }, delay);
   }
 
 }
