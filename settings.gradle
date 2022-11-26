@@ -25,3 +25,4 @@ include ':tool:profiler'
 
 include ':demo:aidl'
 include ':demo:datastore'
+include ':demo:startup'
