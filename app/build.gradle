@@ -87,6 +87,7 @@ dependencies {
     implementation project(':tool:profiler')
     implementation project(':demo:aidl')
     implementation project(':demo:datastore')
+    implementation project(':demo:appwidget')
 
     implementation 'androidx.room:room-runtime:2.2.3'
     kapt 'androidx.room:room-compiler:2.2.3'

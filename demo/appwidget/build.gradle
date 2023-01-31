@@ -1,0 +1,15 @@
+apply from: rootProject.file('library.gradle')
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+}
+
+android {
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+
+
+
