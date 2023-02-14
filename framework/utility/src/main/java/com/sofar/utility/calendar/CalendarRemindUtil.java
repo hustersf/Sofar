@@ -10,53 +10,59 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.provider.CalendarContract;
 import android.text.TextUtils;
+import androidx.annotation.NonNull;
 
 /**
  * 系统日历添加和删除信息
  * <p>
  * 读写日历需要对应的权限
  * 建议业务方异步调用相关方法
+ * <p>
+ * RRULE 规则示例
+ * 每天发生一次，重复10次: FREQ=DAILY;COUNT=10
+ * 每天发生一次，直到1997年12月24日: FREQ=DAILY;UNTIL=19971224T000000Z
+ * 每2天发生一次,直到永远: FREQ=DAILY;INTERVAL=2
+ * 每10天发生一次，重复5次: FREQ=DAILY;INTERVAL=10;COUNT=5
+ * 每周一次，共发生10次: FREQ=WEEKLY;COUNT=10
+ * 其它更复杂的规则请百度
  */
 public class CalendarRemindUtil {
   private static final String ACCOUNT_NAME = "我的日历";
 
   /**
-   * 插入一个日历事件,参数说明详见下面的方法
-   */
-  public static long insertCalendarEvent(Context context, String title, String description,
-    long beginTime, long durationSeconds, int remindMinutes) {
-    return insertCalendarEventRepeatByDay(context, title, description, beginTime, durationSeconds,
-      remindMinutes, 1);
-  }
-
-  /**
+   * 插入一个日历事件
+   *
    * @param context
-   * @param title
-   * @param description
-   * @param beginTime       日历提醒时间
-   * @param durationSeconds 日历提醒持续多少秒, 比如3600代表一小时
-   * @param remindMinutes   日历提前几分钟开始提醒
-   * @param count           循环添加多少天
+   * @param info    日历事件的信息
    * @return 返回插入事件的id
    */
-  public static long insertCalendarEventRepeatByDay(Context context, String title,
-    String description, long beginTime, long durationSeconds, int remindMinutes, int count) {
+  public static long insertCalendarEvent(@NonNull Context context, @NonNull CalendarInfo info) {
     long calendar_id = checkAndAddCalendarAccounts(context);
     if (calendar_id < 0) {
       return -1;
     }
 
     ContentValues event = new ContentValues();
-    event.put(CalendarContract.Events.TITLE, title);
-    event.put(CalendarContract.Events.DESCRIPTION, description);
+    event.put(CalendarContract.Events.TITLE, info.title);
+    event.put(CalendarContract.Events.DESCRIPTION, info.description);
     event.put(CalendarContract.Events.CALENDAR_ID, calendar_id); // 插入账户的id
-    event.put(CalendarContract.Events.DTSTART, beginTime);// 必须有
-    event.put(CalendarContract.Events.DURATION, String.format("P%sS", durationSeconds));
-    if (count > 1) {
-      event.put(CalendarContract.Events.RRULE, String.format("FREQ=DAILY;COUNT=%s", count));
+    event.put(CalendarContract.Events.DTSTART, info.startTime);// 必须有
+    if (info.count > 1) {
+      //对于重复事件,您必须加入 DURATION，以及 RRULE 或 RDATE
+      event.put(CalendarContract.Events.DURATION, String.format("P%sS", info.durationSeconds));
+      String freq = "DAILY";
+      if (info.repeat == CalendarInfo.RepeatRule.WEEK) {
+        freq = "WEEKLY";
+      } else if (info.repeat == CalendarInfo.RepeatRule.MONTH) {
+        freq = "MONTHLY";
+      }
+      event.put(CalendarContract.Events.RRULE, String.format("FREQ=%s;COUNT=%s", freq, info.count));
+    } else {
+      //对于非重复事件，您必须加入 DTEND。
+      event.put(CalendarContract.Events.DTEND, info.endTime);
     }
     event.put(CalendarContract.Events.HAS_ALARM, 1);// 设置有闹钟提醒
-    event.put(CalendarContract.Events.ALL_DAY, 0);
+    event.put(CalendarContract.Events.ALL_DAY, 0); //值为1,表示事件占用一整天
     event.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().getID());// 这个是时区，必须有
 
     try {
@@ -67,8 +73,8 @@ public class CalendarRemindUtil {
       ContentValues values = new ContentValues();
       values.put(CalendarContract.Reminders.EVENT_ID, event_id);
       // 提前remind_minutes分钟有提醒
-      values.put(CalendarContract.Reminders.MINUTES, remindMinutes);
-      //提醒方式
+      values.put(CalendarContract.Reminders.MINUTES, info.remindMinutes);
+      //提醒方式, METHOD_ALARM 在华为等手机上并不生效
       values.put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT);
       //插入提醒
       context.getContentResolver().insert(CalendarContract.Reminders.CONTENT_URI, values);
@@ -80,11 +86,46 @@ public class CalendarRemindUtil {
   }
 
   /**
+   * @param context
+   * @param eventId 删除事件的id
+   * @return 删除成功or失败
+   */
+  public static boolean deleteCalendarEvent(@NonNull Context context, long eventId) {
+    Cursor eventCursor = null;
+    try {
+      eventCursor = context.getContentResolver()
+        .query(CalendarContract.Events.CONTENT_URI, null, null, null, null);
+      if (eventCursor == null) { // 查询返回空值
+        return false;
+      }
+      if (eventCursor.getCount() > 0) {
+        for (eventCursor.moveToFirst(); !eventCursor.isAfterLast(); eventCursor.moveToNext()) {
+          int idIndex = eventCursor.getColumnIndex(CalendarContract.Calendars._ID);
+          long id = eventCursor.getLong(idIndex);// 取得id
+          if (id == eventId) {
+            Uri deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, id);
+            context.getContentResolver().delete(deleteUri, null, null);
+            break;
+          }
+        }
+      }
+    } catch (Exception e) {
+      //可以打印log
+      return false;
+    } finally {
+      if (eventCursor != null) {
+        eventCursor.close();
+      }
+    }
+    return true;
+  }
+
+  /**
    * 按标题维度删除日历
    *
    * @return 删除成功or失败
    */
-  public static boolean deleteCalendarEvent(Context context, String title) {
+  public static boolean deleteCalendarEvent(@NonNull Context context, String title) {
     Cursor eventCursor = null;
     try {
       eventCursor = context.getContentResolver()
@@ -123,7 +164,7 @@ public class CalendarRemindUtil {
    * @param context
    * @return 账户id
    */
-  private static int checkAndAddCalendarAccounts(Context context) {
+  private static int checkAndAddCalendarAccounts(@NonNull Context context) {
     int oldId = checkCalendarAccounts(context);
     if (oldId >= 0) {
       return oldId;
@@ -137,7 +178,7 @@ public class CalendarRemindUtil {
     }
   }
 
-  private static int checkCalendarAccounts(Context context) {
+  private static int checkCalendarAccounts(@NonNull Context context) {
     try (Cursor userCursor = context.getContentResolver()
       .query(CalendarContract.Calendars.CONTENT_URI, null, null, null, null)) {
       if (userCursor == null) {
@@ -161,7 +202,7 @@ public class CalendarRemindUtil {
   /**
    * 添加一个日历账户
    */
-  private static long addCalendarAccount(Context context) {
+  private static long addCalendarAccount(@NonNull Context context) {
     ContentValues value = new ContentValues();
     value.put(CalendarContract.Calendars.NAME, ACCOUNT_NAME);
     value.put(CalendarContract.Calendars.ACCOUNT_NAME, ACCOUNT_NAME);
