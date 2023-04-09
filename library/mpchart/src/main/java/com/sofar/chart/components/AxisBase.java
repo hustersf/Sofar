@@ -118,6 +118,11 @@ public abstract class AxisBase extends ComponentBase {
   protected boolean mDrawGridLinesBehindData = true;
 
   /**
+   * flag indicating the axis lines layer depth
+   */
+  protected boolean mDrawAxisLineBehindGrid = false;
+
+  /**
    * Extra spacing for `axisMinimum` to be added to automatically calculated `axisMinimum`
    */
   protected float mSpaceMin = 0.f;
@@ -497,6 +502,12 @@ public abstract class AxisBase extends ComponentBase {
 
   public boolean isDrawGridLinesBehindDataEnabled() {
     return mDrawGridLinesBehindData;
+  }
+
+  public void setDrawAxisLineBehindGrid(boolean enabled) { mDrawAxisLineBehindGrid = enabled; }
+
+  public boolean isDrawAxisLineBehindGrid() {
+    return mDrawAxisLineBehindGrid;
   }
 
   /**

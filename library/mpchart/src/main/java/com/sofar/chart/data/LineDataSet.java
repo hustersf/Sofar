@@ -64,6 +64,8 @@ public class LineDataSet extends LineRadarDataSet<Entry> implements ILineDataSet
 
   private boolean mDrawCircleHole = true;
 
+  private boolean mDrawHighlightCircle = false;
+
 
   public LineDataSet(List<Entry> yVals, String label) {
     super(yVals, label);
@@ -389,6 +391,15 @@ public class LineDataSet extends LineRadarDataSet<Entry> implements ILineDataSet
   @Override
   public boolean isDrawCircleHoleEnabled() {
     return mDrawCircleHole;
+  }
+
+  public void setDrawHighlightCircle(boolean enabled) {
+    mDrawHighlightCircle = enabled;
+  }
+
+  @Override
+  public boolean isDrawHighlightCircle() {
+    return mDrawHighlightCircle;
   }
 
   /**

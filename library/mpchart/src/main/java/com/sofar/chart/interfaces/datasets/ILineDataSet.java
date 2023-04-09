@@ -79,6 +79,8 @@ public interface ILineDataSet extends ILineRadarDataSet<Entry> {
    */
   boolean isDrawCircleHoleEnabled();
 
+  boolean isDrawHighlightCircle();
+
   /**
    * Returns the DashPathEffect that is used for drawing the lines.
    *

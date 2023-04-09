@@ -40,6 +40,22 @@ public class LineChart extends BarLineChartBase<LineData> implements LineDataPro
   }
 
   @Override
+  public boolean needsHighlight(int index) {
+    // no highlight
+    if (!valuesToHighlight()) {
+      return false;
+    }
+
+    for (int i = 0; i < mIndicesToHighlight.length; i++) {
+      // check if the xvalue for the given dataset needs highlight
+      if ((int) mIndicesToHighlight[i].getX() == index) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
   protected void onDetachedFromWindow() {
     // releases the bitmap in the renderer to avoid oom error
     if (mRenderer != null && mRenderer instanceof LineChartRenderer) {

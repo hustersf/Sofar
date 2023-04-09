@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
 import android.os.Bundle;
+import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,12 +16,11 @@ import com.sofar.chart.components.XAxis;
 import com.sofar.chart.data.Entry;
 import com.sofar.chart.data.LineData;
 import com.sofar.chart.data.LineDataSet;
-import com.sofar.chart.formatter.DefaultAxisValueFormatter;
 import com.sofar.chart.formatter.IAxisValueFormatter;
-import com.sofar.chart.formatter.IndexAxisValueFormatter;
+import com.sofar.chart.highlight.Highlight;
 import com.sofar.chart.interfaces.datasets.ILineDataSet;
+import com.sofar.chart.listener.OnChartValueSelectedListener;
 import com.sofar.chart.utils.Utils;
-import com.sofar.widget.Util;
 
 public class ChartActivity extends AppCompatActivity {
 
@@ -59,18 +58,19 @@ public class ChartActivity extends AppCompatActivity {
   }
 
   private void lineChart() {
+    TextView resultTv = findViewById(R.id.line_chart2_result);
     mLineChartView2 = findViewById(R.id.line_chart2);
     mLineChartView2.getDescription().setEnabled(false);
 
     int range = 80;
     List<Entry> data1 = new ArrayList<>();
     for (int i = 0; i < 30; i++) {
-      float val = (float) (Math.random() * range)+10;
+      float val = (float) (Math.random() * range) + 10;
       data1.add(new Entry(i, val));
     }
     List<Entry> data2 = new ArrayList<>();
     for (int i = 0; i < 30; i++) {
-      float val = (float) (Math.random() * range)+10;
+      float val = (float) (Math.random() * range) + 10;
       data2.add(new Entry(i, val));
     }
 
@@ -83,19 +83,17 @@ public class ChartActivity extends AppCompatActivity {
     mLineChartView2.getXAxis().setAxisLineWidth(axisLineWidth);
     mLineChartView2.getXAxis().setGridColor(Color.BLUE);
     mLineChartView2.getXAxis().setGridLineWidth(axisLineWidth);
-//    mLineChartView2.getXAxis().setDrawGridLinesBehindData(false);
     mLineChartView2.getXAxis().enableGridDashedLine(lineLength, spaceLength, 0);
 
     mLineChartView2.getAxisRight().setEnabled(false);
     mLineChartView2.getAxisLeft().setAxisMaximum(100);
     mLineChartView2.getAxisLeft().setAxisMinimum(0);
     mLineChartView2.getAxisLeft().setTextColor(Color.GRAY);
-    mLineChartView2.getAxisLeft().enableAxisLineDashedLine(lineLength, spaceLength, 0);
+    mLineChartView2.getAxisLeft().setDrawAxisLine(false);
     mLineChartView2.getAxisLeft().setAxisLineWidth(axisLineWidth);
     mLineChartView2.getAxisLeft().setAxisLineColor(Color.RED);
     mLineChartView2.getAxisLeft().setGridColor(Color.RED);
     mLineChartView2.getAxisLeft().setGridLineWidth(axisLineWidth);
-//    mLineChartView2.getAxisLeft().setDrawGridLinesBehindData(false);
     mLineChartView2.getAxisLeft().enableGridDashedLine(lineLength, spaceLength, 0);
     mLineChartView2.getAxisLeft().setValueFormatter(new IAxisValueFormatter() {
       @Override
@@ -108,22 +106,36 @@ public class ChartActivity extends AppCompatActivity {
     set1.setMode(LineDataSet.Mode.CUBIC_BEZIER);
     set1.setColor(Color.CYAN);
     set1.setCircleColor(Color.CYAN);
-    set1.setDrawCircles(false);
-    set1.setDrawCircleHole(false);
+    set1.setDrawHighlightCircle(true);
+    set1.setDrawHorizontalHighlightIndicator(false);
 
     LineDataSet set2 = new LineDataSet(data2, "累计耗电量");
     set2.setMode(LineDataSet.Mode.CUBIC_BEZIER);
     set2.setColor(Color.GREEN);
     set2.setCircleColor(Color.GREEN);
-    set2.setDrawCircles(false);
-    set2.setDrawCircleHole(false);
+    set2.setDrawHighlightCircle(true);
+    set2.setDrawHorizontalHighlightIndicator(false);
 
     List<ILineDataSet> list = new ArrayList<>();
     list.add(set1);
     list.add(set2);
     LineData lineData = new LineData(list);
-    //lineData.setDrawValues(false);
+    lineData.setDrawValues(false);
     mLineChartView2.setData(lineData);
+
+    mLineChartView2.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+      @Override
+      public void onValueSelected(Entry e, Highlight h) {
+        int index = (int) e.getX();
+        String ss = data1.get(index).getY() + " : " + data2.get(index).getY();
+        resultTv.setText("数值=" + ss);
+      }
+
+      @Override
+      public void onNothingSelected() {
+
+      }
+    });
   }
 
 }
