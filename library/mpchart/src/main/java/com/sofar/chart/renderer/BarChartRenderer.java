@@ -173,6 +173,10 @@ public class BarChartRenderer extends BarLineScatterCandleBubbleRenderer {
         mRenderPaint.setColor(dataSet.getColor(pos));
       }
 
+      float barRadius = dataSet.getBarCornersRadius();
+      if (dataSet.isDrawFullCorners()) {
+        barRadius = (buffer.buffer[j + 2] - buffer.buffer[j]) / 2;
+      }
       if (isCustomFill) {
         dataSet.getFill(pos)
           .fillRect(
@@ -183,13 +187,13 @@ public class BarChartRenderer extends BarLineScatterCandleBubbleRenderer {
             buffer.buffer[j + 3],
             isInverted ? Fill.Direction.DOWN : Fill.Direction.UP);
       } else {
-        c.drawRect(buffer.buffer[j], buffer.buffer[j + 1], buffer.buffer[j + 2],
-          buffer.buffer[j + 3], mRenderPaint);
+        c.drawRoundRect(buffer.buffer[j], buffer.buffer[j + 1], buffer.buffer[j + 2],
+          buffer.buffer[j + 3], barRadius, barRadius, mRenderPaint);
       }
 
       if (drawBorder) {
-        c.drawRect(buffer.buffer[j], buffer.buffer[j + 1], buffer.buffer[j + 2],
-          buffer.buffer[j + 3], mBarBorderPaint);
+        c.drawRoundRect(buffer.buffer[j], buffer.buffer[j + 1], buffer.buffer[j + 2],
+          buffer.buffer[j + 3], barRadius, barRadius, mBarBorderPaint);
       }
     }
   }
@@ -496,7 +500,11 @@ public class BarChartRenderer extends BarLineScatterCandleBubbleRenderer {
 
       setHighlightDrawPos(high, mBarRect);
 
-      c.drawRect(mBarRect, mHighlightPaint);
+      float barRadius = set.getBarCornersRadius();
+      if (set.isDrawFullCorners()) {
+        barRadius = (mBarRect.right - mBarRect.left) / 2;
+      }
+      c.drawRoundRect(mBarRect, barRadius, barRadius, mHighlightPaint);
     }
   }
 

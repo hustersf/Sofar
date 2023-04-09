@@ -80,6 +80,8 @@ public abstract class AxisBase extends ComponentBase {
    */
   protected boolean mDrawGridLines = true;
 
+  protected boolean mDrawFirstGridLine = true;
+
   /**
    * flag that indicates if the line alongside the axis is drawn or not
    */
@@ -218,6 +220,14 @@ public abstract class AxisBase extends ComponentBase {
    */
   public boolean isDrawGridLinesEnabled() {
     return mDrawGridLines;
+  }
+
+  public void setDrawFirstGridLine(boolean enabled) {
+    mDrawFirstGridLine = enabled;
+  }
+
+  public boolean isDrawFirstGridLine() {
+    return mDrawFirstGridLine;
   }
 
   /**

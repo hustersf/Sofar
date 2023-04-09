@@ -25,6 +25,10 @@ public class BarDataSet extends BarLineScatterCandleBubbleDataSet<BarEntry> impl
 
   private int mBarBorderColor = Color.BLACK;
 
+  private float mBarCornersRadius = 0;
+
+  private boolean mDrawFullCorners = false;
+
   /**
    * the alpha value used to draw the highlight indicator bar
    */
@@ -67,6 +71,7 @@ public class BarDataSet extends BarLineScatterCandleBubbleDataSet<BarEntry> impl
     barDataSet.mStackSize = mStackSize;
     barDataSet.mBarShadowColor = mBarShadowColor;
     barDataSet.mBarBorderWidth = mBarBorderWidth;
+    barDataSet.mBarCornersRadius = mBarCornersRadius;
     barDataSet.mStackLabels = mStackLabels;
     barDataSet.mHighLightAlpha = mHighLightAlpha;
   }
@@ -145,11 +150,11 @@ public class BarDataSet extends BarLineScatterCandleBubbleDataSet<BarEntry> impl
 
       float[] vals = yVals.get(i).getYVals();
 
-        if (vals == null) {
-            mEntryCountStacks++;
-        } else {
-            mEntryCountStacks += vals.length;
-        }
+      if (vals == null) {
+        mEntryCountStacks++;
+      } else {
+        mEntryCountStacks += vals.length;
+      }
     }
   }
 
@@ -163,9 +168,9 @@ public class BarDataSet extends BarLineScatterCandleBubbleDataSet<BarEntry> impl
 
       float[] vals = yVals.get(i).getYVals();
 
-        if (vals != null && vals.length > mStackSize) {
-            mStackSize = vals.length;
-        }
+      if (vals != null && vals.length > mStackSize) {
+        mStackSize = vals.length;
+      }
     }
   }
 
@@ -176,22 +181,22 @@ public class BarDataSet extends BarLineScatterCandleBubbleDataSet<BarEntry> impl
 
       if (e.getYVals() == null) {
 
-          if (e.getY() < mYMin) {
-              mYMin = e.getY();
-          }
+        if (e.getY() < mYMin) {
+          mYMin = e.getY();
+        }
 
-          if (e.getY() > mYMax) {
-              mYMax = e.getY();
-          }
+        if (e.getY() > mYMax) {
+          mYMax = e.getY();
+        }
       } else {
 
-          if (-e.getNegativeSum() < mYMin) {
-              mYMin = -e.getNegativeSum();
-          }
+        if (-e.getNegativeSum() < mYMin) {
+          mYMin = -e.getNegativeSum();
+        }
 
-          if (e.getPositiveSum() > mYMax) {
-              mYMax = e.getPositiveSum();
-          }
+        if (e.getPositiveSum() > mYMax) {
+          mYMax = e.getPositiveSum();
+        }
       }
 
       calcMinMaxX(e);
@@ -301,5 +306,23 @@ public class BarDataSet extends BarLineScatterCandleBubbleDataSet<BarEntry> impl
   @Override
   public String[] getStackLabels() {
     return mStackLabels;
+  }
+
+  public void setBarCornersRadius(float radius) {
+    mBarCornersRadius = radius;
+  }
+
+  @Override
+  public float getBarCornersRadius() {
+    return mBarCornersRadius;
+  }
+
+  public void setDrawFullCorners(boolean enabled) {
+    mDrawFullCorners = enabled;
+  }
+
+  @Override
+  public boolean isDrawFullCorners() {
+    return mDrawFullCorners;
   }
 }

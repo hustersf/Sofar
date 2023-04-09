@@ -25,6 +25,23 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content" />
 
+    <com.sofar.chart.charts.BarChart
+      android:id="@+id/bar_chart1"
+      android:layout_width="match_parent"
+      android:layout_height="200dp"
+      android:layout_marginTop="20dp" />
+
+    <com.sofar.chart.charts.BarChart
+      android:id="@+id/bar_chart2"
+      android:layout_width="match_parent"
+      android:layout_height="200dp"
+      android:layout_marginTop="20dp" />
+
+    <TextView
+      android:id="@+id/bar_chart2_result"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content" />
+
   </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

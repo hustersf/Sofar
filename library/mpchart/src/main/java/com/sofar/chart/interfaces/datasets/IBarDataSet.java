@@ -68,4 +68,8 @@ public interface IBarDataSet extends IBarLineScatterCandleBubbleDataSet<BarEntry
    * @return
    */
   String[] getStackLabels();
+
+  float getBarCornersRadius();
+
+  boolean isDrawFullCorners();
 }
