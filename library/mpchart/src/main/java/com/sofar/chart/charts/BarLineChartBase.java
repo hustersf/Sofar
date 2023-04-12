@@ -45,6 +45,8 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
   IBarLineScatterCandleBubbleDataSet<? extends Entry>>>
   extends Chart<T> implements BarLineScatterCandleBubbleDataProvider {
 
+  protected float mHighestVisibleX = -1;
+
   /**
    * the maximum number of entries to which values will be drawn
    * (entry numbers greater than this value will cause value-labels to disappear)
@@ -1475,10 +1477,17 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
    */
   @Override
   public float getHighestVisibleX() {
+    if (mHighestVisibleX != -1) {
+      return mHighestVisibleX;
+    }
     getTransformer(AxisDependency.LEFT).getValuesByTouchPoint(mViewPortHandler.contentRight(),
       mViewPortHandler.contentBottom(), posForGetHighestVisibleX);
     float result = (float) Math.min(mXAxis.mAxisMaximum, posForGetHighestVisibleX.x);
     return result;
+  }
+
+  public void setHighestVisibleX(float x) {
+    mHighestVisibleX = x;
   }
 
   /**

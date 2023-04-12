@@ -98,6 +98,7 @@ public class ChartActivity extends AppCompatActivity {
     mLineChartView2.getXAxis().setGridColor(Color.BLUE);
     mLineChartView2.getXAxis().setGridLineWidth(axisLineWidth);
     mLineChartView2.getXAxis().enableGridDashedLine(lineLength, spaceLength, 0);
+    mLineChartView2.setHighestVisibleX(15);
 
     mLineChartView2.getAxisRight().setEnabled(false);
     mLineChartView2.getAxisLeft().setAxisMaximum(100);
@@ -141,8 +142,8 @@ public class ChartActivity extends AppCompatActivity {
       @Override
       public void onValueSelected(Entry e, Highlight h) {
         int index = (int) e.getX();
-        String ss = data1.get(index).getY() + " : " + data2.get(index).getY();
-        resultTv.setText("数值=" + ss);
+        resultTv.setText("[x=" + index + ",y1=" + data1.get(index).getY()
+          + ",y2=" + data2.get(index).getY());
         helper.moveWithHighlight(e, h);
       }
 
