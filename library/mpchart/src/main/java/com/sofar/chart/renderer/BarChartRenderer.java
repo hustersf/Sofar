@@ -6,12 +6,14 @@ import java.util.List;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 
 import com.sofar.chart.animation.ChartAnimator;
 import com.sofar.chart.buffer.BarBuffer;
 import com.sofar.chart.data.BarData;
+import com.sofar.chart.data.BarDataSet;
 import com.sofar.chart.data.BarEntry;
 import com.sofar.chart.highlight.Highlight;
 import com.sofar.chart.highlight.Range;
@@ -31,6 +33,8 @@ public class BarChartRenderer extends BarLineScatterCandleBubbleRenderer {
    * the rect object that is used for drawing the bars
    */
   protected RectF mBarRect = new RectF();
+  protected Path mBarRoundPath = new Path();
+  protected float[] radii = new float[8];
 
   protected BarBuffer[] mBarBuffers;
 
@@ -173,10 +177,6 @@ public class BarChartRenderer extends BarLineScatterCandleBubbleRenderer {
         mRenderPaint.setColor(dataSet.getColor(pos));
       }
 
-      float barRadius = dataSet.getBarCornersRadius();
-      if (dataSet.isDrawFullCorners()) {
-        barRadius = (buffer.buffer[j + 2] - buffer.buffer[j]) / 2;
-      }
       if (isCustomFill) {
         dataSet.getFill(pos)
           .fillRect(
@@ -187,13 +187,15 @@ public class BarChartRenderer extends BarLineScatterCandleBubbleRenderer {
             buffer.buffer[j + 3],
             isInverted ? Fill.Direction.DOWN : Fill.Direction.UP);
       } else {
-        c.drawRoundRect(buffer.buffer[j], buffer.buffer[j + 1], buffer.buffer[j + 2],
-          buffer.buffer[j + 3], barRadius, barRadius, mRenderPaint);
+        mBarRect.set(buffer.buffer[j], buffer.buffer[j + 1], buffer.buffer[j + 2],
+          buffer.buffer[j + 3]);
+        drawRoundBar(c, mRenderPaint, dataSet);
       }
 
       if (drawBorder) {
-        c.drawRoundRect(buffer.buffer[j], buffer.buffer[j + 1], buffer.buffer[j + 2],
-          buffer.buffer[j + 3], barRadius, barRadius, mBarBorderPaint);
+        mBarRect.set(buffer.buffer[j], buffer.buffer[j + 1], buffer.buffer[j + 2],
+          buffer.buffer[j + 3]);
+        drawRoundBar(c, mBarBorderPaint, dataSet);
       }
     }
   }
@@ -500,12 +502,35 @@ public class BarChartRenderer extends BarLineScatterCandleBubbleRenderer {
 
       setHighlightDrawPos(high, mBarRect);
 
-      float barRadius = set.getBarCornersRadius();
-      if (set.isDrawFullCorners()) {
-        barRadius = (mBarRect.right - mBarRect.left) / 2;
-      }
-      c.drawRoundRect(mBarRect, barRadius, barRadius, mHighlightPaint);
+      drawRoundBar(c, mHighlightPaint, set);
     }
+  }
+
+  private void drawRoundBar(Canvas c, Paint paint, IBarDataSet set) {
+    float barRadius = set.getBarCornersRadius();
+    if (set.isDrawFullCorners()) {
+      barRadius = (mBarRect.right - mBarRect.left) / 2;
+    }
+    for (int i = 0; i < radii.length; i++) {
+      radii[i] = 0;
+    }
+
+    if (set.getMode() == BarDataSet.Mode.ALL_ROUND) {
+      for (int i = 0; i < radii.length; i++) {
+        radii[i] = barRadius;
+      }
+    } else if (set.getMode() == BarDataSet.Mode.TOP_ROUND) {
+      for (int i = 0; i < radii.length / 2; i++) {
+        radii[i] = barRadius;
+      }
+    } else if (set.getMode() == BarDataSet.Mode.BOTTOM_ROUND) {
+      for (int i = radii.length / 2; i < radii.length; i++) {
+        radii[i] = barRadius;
+      }
+    }
+    mBarRoundPath.reset();
+    mBarRoundPath.addRoundRect(mBarRect, radii, Path.Direction.CW);
+    c.drawPath(mBarRoundPath, paint);
   }
 
   /**

@@ -10,6 +10,8 @@ import com.sofar.chart.utils.Fill;
 
 public class BarDataSet extends BarLineScatterCandleBubbleDataSet<BarEntry> implements IBarDataSet {
 
+  private Mode mMode = Mode.RECT;
+
   /**
    * the maximum number of bars that are stacked upon each other, this value
    * is calculated from the Entries that are added to the DataSet
@@ -324,5 +326,21 @@ public class BarDataSet extends BarLineScatterCandleBubbleDataSet<BarEntry> impl
   @Override
   public boolean isDrawFullCorners() {
     return mDrawFullCorners;
+  }
+
+  @Override
+  public Mode getMode() {
+    return mMode;
+  }
+
+  public void setMode(Mode mode) {
+    mMode = mode;
+  }
+
+  public enum Mode {
+    RECT,
+    ALL_ROUND,
+    TOP_ROUND,
+    BOTTOM_ROUND,
   }
 }

@@ -25,6 +25,7 @@ import com.sofar.chart.highlight.Highlight;
 import com.sofar.chart.interfaces.datasets.IBarDataSet;
 import com.sofar.chart.interfaces.datasets.ILineDataSet;
 import com.sofar.chart.listener.OnChartValueSelectedListener;
+import com.sofar.chart.utils.MarkerViewHelper;
 import com.sofar.chart.utils.Utils;
 
 public class ChartActivity extends AppCompatActivity {
@@ -72,6 +73,8 @@ public class ChartActivity extends AppCompatActivity {
     TextView resultTv = findViewById(R.id.line_chart2_result);
     mLineChartView2 = findViewById(R.id.line_chart2);
     mLineChartView2.getDescription().setEnabled(false);
+    mLineChartView2.setScaleEnabled(false);
+    MarkerViewHelper helper = new MarkerViewHelper(mLineChartView2, resultTv);
 
     int range = 80;
     List<Entry> data1 = new ArrayList<>();
@@ -140,6 +143,7 @@ public class ChartActivity extends AppCompatActivity {
         int index = (int) e.getX();
         String ss = data1.get(index).getY() + " : " + data2.get(index).getY();
         resultTv.setText("数值=" + ss);
+        helper.moveWithHighlight(e, h);
       }
 
       @Override
@@ -173,6 +177,7 @@ public class ChartActivity extends AppCompatActivity {
     TextView resultTv = findViewById(R.id.bar_chart2_result);
     mBarChartView2 = findViewById(R.id.bar_chart2);
     mBarChartView2.getDescription().setEnabled(false);
+    mBarChartView2.setScaleEnabled(false);
 
     int range = 100;
     List<BarEntry> entries = new ArrayList<>();
@@ -212,6 +217,7 @@ public class ChartActivity extends AppCompatActivity {
     });
     BarDataSet set1 = new BarDataSet(entries, "电池平均电量");
     set1.setDrawFullCorners(true);
+    set1.setMode(BarDataSet.Mode.TOP_ROUND);
     List<IBarDataSet> list = new ArrayList<>();
     list.add(set1);
     BarData barData = new BarData(list);

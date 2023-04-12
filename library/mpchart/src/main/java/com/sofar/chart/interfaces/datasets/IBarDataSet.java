@@ -2,6 +2,7 @@ package com.sofar.chart.interfaces.datasets;
 
 import java.util.List;
 
+import com.sofar.chart.data.BarDataSet;
 import com.sofar.chart.data.BarEntry;
 import com.sofar.chart.utils.Fill;
 
@@ -72,4 +73,6 @@ public interface IBarDataSet extends IBarLineScatterCandleBubbleDataSet<BarEntry
   float getBarCornersRadius();
 
   boolean isDrawFullCorners();
+
+  BarDataSet.Mode getMode();
 }
