@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -78,12 +79,12 @@ public class ChartActivity extends AppCompatActivity {
 
     int range = 80;
     List<Entry> data1 = new ArrayList<>();
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 24; i++) {
       float val = (float) (Math.random() * range) + 10;
       data1.add(new Entry(i, val));
     }
     List<Entry> data2 = new ArrayList<>();
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 24; i++) {
       float val = (float) (Math.random() * range) + 10;
       data2.add(new Entry(i, val));
     }
@@ -92,13 +93,16 @@ public class ChartActivity extends AppCompatActivity {
     float spaceLength = Utils.convertDpToPixel(2);
     float axisLineWidth = 1f;
     mLineChartView2.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
-    mLineChartView2.getXAxis().setLabelCount(4, false);
+   // mLineChartView2.getXAxis().setLabelCount(5, false);
+    mLineChartView2.getXAxis().setLabelInterval(6.0f);
+    mLineChartView2.getXAxis().setLabelGravity(Gravity.LEFT);
     mLineChartView2.getXAxis().setAxisLineColor(Color.BLUE);
     mLineChartView2.getXAxis().setAxisLineWidth(axisLineWidth);
     mLineChartView2.getXAxis().setGridColor(Color.BLUE);
     mLineChartView2.getXAxis().setGridLineWidth(axisLineWidth);
     mLineChartView2.getXAxis().enableGridDashedLine(lineLength, spaceLength, 0);
     mLineChartView2.setHighestVisibleX(15);
+    mLineChartView2.getXAxis().setValueFormatter((value, axis) -> (int) value + " PM");
 
     mLineChartView2.getAxisRight().setEnabled(false);
     mLineChartView2.getAxisLeft().setAxisMaximum(100);

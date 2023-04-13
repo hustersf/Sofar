@@ -189,6 +189,10 @@ public abstract class AxisRenderer extends Renderer {
 
     int n = mAxis.isCenterAxisLabelsEnabled() ? 1 : 0;
 
+    if (mAxis.getLabelInterval() > 0) {
+      interval = mAxis.getLabelInterval();
+    }
+
     // force label count
     if (mAxis.isForceLabelsEnabled()) {
 

@@ -7,6 +7,7 @@ import java.util.List;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.util.Log;
+import android.view.Gravity;
 
 import com.sofar.chart.formatter.DefaultAxisValueFormatter;
 import com.sofar.chart.formatter.IAxisValueFormatter;
@@ -56,6 +57,10 @@ public abstract class AxisBase extends ComponentBase {
    * the number of label entries the axis should have, default 6
    */
   private int mLabelCount = 6;
+
+  private float mLabelInterval = 0;
+
+  private int mLabelGravity = Gravity.CENTER;
 
   /**
    * the minimum interval between axis values
@@ -411,6 +416,22 @@ public abstract class AxisBase extends ComponentBase {
     return mLabelCount;
   }
 
+  public void setLabelInterval(float interval) {
+    mLabelInterval = interval;
+  }
+
+  public float getLabelInterval() {
+    return mLabelInterval;
+  }
+
+  public void setLabelGravity(int gravity) {
+    mLabelGravity = gravity;
+  }
+
+  public int getLabelGravity() {
+    return mLabelGravity;
+  }
+
   /**
    * @return true if granularity is enabled
    */
@@ -508,13 +529,13 @@ public abstract class AxisBase extends ComponentBase {
    *
    * @param enabled
    */
-  public void setDrawGridLinesBehindData(boolean enabled) { mDrawGridLinesBehindData = enabled; }
+  public void setDrawGridLinesBehindData(boolean enabled) {mDrawGridLinesBehindData = enabled;}
 
   public boolean isDrawGridLinesBehindDataEnabled() {
     return mDrawGridLinesBehindData;
   }
 
-  public void setDrawAxisLineBehindGrid(boolean enabled) { mDrawAxisLineBehindGrid = enabled; }
+  public void setDrawAxisLineBehindGrid(boolean enabled) {mDrawAxisLineBehindGrid = enabled;}
 
   public boolean isDrawAxisLineBehindGrid() {
     return mDrawAxisLineBehindGrid;

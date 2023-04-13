@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.view.Gravity;
 
 import com.sofar.chart.components.LimitLine;
 import com.sofar.chart.components.XAxis;
@@ -235,6 +236,12 @@ public class XAxisRenderer extends AxisRenderer {
 
   protected void drawLabel(Canvas c, String formattedLabel, float x, float y, MPPointF anchor,
     float angleDegrees) {
+    float textWidth = mAxisLabelPaint.measureText(formattedLabel);
+    if (mXAxis.getLabelGravity() == Gravity.LEFT) {
+      x += textWidth / 2;
+    } else if (mXAxis.getLabelGravity() == Gravity.RIGHT) {
+      x -= textWidth / 2;
+    }
     Utils.drawXAxisValue(c, formattedLabel, x, y, mAxisLabelPaint, anchor, angleDegrees);
   }
 
