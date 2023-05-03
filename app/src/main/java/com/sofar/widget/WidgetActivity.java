@@ -26,6 +26,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.sofar.R;
 import com.sofar.widget.bar.SettingsActivity;
+import com.sofar.widget.chart.ChartActivity;
+import com.sofar.widget.chart.LineChartView;
 import com.sofar.widget.scroll.NestedScrollActivity;
 import com.sofar.widget.textview.TextTagView;
 import com.sofar.widget.textview.TextWithTagView;
@@ -67,7 +69,7 @@ public class WidgetActivity extends AppCompatActivity {
     span3();
     mask();
     floatingWidget();
-    swipe();
+    // swipe();
     overLayLayoutManager();
   }
 
@@ -75,13 +77,16 @@ public class WidgetActivity extends AppCompatActivity {
     TextWithTagView tagView = findViewById(R.id.tag_text);
     List<String> tags = new ArrayList<>();
     tags.add("#设置页面");
-    tags.add("#标签2");
+    tags.add("#图表页面");
     tags.add("#标签3");
     tagView.setTags(tags);
     tagView.update();
     tagView.setOnTagClickListener((position, view) -> {
       if (position == 0) {
         Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+      } else if (position == 1) {
+        Intent intent = new Intent(this, ChartActivity.class);
         startActivity(intent);
       }
       ToastUtil.startShort(this, tags.get(position));
@@ -322,6 +327,5 @@ public class WidgetActivity extends AppCompatActivity {
       recyclerView.scrollToPosition(list.size() * loopCount / 2);
     });
   }
-
 }
 

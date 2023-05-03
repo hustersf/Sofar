@@ -18,7 +18,8 @@ include ':core:fun'
 include ':core:preloader'
 include ':core:ad'
 
-include ':external:daogenerator'
+include ':library:daogenerator'
+include ':library:mpchart'
 
 include ':debug'
 include ':tool:profiler'

@@ -89,6 +89,8 @@ dependencies {
     implementation project(':demo:datastore')
     implementation project(':demo:appwidget')
 
+    implementation project(':library:mpchart')
+
     implementation 'androidx.room:room-runtime:2.2.3'
     kapt 'androidx.room:room-compiler:2.2.3'
 

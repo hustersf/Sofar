@@ -11,6 +11,17 @@
     android:background="@color/background"
     android:orientation="vertical">
 
+<!--    <HorizontalScrollView-->
+<!--      android:layout_width="match_parent"-->
+<!--      android:layout_height="match_parent">-->
+
+      <com.sofar.widget.chart.LineChartView
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:padding="20dp" />
+
+<!--    </HorizontalScrollView>-->
+
     <com.sofar.widget.textview.TextWithTagView
       android:id="@+id/tag_text"
       android:layout_width="270dp"
@@ -30,8 +41,8 @@
       android:layout_height="wrap_content"
       android:ellipsize="end"
       android:maxLines="2"
-      android:textSize="16dp"
-      android:text="文字后跟随任意个标签测试，文字后跟随任意个标签测试，文字后跟随任意个标签测试" />
+      android:text="文字后跟随任意个标签测试，文字后跟随任意个标签测试，文字后跟随任意个标签测试"
+      android:textSize="16dp" />
 
     <com.sofar.widget.progress.VoteProgress
       android:id="@+id/progress"

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@color/background">
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.sofar.chart.charts.LineChart
+      android:id="@+id/line_chart1"
+      android:layout_width="match_parent"
+      android:layout_height="200dp" />
+
+    <TextView
+      android:id="@+id/line_chart2_result"
+      android:layout_width="100dp"
+      android:layout_height="50dp"
+      android:layout_marginTop="20dp"
+      android:background="@color/colorAccent"
+      android:textColor="@color/white" />
+
+    <com.sofar.chart.charts.LineChart
+      android:id="@+id/line_chart2"
+      android:layout_width="match_parent"
+      android:layout_height="200dp" />
+
+    <com.sofar.chart.charts.BarChart
+      android:id="@+id/bar_chart1"
+      android:layout_width="match_parent"
+      android:layout_height="200dp"
+      android:layout_marginTop="20dp" />
+
+    <com.sofar.chart.charts.BarChart
+      android:id="@+id/bar_chart2"
+      android:layout_width="match_parent"
+      android:layout_height="200dp"
+      android:layout_marginTop="20dp" />
+
+    <TextView
+      android:id="@+id/bar_chart2_result"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content" />
+
+  </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>
