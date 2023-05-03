@@ -209,6 +209,14 @@
     </activity>
 
     <activity
+      android:name=".widget.recycler.GroupRecyclerActivity"
+      android:configChanges="orientation|keyboardHidden|screenSize"
+      android:exported="false"
+      android:screenOrientation="portrait">
+
+    </activity>
+
+    <activity
       android:name=".widget.scroll.NestedScrollActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
       android:exported="false"
