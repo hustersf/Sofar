@@ -8,6 +8,7 @@ public final class ExpandableViewHolder<GROUP, CHILD> extends RecyclerView.ViewH
 
   public final ExpandableCell mCell;
   private boolean mBind;
+  public int groupPosition;
 
   public ExpandableViewHolder(@NonNull View itemView, @NonNull ExpandableCell cell) {
     super(itemView);

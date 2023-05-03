@@ -31,7 +31,7 @@ public class GroupRecyclerActivity extends AppCompatActivity {
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.recycler_activity);
+    setContentView(R.layout.expand_recycler_activity);
     setTitle("分组列表测试");
 
     refreshLayout = findViewById(R.id.refresh_layout);

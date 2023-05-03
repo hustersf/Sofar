@@ -47,10 +47,20 @@ public abstract class ExpandableAdapter<Group, Child>
     return new ExpandableViewHolder(itemView, cell);
   }
 
+  /**
+   * 仅仅只是创建一个 ExpandableViewHolder 对象，不放入 mCells 列表中
+   */
+  public ExpandableViewHolder onlyCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    ExpandableCell cell = onCreateCell(viewType);
+    View itemView = cell.createView(parent);
+    return new ExpandableViewHolder(itemView, cell);
+  }
+
   @Override
   public void onBindViewHolder(@NonNull ExpandableViewHolder holder, int position) {
     ItemPosition itemPosition = getAdapterItemPosition(position);
     boolean expand = isExpand(itemPosition.groupPosition);
+    holder.groupPosition = itemPosition.groupPosition;
     if (itemPosition.childPosition == RecyclerView.NO_POSITION) {
       performGroupClick(holder, itemPosition.groupPosition);
       Group group = getGroupItem(itemPosition.groupPosition);
