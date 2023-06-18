@@ -3,17 +3,20 @@ package com.sofar.widget.recycler.adapter.expand;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 public abstract class ExpandableCell<GROUP, CHILD> {
 
-  public RecyclerView.ViewHolder mViewHolder;
+  public ExpandableViewHolder mViewHolder;
 
   protected abstract View createView(@NonNull ViewGroup parent);
 
   protected void onCreate(@NonNull View rootView) {}
 
   protected void onBindGroup(@NonNull GROUP group, boolean expand) {}
+
+  protected boolean onInterceptGroupClick(@NonNull GROUP group, boolean expand) {
+    return false;
+  }
 
   protected void onBindChild(@NonNull CHILD child, boolean expand) {}
 

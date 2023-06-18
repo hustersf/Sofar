@@ -1,13 +1,13 @@
 package com.sofar.widget.recycler.adapter.expand;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class ExpandableAdapter<Group, Child>
   extends RecyclerView.Adapter<ExpandableViewHolder> {
@@ -62,18 +62,24 @@ public abstract class ExpandableAdapter<Group, Child>
     boolean expand = isExpand(itemPosition.groupPosition);
     holder.groupPosition = itemPosition.groupPosition;
     if (itemPosition.childPosition == RecyclerView.NO_POSITION) {
-      performGroupClick(holder, itemPosition.groupPosition);
       Group group = getGroupItem(itemPosition.groupPosition);
       holder.bindGroup(group, expand);
+      performGroupClick(holder, group);
     } else {
       Child child = getChildItem(itemPosition.groupPosition, itemPosition.childPosition);
       holder.bindChild(child, expand);
     }
   }
 
-  private void performGroupClick(@NonNull ExpandableViewHolder holder, int groupPosition) {
+  private void performGroupClick(@NonNull ExpandableViewHolder holder, Group group) {
     holder.itemView.setOnClickListener(v -> {
-      if (isExpand(groupPosition)) {
+      int groupPosition = holder.groupPosition;
+      boolean expand = isExpand(groupPosition);
+      if (holder.interceptGroupClick(group, expand)) {
+        return;
+      }
+
+      if (expand) {
         collapse(groupPosition);
       } else {
         expand(groupPosition);
@@ -187,6 +193,14 @@ public abstract class ExpandableAdapter<Group, Child>
     return getGroupAdapterPosition(groupPosition) + 1 + childPosition;
   }
 
+  public boolean isChildItem(int position) {
+    ItemPosition itemPosition = getAdapterItemPosition(position);
+    if (itemPosition.childPosition == RecyclerView.NO_POSITION) {
+      return false;
+    }
+    return true;
+  }
+
   @Override
   public int getItemCount() {
     int itemCount = 0;
@@ -211,6 +225,16 @@ public abstract class ExpandableAdapter<Group, Child>
   }
 
   public abstract Child getChildItem(int groupPosition, int childPosition);
+
+  public int getGroupPosition(int position) {
+    ItemPosition itemPosition = getAdapterItemPosition(position);
+    return itemPosition.groupPosition;
+  }
+
+  public int getChildPosition(int position) {
+    ItemPosition itemPosition = getAdapterItemPosition(position);
+    return itemPosition.childPosition;
+  }
 
   private ItemPosition getAdapterItemPosition(int adapterPosition) {
     tempItemPosition.groupPosition = RecyclerView.NO_POSITION;

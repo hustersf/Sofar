@@ -22,6 +22,10 @@ public final class ExpandableViewHolder<GROUP, CHILD> extends RecyclerView.ViewH
     mBind = true;
   }
 
+  public boolean interceptGroupClick(GROUP group, boolean expand) {
+    return mCell.onInterceptGroupClick(group, expand);
+  }
+
   public void bindChild(CHILD child, boolean expand) {
     mCell.onBindChild(child, expand);
     mBind = true;
