@@ -25,6 +25,24 @@
     </activity>
 
     <activity
+      android:name=".router.JumpActivity"
+      android:configChanges="orientation|keyboardHidden|screenSize"
+      android:exported="true"
+      android:screenOrientation="portrait"
+      android:theme="@style/JumpTheme">
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+
+        <data
+          android:host="*"
+          android:scheme="your-scheme" />
+      </intent-filter>
+    </activity>
+
+    <activity
       android:name=".skin.SkinActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
       android:exported="true"
@@ -72,8 +90,7 @@
       android:name=".widget.chart.ChartActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
       android:exported="false"
-      android:screenOrientation="portrait">
-    </activity>
+      android:screenOrientation="portrait"></activity>
 
     <activity
       android:name=".network.NetworkActivity"

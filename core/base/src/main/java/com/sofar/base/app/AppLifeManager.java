@@ -44,6 +44,10 @@ public class AppLifeManager {
     return appOnForeground;
   }
 
+  public int getActivityStackSize() {
+    return pages.size();
+  }
+
   /**
    * @return 获取栈顶Activity
    */
