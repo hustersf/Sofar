@@ -3,6 +3,7 @@ package com.sofar.widget.refresh;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.sofar.utility.DeviceUtil;
 
@@ -25,6 +26,7 @@ public class CustomRefreshLayout extends RefreshLayout {
       int padding = DeviceUtil.dp2px(getContext(), 15);
       refreshView.setPadding(padding, padding, padding, padding);
     }
+    setRefreshViewSize(ViewGroup.LayoutParams.WRAP_CONTENT);
     return refreshView;
   }
 

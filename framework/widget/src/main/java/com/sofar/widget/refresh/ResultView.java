@@ -6,9 +6,7 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-
 public class ResultView extends FrameLayout implements ResultStatus {
-
 
   public ResultView(@NonNull Context context) {
     this(context, null);

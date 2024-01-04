@@ -30,7 +30,7 @@ import androidx.core.view.ViewCompat;
 import com.sofar.widget.BuildConfig;
 
 /**
- * NOTE: the class based on the {@link SwipeRefreshLayout} source code
+ * NOTE: the class based on the {SwipeRefreshLayout} source code
  * <p>
  * The RecyclerRefreshLayout should be used whenever the user can refresh the`
  * contents of a view via a vertical swipe gesture. The activity that
@@ -159,7 +159,6 @@ public abstract class RefreshLayout extends ViewGroup
       @Override
       public void onAnimationStart(Animation animation) {
         mIsAnimatingToStart = true;
-//          mRefreshStatus.refreshing();
       }
 
       @Override
@@ -190,10 +189,6 @@ public abstract class RefreshLayout extends ViewGroup
 
     @Override
     public void onAnimationEnd(Animation animation) {
-//      if (mResultView != null) {
-//        mResultStatus.onHide();
-//        mResultView.setVisibility(View.GONE);
-//      }
       reset();
     }
   };
@@ -255,7 +250,6 @@ public abstract class RefreshLayout extends ViewGroup
     mResultTargetOffset = DEFAULT_RESULT_TARGET_OFFSET_DP * metrics.density;
 
     mTargetOrRefreshViewOffsetY = 0.0f;
-    Log.i(TAG, "constructor: " + mTargetOrRefreshViewOffsetY);
     mRefreshInitialOffset = 0.0f;
 
     mNestedScrollingParentHelper = new NestedScrollingParentHelper(this);
@@ -264,14 +258,14 @@ public abstract class RefreshLayout extends ViewGroup
     createRefreshView();
     createDragDistanceConverter();
     setNestedScrollingEnabled(true);
-    ViewCompat.setChildrenDrawingOrderEnabled(this, true);
+    setChildrenDrawingOrderEnabled(true);
   }
 
   @Override
   protected void onDetachedFromWindow() {
+    super.onDetachedFromWindow();
     reset();
     clearAnimation();
-    super.onDetachedFromWindow();
   }
 
   private void reset() {
@@ -286,8 +280,6 @@ public abstract class RefreshLayout extends ViewGroup
     mIsAnimatingToStart = false;
     isResetFromResult = false;
     mIsFitRefresh = false;
-
-    Log.i(TAG, "reset");
   }
 
   private void setTargetOrRefreshViewToInitial() {
@@ -554,7 +546,6 @@ public abstract class RefreshLayout extends ViewGroup
     if (dy < 0) {
       mTotalUnconsumed += Math.abs(dy);
       Log.i(TAG, "nested scroll");
-//      moveSpinner(mTotalUnconsumed, -dy);
       moveSpinner(mTotalUnconsumed);
     }
   }
@@ -671,8 +662,6 @@ public abstract class RefreshLayout extends ViewGroup
     switch (mRefreshStyle) {
       case FLOAT:
         return layoutTop;
-      case PINNED:
-        return layoutTop + (int) mTargetOrRefreshViewOffsetY;
       default:
         // not consider mRefreshResistanceRate < 1.0f
         return layoutTop + (int) mTargetOrRefreshViewOffsetY;
@@ -681,8 +670,6 @@ public abstract class RefreshLayout extends ViewGroup
 
   private int reviseRefreshViewLayoutTop(int layoutTop) {
     switch (mRefreshStyle) {
-      case FLOAT:
-        return layoutTop + (int) mTargetOrRefreshViewOffsetY;
       case PINNED:
         return layoutTop;
       default:
@@ -827,7 +814,7 @@ public abstract class RefreshLayout extends ViewGroup
         break;
     }
 
-    final int action = MotionEventCompat.getActionMasked(ev);
+    final int action = ev.getActionMasked();
 
     switch (action) {
       case MotionEvent.ACTION_DOWN:
@@ -909,7 +896,7 @@ public abstract class RefreshLayout extends ViewGroup
 
     switch (action) {
       case MotionEvent.ACTION_DOWN:
-        mActivePointerId = MotionEventCompat.getPointerId(ev, 0);
+        mActivePointerId = ev.getPointerId(0);
         mIsBeingDragged = mTargetOrRefreshViewOffsetY > 0;
         break;
 
@@ -988,7 +975,7 @@ public abstract class RefreshLayout extends ViewGroup
         break;
       }
 
-      case MotionEventCompat.ACTION_POINTER_DOWN: {
+      case MotionEvent.ACTION_POINTER_DOWN: {
         onNewerPointerDown(ev);
         break;
       }
@@ -1048,12 +1035,12 @@ public abstract class RefreshLayout extends ViewGroup
         clearAnimation();
         reset();
       }
-      mIsRefreshing = refreshing;
+      mIsRefreshing = true;
       mNotifyListener = false;
 
       animateToRefreshingPosition(mRefreshingListener, true);
     } else {
-      setRefreshing(refreshing, false);
+      setRefreshing(false, false);
     }
   }
 
@@ -1200,8 +1187,8 @@ public abstract class RefreshLayout extends ViewGroup
   }
 
   private void onNewerPointerDown(MotionEvent ev) {
-    final int index = MotionEventCompat.getActionIndex(ev);
-    mActivePointerId = MotionEventCompat.getPointerId(ev, index);
+    final int index = ev.getActionIndex();
+    mActivePointerId = ev.getPointerId(index);
 
     mInitialMotionY = getMotionEventY(ev, mActivePointerId) - mCurrentTouchOffsetY;
 
@@ -1209,12 +1196,12 @@ public abstract class RefreshLayout extends ViewGroup
   }
 
   private void onSecondaryPointerUp(MotionEvent ev) {
-    int pointerIndex = MotionEventCompat.getActionIndex(ev);
-    int pointerId = MotionEventCompat.getPointerId(ev, pointerIndex);
+    int pointerIndex = ev.getActionIndex();
+    int pointerId = ev.getPointerId(pointerIndex);
 
     if (pointerId == mActivePointerId) {
       final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
-      mActivePointerId = MotionEventCompat.getPointerId(ev, newPointerIndex);
+      mActivePointerId = ev.getPointerId(newPointerIndex);
     }
 
     mInitialMotionY = getMotionEventY(ev, mActivePointerId) - mCurrentTouchOffsetY;
@@ -1296,7 +1283,7 @@ public abstract class RefreshLayout extends ViewGroup
     if (index < 0) {
       return -1;
     }
-    return MotionEventCompat.getY(ev, index);
+    return ev.getY(index);
   }
 
   private boolean canChildScrollUp(View mTarget) {
@@ -1321,7 +1308,7 @@ public abstract class RefreshLayout extends ViewGroup
       }
     }
 
-    return ViewCompat.canScrollVertically(mTarget, -1);
+    return mTarget.canScrollVertically(-1);
   }
 
   private void ensureTarget() {

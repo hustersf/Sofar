@@ -3,9 +3,9 @@ package com.sofar.widget.refresh;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class RefreshView extends RelativeLayout implements RefreshStatus {
-
 
   public RefreshView(Context context) {
     this(context, null);
@@ -17,9 +17,9 @@ public class RefreshView extends RelativeLayout implements RefreshStatus {
 
   public RefreshView(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
-  }
-
-  private void updateColor() {
+    TextView textView = new TextView(context);
+    textView.setText("Loading...");
+    addView(textView);
   }
 
   @Override
