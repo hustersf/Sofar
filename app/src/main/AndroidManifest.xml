@@ -248,6 +248,13 @@
       android:theme="@style/AppTheme.NoActionBar"></activity>
 
     <activity
+      android:name=".widget.scroll.AppbarLayoutActivity"
+      android:configChanges="orientation|keyboardHidden|screenSize"
+      android:exported="false"
+      android:screenOrientation="portrait"/>
+
+
+    <activity
       android:name=".fun.ad.AdActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
       android:exported="false"

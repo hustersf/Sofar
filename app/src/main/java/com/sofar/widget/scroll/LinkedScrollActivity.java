@@ -13,7 +13,8 @@ import com.sofar.R;
 
 
 /**
- * 测试联动滚动
+ * 测试联动滚动示例
+ * 普通View监听手势触发 HorizontalScrollView 滚动+Fling
  */
 public class LinkedScrollActivity extends AppCompatActivity {
 
