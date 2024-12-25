@@ -28,6 +28,7 @@ import com.sofar.R;
 import com.sofar.widget.bar.SettingsActivity;
 import com.sofar.widget.chart.ChartActivity;
 import com.sofar.widget.recycler.GroupRecyclerActivity;
+import com.sofar.widget.scroll.AppbarLayoutActivity;
 import com.sofar.widget.scroll.NestedScrollActivity;
 import com.sofar.widget.textview.TextTagView;
 import com.sofar.widget.textview.TextWithTagView;
@@ -284,7 +285,7 @@ public class WidgetActivity extends AppCompatActivity {
     FloatingWidget widget = new FloatingWidget(this);
     ViewUtil.inflate(widget, R.layout.read_timer, true);
     widget.findViewById(R.id.read_time_root).setOnClickListener(v -> {
-      Intent intent = new Intent(this, NestedScrollActivity.class);
+      Intent intent = new Intent(this, AppbarLayoutActivity.class);
       startActivity(intent);
     });
     widget.setScreenRatio(1.0f, 1.0f);

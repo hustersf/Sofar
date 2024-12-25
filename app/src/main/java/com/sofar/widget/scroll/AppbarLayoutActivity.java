@@ -5,25 +5,32 @@ import java.util.List;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.AppBarLayout;
 import com.sofar.R;
 import com.sofar.fun.play.Feed;
+import com.sofar.utility.ViewUtil;
 import com.sofar.widget.DataProvider;
 import com.sofar.widget.recycler.FeedAdapter;
+import com.sofar.widget.recycler.adapter.Cell;
+import com.sofar.widget.recycler.adapter.CellAdapter;
 
 
 /**
  * 测试联动滚动示例
  * CoordinatorLayout + AppBarLayout + RecyclerView
  * 类似B站视频详情页效果：列表向上滚动时，视频区域逐渐缩小，但视频比例始终保持不变
- *
+ * <p>
  * 使用规则
  * 1.AppBarLayout 必须是 CoordinatorLayout 到直接子布局
  * 2.必须设置 app:layout_behavior，且位置必须放到与 AppBarLayout 同一层级View上
@@ -63,7 +70,7 @@ public class AppbarLayoutActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.app_bar_layout_activity);
     initAppBarLayout();
-    initRecyclerView();
+    initRecyclerView2();
   }
 
   private void initAppBarLayout() {
@@ -79,7 +86,8 @@ public class AppbarLayoutActivity extends AppCompatActivity {
     recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
     FeedAdapter adapter = new FeedAdapter();
     recyclerView.setAdapter(adapter);
-    setData(adapter);
+    adapter.setList(buildData());
+    adapter.notifyDataSetChanged();
     recyclerView.post(new Runnable() {
       @Override
       public void run() {
@@ -88,7 +96,21 @@ public class AppbarLayoutActivity extends AppCompatActivity {
     });
   }
 
-  private void setData(FeedAdapter adapter) {
+  private void initRecyclerView2() {
+    recyclerView = findViewById(R.id.recycler_view);
+    recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+    TestAdapter adapter = new TestAdapter(recyclerView);
+    recyclerView.setAdapter(adapter);
+    List<Feed> list = new ArrayList<>();
+    for (int i = 0; i < 100; i++) {
+      list.addAll(buildData());
+    }
+    adapter.setItems(list);
+    adapter.notifyDataSetChanged();
+  }
+
+
+  private List<Feed> buildData() {
     List<String> imgUrls = DataProvider.imgUrls();
     List<Feed> list = new ArrayList<>();
     for (int i = 0; i < imgUrls.size(); i++) {
@@ -97,13 +119,56 @@ public class AppbarLayoutActivity extends AppCompatActivity {
       feed.imgUrl = imgUrls.get(i);
       list.add(feed);
     }
-    adapter.setList(list);
-    adapter.notifyDataSetChanged();
+    return list;
   }
 
   @Override
   protected void onDestroy() {
     super.onDestroy();
     appBarLayout.removeOnOffsetChangedListener(offsetChangedListener);
+  }
+
+  public static class TestAdapter extends CellAdapter<Feed> {
+
+    private final RecyclerView recyclerView;
+
+    public TestAdapter(RecyclerView recyclerView) {
+      this.recyclerView = recyclerView;
+    }
+
+    @NonNull
+    @Override
+    protected Cell<Feed> onCreateCell(int viewType) {
+      return new Cell<Feed>() {
+
+        ImageView cover;
+        Feed feed;
+
+        @Override
+        protected View createView(@NonNull ViewGroup parent) {
+          return ViewUtil.inflate(parent, R.layout.feed_image_card_item);
+        }
+
+        @Override
+        protected void onCreate(@NonNull View rootView) {
+          super.onCreate(rootView);
+          cover = rootView.findViewById(R.id.cover);
+          rootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+              notifyItemChanged(getPosition());
+              recyclerView.scrollToPosition(getPosition());
+            }
+          });
+        }
+
+        @Override
+        protected void onBind(@NonNull Feed data) {
+          super.onBind(data);
+          feed = data;
+          Glide.with(cover).load(data.imgUrl).into(cover);
+        }
+      };
+    }
   }
 }
