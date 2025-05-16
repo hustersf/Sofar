@@ -43,10 +43,6 @@ class FrameMonitor : AbsMonitor() {
     return MonitorType.FPS
   }
 
-  override fun pollInterval(): Long {
-    return 1000
-  }
-
   fun record() {
     Log.d(tag, "fps=$frameRate")
     MonitorManager.frameCallback(frameRate)

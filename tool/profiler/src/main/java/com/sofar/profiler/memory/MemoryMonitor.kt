@@ -39,10 +39,6 @@ class MemoryMonitor : AbsMonitor() {
     return MonitorType.MEMORY
   }
 
-  override fun pollInterval(): Long {
-    return 1000
-  }
-
   fun getMemoryInfo(): String {
     return memInfo.toString()
   }

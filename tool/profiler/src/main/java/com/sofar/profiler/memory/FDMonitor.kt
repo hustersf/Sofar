@@ -33,10 +33,6 @@ class FDMonitor : AbsMonitor() {
     return MonitorType.FD
   }
 
-  override fun pollInterval(): Long {
-    return 1000
-  }
-
   private fun record() {
     try {
       readFile()

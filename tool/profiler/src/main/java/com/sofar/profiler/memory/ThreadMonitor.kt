@@ -33,10 +33,6 @@ class ThreadMonitor : AbsMonitor() {
     return MonitorType.THREAD
   }
 
-  override fun pollInterval(): Long {
-    return 1000
-  }
-
   private fun record() {
     try {
       dumpThread()

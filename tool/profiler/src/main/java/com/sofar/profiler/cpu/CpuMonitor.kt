@@ -40,10 +40,6 @@ class CpuMonitor : AbsMonitor() {
     return MonitorType.CPU
   }
 
-  override fun pollInterval(): Long {
-    return 1000
-  }
-
   private fun record() {
     try {
       cpuRate = if (VERSION.SDK_INT >= Build.VERSION_CODES.O) {

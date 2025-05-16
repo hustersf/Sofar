@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
 import android.os.Process
+import com.sofar.profiler.activity.ActivityTracer
 import com.sofar.profiler.cpu.CpuMonitor
 import com.sofar.profiler.frame.FrameMonitor
 import com.sofar.profiler.memory.FDMonitor
@@ -32,6 +33,8 @@ object MonitorManager {
     val handlerThread = HandlerThread("profiler-monitor")
     handlerThread.start()
     monitorHandler = Handler(handlerThread.looper)
+
+    ActivityTracer.get().init(appContext)
   }
 
   private fun key(modelClass: Class<*>): String {
