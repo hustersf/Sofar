@@ -6,11 +6,13 @@ import android.os.HandlerThread
 import android.os.Looper
 import android.os.Process
 import com.sofar.profiler.activity.ActivityTracer
+import com.sofar.profiler.battery.BatteryMonitor
 import com.sofar.profiler.cpu.CpuMonitor
 import com.sofar.profiler.frame.FrameMonitor
 import com.sofar.profiler.memory.FDMonitor
 import com.sofar.profiler.memory.MemoryMonitor
 import com.sofar.profiler.memory.ThreadMonitor
+import com.sofar.profiler.traffic.TrafficMonitor
 import java.util.*
 import kotlin.collections.HashMap
 import kotlin.collections.set
@@ -48,6 +50,8 @@ object MonitorManager {
     map[key(MemoryMonitor::class.java)] = MemoryMonitor()
     map[key(ThreadMonitor::class.java)] = ThreadMonitor()
     map[key(FDMonitor::class.java)] = FDMonitor()
+    map[key(BatteryMonitor::class.java)] = BatteryMonitor()
+    map[key(TrafficMonitor::class.java)] = TrafficMonitor()
   }
 
   @JvmStatic
@@ -127,6 +131,22 @@ object MonitorManager {
     UIHandler.post {
       for (callback in callbacks) {
         callback.onFDCount(count)
+      }
+    }
+  }
+
+  fun batteryCallback(info: String) {
+    UIHandler.post {
+      for (callback in callbacks) {
+        callback.onBatteryInfo(info)
+      }
+    }
+  }
+
+  fun trafficCallback(info: String) {
+    UIHandler.post {
+      for (callback in callbacks) {
+        callback.onTrafficInfo(info)
       }
     }
   }

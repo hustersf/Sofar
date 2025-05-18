@@ -2,6 +2,7 @@ package com.sofar;
 
 import org.jetbrains.annotations.NotNull;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -51,6 +52,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onFDCount(int count) {
       Log.d(TAG, "FD数=" + count);
+    }
+
+    @Override
+    public void onBatteryInfo(@NonNull String info) {
+      Log.d(TAG, "电池信息=" + info);
+    }
+
+    @Override
+    public void onTrafficInfo(@NonNull String info) {
+      Log.d(TAG, "流量信息=" + info);
     }
   };
 

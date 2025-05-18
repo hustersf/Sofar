@@ -24,4 +24,11 @@ interface MonitorCallback {
   fun onFDCount(count: Int) {
   }
 
+  @MainThread
+  fun onBatteryInfo(info: String) {
+  }
+
+  @MainThread
+  fun onTrafficInfo(info: String) {
+  }
 }
