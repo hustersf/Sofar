@@ -1,22 +1,18 @@
 package com.sofar.profiler.memory
 
-import android.app.ActivityManager
-import android.content.Context
+import android.os.Build
 import android.os.Debug
 import android.util.Log
 import com.sofar.profiler.AbsMonitor
 import com.sofar.profiler.MonitorManager
 import com.sofar.profiler.MonitorType
 import com.sofar.profiler.formatNumber
-import java.io.File
 import java.lang.Exception
 
 class MemoryMonitor : AbsMonitor() {
 
   private var tag = "MemoryMonitor"
-  var activityManager: ActivityManager = appContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-
-  var memInfo = StringBuffer()
+  private var memInfo = StringBuffer()
 
   private val runnable: Runnable = object : Runnable {
     override fun run() {
@@ -45,9 +41,7 @@ class MemoryMonitor : AbsMonitor() {
 
   private fun record() {
     try {
-      javaHeap()
-      totalMemory()
-      readFile()
+      pssMemory()
       Log.d(tag, memInfo.toString())
       MonitorManager.memoryCallback(memInfo.toString())
     } catch (e: Exception) {
@@ -55,55 +49,56 @@ class MemoryMonitor : AbsMonitor() {
     }
   }
 
-  private fun javaHeap() {
-    var max = Runtime.getRuntime().maxMemory()
-    var total = Runtime.getRuntime().totalMemory()
-    var free = Runtime.getRuntime().freeMemory()
-
-    var use = total - free
-    var ratio = formatNumber(1.0f * 100 * use / max)
-
-    memInfo.append("java heap use(MB)=")
-    memInfo.append(formatNumber(1.0f * use / 1024 / 1024))
-    memInfo.append("($ratio%)")
-    memInfo.append("\n")
-  }
-
-  private fun totalMemory() {
+  private fun pssMemory() {
     var mem = Debug.MemoryInfo()
     Debug.getMemoryInfo(mem)
-    var totalPss = mem.totalPss
-    var nativePss = mem.nativePss
 
-    memInfo.append("total pss(MB)=")
-    memInfo.append(formatNumber(1.0f * totalPss / 1024))
-    memInfo.append("\n")
-    memInfo.append("native pss(MB)=")
-    memInfo.append(formatNumber(1.0f * nativePss / 1024))
-    memInfo.append("\n")
+    var pssTotalK = mem.totalPss
+    var pssJavaK = -1
+    var pssNativeK = -1
+    var pssGraphicK = -1
+    var pssStackK = -1
+    var pssCodeK = -1
 
-    val info = ActivityManager.MemoryInfo()
-    activityManager.getMemoryInfo(info)
-    val total = info.totalMem / 1024 / 1024.toFloat()
-    val avail = info.availMem / 1024 / 1024.toFloat()
-    memInfo.append("总RAM容量(MB)=${formatNumber(total)}")
-    memInfo.append("\n")
-    memInfo.append("剩余RAM(MB)=${formatNumber(avail)}")
-    memInfo.append("\n")
-  }
-
-  private fun readFile() {
-    var lines = File("/proc/$pid/status").readLines()
-    lines.forEach {
-      //  Log.d(tag, "line=$it")
-      if (it.startsWith("VmSize")) {
-        var params = it.split(Regex("\\s+"))
-        if (params.size > 1) {
-          memInfo.append("VmSize(MB)=")
-          memInfo.append(params[1].toInt() / 1024)
-          memInfo.append("\n")
-        }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      mem.memoryStats.apply {
+        fun Map<String, String>.getInt(key: String) = get(key)?.toInt() ?: -1
+        pssJavaK = getInt("summary.java-heap")
+        pssNativeK = getInt("summary.native-heap")
+        pssCodeK = getInt("summary.code")
+        pssStackK = getInt("summary.stack")
+        pssGraphicK = getInt("summary.graphics")
       }
+    } else {
+      mem.apply {
+        pssJavaK = dalvikPrivateDirty
+        pssNativeK = nativePrivateDirty
+      }
+    }
+
+    memInfo.append("Total pss(MB)=")
+    memInfo.append(formatNumber(1.0f * pssTotalK / 1024))
+    memInfo.append("\n")
+    memInfo.append("Java pss(MB)=")
+    memInfo.append(formatNumber(1.0f * pssJavaK / 1024))
+    memInfo.append("\n")
+    memInfo.append("Native pss(MB)=")
+    memInfo.append(formatNumber(1.0f * pssNativeK / 1024))
+    memInfo.append("\n")
+    if (pssGraphicK != -1) {
+      memInfo.append("Graphics pss(MB)=")
+      memInfo.append(formatNumber(1.0f * pssGraphicK / 1024))
+      memInfo.append("\n")
+    }
+    if (pssStackK != -1) {
+      memInfo.append("Stack pss(MB)=")
+      memInfo.append(formatNumber(1.0f * pssStackK / 1024))
+      memInfo.append("\n")
+    }
+    if (pssCodeK != -1) {
+      memInfo.append("Code pss(MB)=")
+      memInfo.append(formatNumber(1.0f * pssCodeK / 1024))
+      memInfo.append("\n")
     }
   }
 
