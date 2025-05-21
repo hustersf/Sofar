@@ -7,6 +7,7 @@ import android.os.Looper
 import android.os.Process
 import com.sofar.profiler.activity.ActivityTracer
 import com.sofar.profiler.battery.BatteryMonitor
+import com.sofar.profiler.block.core.BlockMonitorManager
 import com.sofar.profiler.cpu.CpuMonitor
 import com.sofar.profiler.frame.FrameMonitor
 import com.sofar.profiler.memory.FDMonitor
@@ -37,6 +38,7 @@ object MonitorManager {
     monitorHandler = Handler(handlerThread.looper)
 
     ActivityTracer.get().init(appContext)
+    BlockMonitorManager.get().start()
   }
 
   private fun key(modelClass: Class<*>): String {
