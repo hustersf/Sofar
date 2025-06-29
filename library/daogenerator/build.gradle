@@ -1,7 +1,7 @@
 apply plugin: 'java'
 
 dependencies {
-    implementation "org.greenrobot:greendao-generator:3.3.0"
+    implementation libs.greendao.generator
 }
 
 

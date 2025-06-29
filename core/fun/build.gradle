@@ -1,24 +1,23 @@
 apply from: rootProject.file('library.gradle')
 
 android {
+    namespace 'com.sofar.fun'
     defaultConfig {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 }
 
 dependencies {
-    implementation 'androidx.fragment:fragment:1.1.0'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.recyclerview
 
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.0'
+    implementation libs.rxandroid
+    implementation libs.rxjava
+    implementation libs.greendao
 
-    implementation 'org.greenrobot:greendao:3.3.0'
-
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    testImplementation libs.junit
+    androidTestImplementation libs.androidx.junit
+    androidTestImplementation libs.androidx.espresso.core
 }
 
 

@@ -1,7 +1,10 @@
 apply from: rootProject.file('library.gradle')
 
+android {
+    namespace 'com.sofar.config'
+}
 dependencies {
-    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation libs.gson
 }
 
 

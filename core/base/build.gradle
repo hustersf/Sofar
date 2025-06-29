@@ -1,16 +1,19 @@
 apply from: rootProject.file('library.gradle')
 
-dependencies {
-    api 'com.github.tbruyelle:rxpermissions:0.10.2'
-    implementation 'androidx.core:core:1.0.2'
-    implementation 'androidx.fragment:fragment:1.2.4'
-    api 'io.reactivex.rxjava2:rxjava:2.1.0'
+android {
+    namespace 'com.sofar.base'
+}
 
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+dependencies {
     implementation project(':framework:utility')
     implementation project(':framework:widget')
-    implementation 'androidx.lifecycle:lifecycle-process:2.2.0'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.recyclerview
+    implementation libs.material
+    implementation libs.androidx.lifecycle.process
+    implementation libs.androidx.swiperefreshlayout
+    implementation libs.retrofit.gson
+    implementation libs.rxjava
 }
 
 

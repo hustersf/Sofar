@@ -1,62 +1,37 @@
 package com.sofar.skin.base;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.LayoutInflaterCompat;
 
-import com.sofar.skin.callback.IDynamicNewView;
-import com.sofar.skin.callback.ISkinUpdate;
-import com.sofar.skin.core.SkinInflaterFactory;
-import com.sofar.skin.core.SkinManager;
-import com.sofar.skin.model.DynamicAttr;
+import com.sofar.skin.core.SkinCompatDelegate;
 
-import java.util.List;
+/**
+ * 需要换肤的页面 可以继承 SkinBaseActivity
+ * 当然也可以使用 SkinCompatDelegate 支持换肤
+ */
+public class SkinBaseActivity extends AppCompatActivity {
 
-public class SkinBaseActivity extends AppCompatActivity implements ISkinUpdate, IDynamicNewView {
-
-  private SkinInflaterFactory mSkinInflaterFactory;
+  private SkinCompatDelegate mSkinDelegate;
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
-    mSkinInflaterFactory = new SkinInflaterFactory(this);
-    LayoutInflaterCompat.setFactory2(LayoutInflater.from(this), mSkinInflaterFactory);
-
+    getSkinDelegate().installViewFactory();
     super.onCreate(savedInstanceState);
-    SkinManager.getInstance().attach(this);
+    getSkinDelegate().onCreate(savedInstanceState);
   }
 
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    SkinManager.getInstance().detach(this);
-    if (mSkinInflaterFactory != null) {
-      mSkinInflaterFactory.clean();
-    }
+    getSkinDelegate().onDestroy();
   }
 
-  @Override
-  public void onThemeUpdate() {
-    if (mSkinInflaterFactory != null) {
-      mSkinInflaterFactory.applySkin();
+  public SkinCompatDelegate getSkinDelegate() {
+    if (mSkinDelegate == null) {
+      mSkinDelegate = new SkinCompatDelegate(this);
     }
-  }
-
-  @Override
-  public void dynamicAddView(View view, List<DynamicAttr> dynamicAttrs) {
-    if (mSkinInflaterFactory != null) {
-      mSkinInflaterFactory.dynamicAddSkinEnableView(this, view, dynamicAttrs);
-    }
-  }
-
-  @Override
-  public void dynamicAddView(View view, String attrName, int attrValueResId) {
-    if (mSkinInflaterFactory != null) {
-      mSkinInflaterFactory.dynamicAddSkinEnableView(this, view, attrName, attrValueResId);
-    }
+    return mSkinDelegate;
   }
 }
 

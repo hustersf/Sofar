@@ -1,3 +1,25 @@
+pluginManagement {
+    repositories {
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+}
+
 rootProject.name = 'Sofar'
 
 include ':app'
@@ -5,7 +27,6 @@ include ':app'
 include ':framework:widget'
 include ':framework:utility'
 include ':framework:network'
-include ':framework:player'
 include ':framework:download'
 include ':framework:skin'
 include ':framework:audio-record'

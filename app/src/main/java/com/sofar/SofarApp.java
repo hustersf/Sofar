@@ -17,7 +17,6 @@ import com.sofar.image.ImageManager;
 import com.sofar.preferences.PreferenceConfigHolder;
 import com.sofar.preferences.SofarSharedPreferences;
 import com.sofar.profiler.MonitorManager;
-import com.sofar.skin.core.Skin;
 import com.sofar.utility.FileUtil;
 import com.sofar.utility.SystemUtil;
 
@@ -32,8 +31,6 @@ public class SofarApp extends Application {
   @Override
   public void onCreate() {
     super.onCreate();
-    Skin.init(this);
-    Skin.addSupportSkinColorResName("themeColor");
 
     LocationProvider.getInstance().init(this);
 

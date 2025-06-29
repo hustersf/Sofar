@@ -1,7 +1,13 @@
 apply from: rootProject.file('library.gradle')
 
+android {
+    namespace 'com.sofar.aidl'
+    buildFeatures {
+        aidl = true // 显式启用
+    }
+}
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation libs.androidx.appcompat
 }
 
 

@@ -1,12 +1,12 @@
 apply from: rootProject.file('library.gradle')
 
 android {
-
+    namespace 'com.sofar.preloader'
 }
 
 dependencies {
-    api 'io.reactivex.rxjava2:rxandroid:2.1.0'
-    api 'io.reactivex.rxjava2:rxjava:2.1.0'
+    implementation libs.rxandroid
+    implementation libs.rxjava
 }
 
 

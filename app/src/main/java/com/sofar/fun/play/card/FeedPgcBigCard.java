@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import com.sofar.R;
 import com.sofar.base.viewbinder.RecyclerViewBinder;
 import com.sofar.fun.play.core.PlayableRecyclerViewBinder;
-import com.sofar.fun.play.viewbinder.FeedVideoCoreViewBinder;
+//import com.sofar.fun.play.viewbinder.FeedVideoCoreViewBinder;
 import com.sofar.fun.play.viewbinder.FeedVideoPlayPanelViewBinder;
 import com.sofar.fun.play.viewbinder.FeedVideoPlayableViewBinder;
 import com.sofar.fun.play.viewbinder.FeedVideoSizeViewBinder;
@@ -28,7 +28,7 @@ public class FeedPgcBigCard extends FeedPlayableCard {
     PlayableRecyclerViewBinder viewBinder = new PlayableRecyclerViewBinder();
     viewBinder.setPlayViewBinder(new FeedVideoPlayableViewBinder(mFeedPlayer, viewBinder));
     viewBinder.addViewBinder(new FeedVideoSizeViewBinder());
-    viewBinder.addViewBinder(new FeedVideoCoreViewBinder());
+   // viewBinder.addViewBinder(new FeedVideoCoreViewBinder());
     viewBinder.addViewBinder(new FeedVideoPlayPanelViewBinder());
     return viewBinder;
   }

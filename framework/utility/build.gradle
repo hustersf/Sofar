@@ -1,7 +1,10 @@
 apply from: rootProject.file('library.gradle')
 
+android {
+    namespace 'com.sofar.utility'
+}
+
 dependencies {
-    implementation 'androidx.annotation:annotation:1.1.0'
 }
 
 

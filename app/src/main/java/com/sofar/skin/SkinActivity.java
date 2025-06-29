@@ -16,6 +16,7 @@ import com.sofar.R;
 import com.sofar.skin.base.SkinBaseActivity;
 import com.sofar.skin.callback.ILoaderListener;
 import com.sofar.skin.core.SkinManager;
+import com.sofar.skin.core.SkinResourceManager;
 import com.sofar.utility.LogUtil;
 
 public class SkinActivity extends SkinBaseActivity {
@@ -56,9 +57,9 @@ public class SkinActivity extends SkinBaseActivity {
   }
 
   private void resourceTest() {
-    dynamicAddView(skinLayout2, "background", R.drawable.skin_background);
-    dynamicAddView(skinTv2, "textColor", R.color.main_text_color);
-    dynamicAddView(skinSelectorTv2, "textColor", R.color.skin_selector_color);
+    SkinManager.get().dynamicAddView(skinLayout2, "background", R.drawable.skin_background);
+    SkinManager.get().dynamicAddView(skinTv2, "textColor", R.color.main_text_color);
+    SkinManager.get().dynamicAddView(skinSelectorTv2, "textColor", R.color.skin_selector_color);
   }
 
   private void colorSkin() {
@@ -92,7 +93,7 @@ public class SkinActivity extends SkinBaseActivity {
   }
 
   private void changeColorSkin(int color) {
-    SkinManager.getInstance().loadColorSkin(color);
+    SkinResourceManager.get().loadColorSkin(color);
   }
 
   @Override
@@ -104,26 +105,21 @@ public class SkinActivity extends SkinBaseActivity {
 
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-    switch (item.getItemId()) {
-      case R.id.skin1:
-        changeSkin("red.skin");
-        break;
-      case R.id.skin2:
-        changeSkin("green.skin");
-        break;
-      case R.id.skin3:
-        changeSkin("blue.skin");
-        break;
-      case R.id.skin4:
-        SkinManager.getInstance().restoreDefaultTheme();
-        break;
+    if(item.getItemId()==R.id.skin1){
+      changeSkin("red.skin");
+    } else if(item.getItemId()==R.id.skin2){
+      changeSkin("green.skin");
+    } else if(item.getItemId()==R.id.skin3){
+      changeSkin("blue.skin");
+    } else if(item.getItemId()==R.id.skin4){
+      SkinResourceManager.get().restoreDefaultSkin();
     }
     return super.onOptionsItemSelected(item);
   }
 
   private void changeSkin(String skinName) {
 
-    SkinManager.getInstance().loadSkin(skinName, new ILoaderListener() {
+    SkinResourceManager.get().loadSkin(skinName, new ILoaderListener() {
       @Override
       public void onStart() {
 

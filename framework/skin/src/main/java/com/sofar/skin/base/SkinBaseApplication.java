@@ -9,6 +9,6 @@ public class SkinBaseApplication extends Application {
   @Override
   public void onCreate() {
     super.onCreate();
-    SkinManager.getInstance().init(this);
+    SkinManager.get().init(this);
   }
 }

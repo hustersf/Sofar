@@ -4,7 +4,6 @@ import java.util.UUID;
 
 import androidx.annotation.NonNull;
 
-import com.google.common.primitives.UnsignedLong;
 import com.sofar.ad.AdRequest;
 import com.sofar.ad.model.AdInfo;
 import com.sofar.ad.model.BaseAd;
@@ -16,7 +15,7 @@ public class AdUtil {
     try {
       String uuId = UUID.randomUUID().toString();
       long sign = TermSign.calcTermSign(uuId.getBytes());
-      return UnsignedLong.fromLongBits(sign).toString();
+      return String.valueOf(sign);
     } catch (Exception e) {
       return String.valueOf(System.currentTimeMillis());
     }

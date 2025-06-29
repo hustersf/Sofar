@@ -1,10 +1,13 @@
 apply from: rootProject.file('library.gradle')
 
+android {
+    namespace 'com.sofar.widget'
+}
+
 dependencies {
-    implementation 'androidx.fragment:fragment:1.1.0'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation project(':framework:utility')
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.recyclerview
 }
 
 
