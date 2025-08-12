@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.os.Build
 import android.os.Bundle
+import com.sofar.profiler.startup.StartupTracerV2
 
 class ActivityLifecycleImpl : Application.ActivityLifecycleCallbacks {
 
@@ -11,15 +12,19 @@ class ActivityLifecycleImpl : Application.ActivityLifecycleCallbacks {
 
   fun init(appContext: Application) {
     appContext.registerActivityLifecycleCallbacks(this)
+    StartupTracerV2.get().start()
   }
 
   override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
     pages.add(activity)
+    StartupTracerV2.get().onActivityCreated(activity)
   }
 
   override fun onActivityStarted(activity: Activity) {}
 
-  override fun onActivityResumed(activity: Activity) {}
+  override fun onActivityResumed(activity: Activity) {
+    StartupTracerV2.get().onActivityResumed(activity)
+  }
 
   override fun onActivityPaused(activity: Activity) {}
 
@@ -29,6 +34,7 @@ class ActivityLifecycleImpl : Application.ActivityLifecycleCallbacks {
 
   override fun onActivityDestroyed(activity: Activity) {
     pages.remove(activity)
+    StartupTracerV2.get().onActivityDestroyed(activity)
   }
 
   /**

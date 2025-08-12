@@ -37,7 +37,6 @@ class ActivityTracer private constructor() {
   }
 
   fun init(appContext: Application){
-    ActivityLifecycleImpl.get().init(appContext)
     HandlerHooker.doHook(appContext)
   }
 

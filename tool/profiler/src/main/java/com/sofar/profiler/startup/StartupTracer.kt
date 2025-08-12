@@ -6,6 +6,13 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
 
+/**
+ * 业务方需要主动调用相关API
+ * 1.[onApplicationCreateStart]
+ * 2.[onApplicationCreateEnd]
+ * 3.[onSplashActivityCreated]
+ * 4.[onActivityFocused]
+ */
 class StartupTracer : Application.ActivityLifecycleCallbacks {
 
   companion object {

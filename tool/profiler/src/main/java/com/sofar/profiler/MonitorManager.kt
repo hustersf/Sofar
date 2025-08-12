@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
 import android.os.Process
+import com.sofar.profiler.activity.ActivityLifecycleImpl
 import com.sofar.profiler.activity.ActivityTracer
 import com.sofar.profiler.battery.BatteryMonitor
 import com.sofar.profiler.block.core.BlockMonitorManager
@@ -14,8 +15,8 @@ import com.sofar.profiler.memory.FDMonitor
 import com.sofar.profiler.memory.MemoryMonitor
 import com.sofar.profiler.memory.ThreadMonitor
 import com.sofar.profiler.traffic.TrafficMonitor
-import java.util.*
 import kotlin.collections.HashMap
+import kotlin.collections.LinkedHashSet
 import kotlin.collections.set
 
 object MonitorManager {
@@ -27,7 +28,7 @@ object MonitorManager {
   lateinit var monitorHandler: Handler
 
   var map = HashMap<String, IMonitor>()
-  var callbacks = ArrayList<MonitorCallback>()
+  var callbacks = LinkedHashSet<MonitorCallback>()
 
   @JvmStatic
   fun init(appContext: Application) {
@@ -37,6 +38,7 @@ object MonitorManager {
     handlerThread.start()
     monitorHandler = Handler(handlerThread.looper)
 
+    ActivityLifecycleImpl.get().init(appContext)
     ActivityTracer.get().init(appContext)
     BlockMonitorManager.get().start()
   }
