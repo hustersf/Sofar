@@ -4,6 +4,7 @@ import android.util.Log
 import com.sofar.profiler.AbsMonitor
 import com.sofar.profiler.MonitorManager
 import com.sofar.profiler.MonitorType
+import java.io.File
 import java.lang.Exception
 
 class ThreadMonitor : AbsMonitor() {
@@ -48,15 +49,34 @@ class ThreadMonitor : AbsMonitor() {
   }
 
   private fun dumpThread() {
-    val threadSet: Set<Thread> = Thread.getAllStackTraces().keys
-    count = threadSet.size
-    if (threadSet.size > warningCount) {
+    var taskDir = File("/proc/self/task")
+    count = taskDir.listFiles().size
+    if (count > warningCount) {
       Log.d(tag, getInfo())
     }
   }
 
 
   fun getInfo(): String {
+    val taskDir = File("/proc/self/task")
+    val sb = StringBuilder()
+    if (taskDir.exists() && taskDir.isDirectory()) {
+      taskDir.listFiles()?.forEach { threadDir ->
+        val tid = threadDir.name.toIntOrNull()
+        if (tid != null) {
+          // 获取线程名称
+          val commFile = File(threadDir, "comm")
+          if (commFile.exists()) {
+            val name = commFile.readText().trim()
+            sb.append(name).append("\n")
+          }
+        }
+      }
+    }
+    return sb.toString()
+  }
+
+  fun getJavaThreadInfo(): String {
     val threadSet: Set<Thread> = Thread.getAllStackTraces().keys
     val sb = StringBuilder()
     for (t in threadSet) {
