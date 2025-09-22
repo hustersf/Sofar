@@ -8,6 +8,7 @@ dependencies {
     implementation project(':framework:utility')
     implementation libs.androidx.appcompat
     implementation libs.androidx.recyclerview
+    implementation libs.dynamicanimation.ktx
 }
 
 

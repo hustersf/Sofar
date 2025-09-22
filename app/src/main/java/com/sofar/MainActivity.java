@@ -22,6 +22,7 @@ import com.sofar.main.MainListAdapter;
 import com.sofar.profiler.MonitorCallback;
 import com.sofar.profiler.MonitorManager;
 import com.sofar.utility.FileUtil;
+import com.sofar.widget.recycler.overscroll.VerticalEdgeEffectFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     recyclerView.setAdapter(adapter);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
     recyclerView.addItemDecoration(new MainItemDecoration(this));
+    recyclerView.setEdgeEffectFactory(new VerticalEdgeEffectFactory());
 
     LocationProvider.getInstance().startLocation();
 
