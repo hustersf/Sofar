@@ -7,8 +7,8 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.util.Log;
 import android.widget.Button;
+import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,12 +16,14 @@ public class AIDLActivity extends AppCompatActivity {
 
   private static final String TAG = "AIDLActivity";
 
+  private TextView resultTv;
+
   IMyAidlInterface mAidlInterface;
   ServiceConnection mConnection = new ServiceConnection() {
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
       mAidlInterface = IMyAidlInterface.Stub.asInterface(service);
-      Log.d(TAG, "onServiceConnected");
+      resultTv.setText("启动 aidl Service OK");
     }
 
     @Override
@@ -34,6 +36,7 @@ public class AIDLActivity extends AppCompatActivity {
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.aidl_activity);
+    resultTv = findViewById(R.id.result_tv);
     bindService();
     aidl();
   }
@@ -42,6 +45,7 @@ public class AIDLActivity extends AppCompatActivity {
   private void bindService() {
     Intent intent = new Intent(this, AIDLService.class);
     this.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    resultTv.setText("启动 aidl Service...");
   }
 
   private void aidl() {
@@ -49,7 +53,7 @@ public class AIDLActivity extends AppCompatActivity {
     button.setOnClickListener(v -> {
       try {
         int result = mAidlInterface.add(12, 12);
-        Log.d(TAG, "aidl result=" + result);
+        resultTv.setText("aidl result=" + result);
       } catch (RemoteException e) {
         e.printStackTrace();
       }
