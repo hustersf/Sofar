@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -74,6 +75,7 @@ dependencies {
     implementation project(':demo:aidl')
     implementation project(':demo:datastore')
     implementation project(':demo:appwidget')
+    implementation project(':demo:room')
 
     implementation project(':library:mpchart')
 

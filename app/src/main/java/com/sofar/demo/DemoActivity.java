@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.sofar.R;
 import com.sofar.aidl.AIDLActivity;
 import com.sofar.datastore.DataStoreActivity;
+import com.sofar.room.RoomActivity;
 
 public class DemoActivity extends AppCompatActivity {
 
@@ -18,6 +19,7 @@ public class DemoActivity extends AppCompatActivity {
     setContentView(R.layout.demo_activity);
     aidl();
     datastore();
+    room();
   }
 
   private void aidl() {
@@ -32,6 +34,14 @@ public class DemoActivity extends AppCompatActivity {
     Button button = findViewById(R.id.datastore_btn);
     button.setOnClickListener(v -> {
       Intent intent = new Intent(this, DataStoreActivity.class);
+      startActivity(intent);
+    });
+  }
+
+  private void room() {
+    Button button = findViewById(R.id.room_btn);
+    button.setOnClickListener(v -> {
+      Intent intent = new Intent(this, RoomActivity.class);
       startActivity(intent);
     });
   }
