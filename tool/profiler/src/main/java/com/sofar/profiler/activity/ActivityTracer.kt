@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.os.SystemClock
 import android.util.Log
+import com.sofar.profiler.MonitorManager
 import com.sofar.profiler.activity.instrumentation.HandlerHooker
 
 class ActivityTracer private constructor() {
@@ -104,6 +105,7 @@ class ActivityTracer private constructor() {
     timeInfo.otherCost = otherCostTime
     timeInfos.add(timeInfo)
     Log.d(TAG, "report=${timeInfo}")
+    MonitorManager.activityStartCallback(timeInfo)
   }
 
   private fun initTime() {

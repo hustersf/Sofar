@@ -2,6 +2,7 @@ package com.sofar.profiler.block.core
 
 import android.os.Looper
 import android.util.Log
+import com.sofar.profiler.MonitorManager
 import com.sofar.profiler.block.model.BlockInfo
 
 class BlockMonitorManager {
@@ -22,14 +23,14 @@ class BlockMonitorManager {
     val INSTANCE: BlockMonitorManager = BlockMonitorManager()
   }
 
-  fun start() {
+  fun start(blockThresholdMillis: Int = 0) {
     if (isRunning) {
       return
     }
     isRunning = true
     if (looperMonitor == null) {
       looperMonitor = LooperMonitor()
-      looperMonitor!!.init()
+      looperMonitor!!.init(blockThresholdMillis)
     }
     Looper.getMainLooper().setMessageLogging(looperMonitor)
   }
@@ -45,7 +46,9 @@ class BlockMonitorManager {
   }
 
   fun notifyBlockEvent(blockInfo: BlockInfo) {
+    Log.d(TAG, "------------------notifyBlockEvent----------------")
     Log.d(TAG, blockInfo.toString())
+    MonitorManager.blockCallback(blockInfo)
   }
 
 }

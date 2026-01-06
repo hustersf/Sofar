@@ -16,7 +16,6 @@ import com.sofar.fun.FunConfig;
 import com.sofar.image.ImageManager;
 import com.sofar.preferences.PreferenceConfigHolder;
 import com.sofar.preferences.SofarSharedPreferences;
-import com.sofar.profiler.MonitorManager;
 import com.sofar.utility.FileUtil;
 import com.sofar.utility.SystemUtil;
 
@@ -51,9 +50,6 @@ public class SofarApp extends Application {
     AppLifeManager.get().init(this);
 
     DownloadManager.get().init(this, new DownloadConfig.Builder().build());
-
-    MonitorManager.init(this);
-    MonitorManager.addAll();
 
     ImageManager.get().init(this);
 

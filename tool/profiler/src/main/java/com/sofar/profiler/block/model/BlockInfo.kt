@@ -1,14 +1,16 @@
 package com.sofar.profiler.block.model
 
 import java.text.SimpleDateFormat
+import java.util.ArrayList
 import java.util.Locale
 
 class BlockInfo {
-  private var timeCost: Long = 0
-  private var threadTimeCost: Long = 0
+  var timeCost: Long = 0
+  var threadTimeCost: Long = 0
+  var keyClass: String = ""
 
-  private var timeStart: String = ""
-  private var timeEnd: String = ""
+  var timeStart: String = ""
+  var timeEnd: String = ""
   private var threadStackEntries: ArrayList<String> = ArrayList()
 
   private val timeSb = StringBuilder()

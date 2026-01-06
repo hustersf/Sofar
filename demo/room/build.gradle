@@ -9,8 +9,8 @@ dependencies {
     implementation libs.androidx.lifecycle.runtime.ktx
     implementation libs.androidx.room
     ksp libs.androidx.room.compiler
-    implementation libs.coroutines
-    implementation libs.coroutines.android
+    implementation libs.kotlin.coroutines
+    implementation libs.kotlin.coroutines.android
 }
 
 

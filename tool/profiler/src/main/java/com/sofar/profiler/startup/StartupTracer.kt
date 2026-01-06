@@ -5,8 +5,11 @@ import android.app.Application
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
+import com.sofar.profiler.MonitorManager
+import com.sofar.profiler.startup.model.StartupInfo
 
 /**
+ * 该类不再使用，SDK内部使用[StartupTracerV2]
  * 业务方需要主动调用相关API
  * 1.[onApplicationCreateStart]
  * 2.[onApplicationCreateEnd]
@@ -44,6 +47,7 @@ class StartupTracer : Application.ActivityLifecycleCallbacks {
   fun onApplicationCreateStart(appContext: Application) {
     applicationStartTime = time()
     appContext.registerActivityLifecycleCallbacks(this)
+    Log.d("StartupTracer", "onApplicationCreateStart")
   }
 
   /**
@@ -51,6 +55,7 @@ class StartupTracer : Application.ActivityLifecycleCallbacks {
    */
   fun onApplicationCreateEnd() {
     applicationCost = time() - applicationStartTime
+    Log.d("StartupTracer", "onApplicationCreateEnd")
   }
 
   /**
@@ -133,11 +138,9 @@ class StartupTracer : Application.ActivityLifecycleCallbacks {
     warmStartUp: Boolean
   ) {
     if (!warmStartUp) {
-      Log.d(
-        "StartupTracer", "applicationCost=$applicationCost,"
-            + "firstScreenCost=$firstScreenCost,"
-            + "allCost=$allCost"
-      )
+      var appStartInfo = StartupInfo(applicationCost, firstScreenCost, allCost)
+      Log.d("StartupTracer", appStartInfo.toString())
+      MonitorManager.appStartCallback(appStartInfo)
     }
   }
 

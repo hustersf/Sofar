@@ -8,8 +8,10 @@ import com.sofar.profiler.MonitorType
 class TrafficMonitor : AbsMonitor() {
 
   private val uid = android.os.Process.myUid()
+
   // 总接收流量（字节）
   private val initRxBytes = TrafficStats.getUidRxBytes(uid)
+
   // 总发送流量（字节）
   private val initTxBytes = TrafficStats.getUidTxBytes(uid)
 
@@ -36,9 +38,10 @@ class TrafficMonitor : AbsMonitor() {
   private fun record() {
     var sb = StringBuilder()
     val rxBytes = TrafficStats.getUidRxBytes(uid)
-    sb.append("数据下载:${rxBytes-initRxBytes}B")
+    sb.append("数据下载:${rxBytes - initRxBytes}B")
     val txBytes = TrafficStats.getUidTxBytes(uid)
-    sb.append(",数据上传:${txBytes-initTxBytes}B")
+    sb.append("\n")
+    sb.append("数据上传:${txBytes - initTxBytes}B")
     MonitorManager.trafficCallback(sb.toString())
   }
 }

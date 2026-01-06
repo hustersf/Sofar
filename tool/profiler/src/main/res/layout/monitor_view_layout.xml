@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content"
+  android:orientation="vertical">
+
+  <ImageView
+    android:id="@+id/profiler_iv"
+    android:layout_width="@dimen/profiler_icon_size"
+    android:layout_height="@dimen/profiler_icon_size"
+    android:layout_gravity="end"
+    android:src="@drawable/profiler_icon" />
+
+  <include layout="@layout/monitor_view_business_layout" />
+
+  <View
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/space_height" />
+
+  <include layout="@layout/monitor_view_performance_layout" />
+
+</LinearLayout>

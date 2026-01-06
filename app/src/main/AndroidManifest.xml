@@ -236,15 +236,13 @@
       android:name=".widget.scroll.NestedScrollActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
       android:exported="false"
-      android:screenOrientation="portrait"
-      android:theme="@style/AppTheme.NoActionBar"></activity>
+      android:screenOrientation="portrait" />
 
     <activity
       android:name=".widget.scroll.LinkedScrollActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
       android:exported="false"
-      android:screenOrientation="portrait"
-      android:theme="@style/AppTheme.NoActionBar"></activity>
+      android:screenOrientation="portrait" />
 
     <activity
       android:name=".widget.scroll.AppbarLayoutActivity"

@@ -6,17 +6,16 @@ import android.util.Log
 import com.sofar.profiler.AbsMonitor
 import com.sofar.profiler.MonitorManager
 import com.sofar.profiler.MonitorType
-import com.sofar.profiler.formatNumber
+import com.sofar.profiler.memory.model.MemoryInfo
 import java.lang.Exception
 
 class MemoryMonitor : AbsMonitor() {
 
   private var tag = "MemoryMonitor"
-  private var memInfo = StringBuffer()
+  private lateinit var memInfo: MemoryInfo
 
   private val runnable: Runnable = object : Runnable {
     override fun run() {
-      memInfo.setLength(0)
       record()
       handler.postDelayed(this, pollInterval())
     }
@@ -43,7 +42,7 @@ class MemoryMonitor : AbsMonitor() {
     try {
       pssMemory()
       Log.d(tag, memInfo.toString())
-      MonitorManager.memoryCallback(memInfo.toString())
+      MonitorManager.memoryCallback(memInfo)
     } catch (e: Exception) {
       Log.d(tag, e.toString())
     }
@@ -76,30 +75,7 @@ class MemoryMonitor : AbsMonitor() {
       }
     }
 
-    memInfo.append("Total pss(MB)=")
-    memInfo.append(formatNumber(1.0f * pssTotalK / 1024))
-    memInfo.append("\n")
-    memInfo.append("Java pss(MB)=")
-    memInfo.append(formatNumber(1.0f * pssJavaK / 1024))
-    memInfo.append("\n")
-    memInfo.append("Native pss(MB)=")
-    memInfo.append(formatNumber(1.0f * pssNativeK / 1024))
-    memInfo.append("\n")
-    if (pssGraphicK != -1) {
-      memInfo.append("Graphics pss(MB)=")
-      memInfo.append(formatNumber(1.0f * pssGraphicK / 1024))
-      memInfo.append("\n")
-    }
-    if (pssStackK != -1) {
-      memInfo.append("Stack pss(MB)=")
-      memInfo.append(formatNumber(1.0f * pssStackK / 1024))
-      memInfo.append("\n")
-    }
-    if (pssCodeK != -1) {
-      memInfo.append("Code pss(MB)=")
-      memInfo.append(formatNumber(1.0f * pssCodeK / 1024))
-      memInfo.append("\n")
-    }
+    memInfo = MemoryInfo(pssTotalK, pssJavaK, pssNativeK, pssGraphicK, pssStackK, pssCodeK)
   }
 
 }

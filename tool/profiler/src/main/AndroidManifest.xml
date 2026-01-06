@@ -1,3 +1,31 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+  <application>
+    <provider
+      android:name=".ProfilerInitProvider"
+      android:authorities="${applicationId}.profilerinitprovider"
+      android:exported="false"
+      android:initOrder="-1" />
+    <activity
+      android:name=".ui.MonitorHostActivity"
+      android:exported="true"
+      android:icon="@drawable/profiler_icon"
+      android:label="@string/profiler_display_activity_label"
+      android:taskAffinity="com.sofar.profiler.${applicationId}" />
+
+    <activity-alias
+      android:name="com.sofar.profiler.ProfilerLauncherActivity"
+      android:enabled="@bool/profiler_add_launcher_icon"
+      android:exported="true"
+      android:icon="@drawable/profiler_icon"
+      android:label="@string/profiler_display_activity_label"
+      android:targetActivity=".ui.MonitorHostActivity"
+      android:taskAffinity="com.sofar.profiler.${applicationId}">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity-alias>
+  </application>
+
 </manifest>

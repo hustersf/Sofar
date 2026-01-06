@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/page_padding">
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
+
+      <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/config_hint"
+        android:textColor="@color/color_error"
+        android:textStyle="bold" />
+
+      <Button
+        android:id="@+id/restore_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/button_height"
+        android:layout_gravity="end"
+        android:padding="@dimen/button_padding"
+        android:text="@string/threshold_restore"
+        android:textSize="@dimen/text_size_small" />
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/button_height"
+      android:layout_marginTop="@dimen/page_padding"
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
+
+      <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/business_config_title"
+        android:textColor="@color/color_text_main"
+        android:textStyle="bold" />
+
+      <Button
+        android:id="@+id/business_save_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/button_height"
+        android:layout_gravity="end"
+        android:padding="@dimen/button_padding"
+        android:text="@string/save"
+        android:textSize="@dimen/text_size_small" />
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/switch_item_height"
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_start_switch_text" />
+
+      <EditText
+        android:id="@+id/app_start_et"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/page_padding"
+        android:layout_weight="1"
+        android:inputType="number" />
+
+      <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/app_start_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/switch_item_height"
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
+
+      <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/app_start_splash_switch_text" />
+
+      <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/app_splash_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <View
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/divider_height"
+      android:background="@color/color_divider_line" />
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/switch_item_height"
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/activity_switch_text" />
+
+      <EditText
+        android:id="@+id/activity_et"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/page_padding"
+        android:layout_weight="1"
+        android:inputType="number" />
+
+      <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/activity_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/button_height"
+      android:layout_marginTop="@dimen/page_padding"
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
+
+      <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/common_config_title"
+        android:textColor="@color/color_text_main"
+        android:textStyle="bold" />
+
+      <Button
+        android:id="@+id/common_save_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/button_height"
+        android:layout_gravity="end"
+        android:gravity="center"
+        android:padding="@dimen/button_padding"
+        android:text="@string/save"
+        android:textSize="@dimen/text_size_small" />
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/switch_item_height"
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/collect_interval_text" />
+
+      <EditText
+        android:id="@+id/collect_interval_et"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/page_padding"
+        android:layout_weight="1"
+        android:inputType="number" />
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/switch_item_height"
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cpu_switch_text" />
+
+      <EditText
+        android:id="@+id/cpu_et"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/page_padding"
+        android:layout_weight="1"
+        android:inputType="number" />
+
+      <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/cpu_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+
+    <View
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/divider_height"
+      android:background="@color/color_divider_line" />
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/switch_item_height"
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/frame_switch_text" />
+
+
+      <EditText
+        android:id="@+id/frame_et"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/page_padding"
+        android:layout_weight="1"
+        android:inputType="number" />
+
+      <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/frame_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <View
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/divider_height"
+      android:background="@color/color_divider_line" />
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/switch_item_height"
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/memory_switch_text" />
+
+      <EditText
+        android:id="@+id/memory_et"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/page_padding"
+        android:layout_weight="1"
+        android:inputType="number" />
+
+      <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/memory_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <View
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/divider_height"
+      android:background="@color/color_divider_line" />
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/switch_item_height"
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/fd_switch_text" />
+
+      <EditText
+        android:id="@+id/fd_et"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/page_padding"
+        android:layout_weight="1"
+        android:inputType="number" />
+
+      <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/fd_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <View
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/divider_height"
+      android:background="@color/color_divider_line" />
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/switch_item_height"
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/thread_switch_text" />
+
+      <EditText
+        android:id="@+id/thread_et"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/page_padding"
+        android:layout_weight="1"
+        android:inputType="number" />
+
+      <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/thread_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <View
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/divider_height"
+      android:background="@color/color_divider_line" />
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/switch_item_height"
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/battery_switch_text" />
+
+      <EditText
+        android:id="@+id/battery_et"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/page_padding"
+        android:layout_weight="1"
+        android:inputType="number" />
+
+      <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/battery_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <View
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/divider_height"
+      android:background="@color/color_divider_line" />
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/switch_item_height"
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
+
+      <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/traffic_switch_text" />
+
+      <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/traffic_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/button_height"
+      android:layout_marginTop="@dimen/page_padding"
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
+
+      <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/block_config_title"
+        android:textColor="@color/color_text_main"
+        android:textStyle="bold" />
+
+      <Button
+        android:id="@+id/block_save_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/button_height"
+        android:layout_gravity="end"
+        android:gravity="center"
+        android:padding="@dimen/button_padding"
+        android:text="@string/save"
+        android:textSize="@dimen/text_size_small" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/switch_item_height"
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/block_switch_text" />
+
+      <EditText
+        android:id="@+id/block_time_et"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/page_padding"
+        android:layout_weight="1"
+        android:inputType="number" />
+
+      <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/block_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/switch_item_height"
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/block_package_text" />
+
+      <EditText
+        android:id="@+id/block_package_et"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/page_padding"
+        android:layout_weight="1" />
+
+    </LinearLayout>
+  </LinearLayout>
+
+</ScrollView>

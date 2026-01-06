@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="@dimen/block_item_height"
+  app:cardCornerRadius="@dimen/card_radius">
+
+  <RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/inner_padding">
+
+    <TextView
+      android:id="@+id/class_tv"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:textColor="@color/color_error"
+      android:textStyle="bold" />
+
+    <TextView
+      android:id="@+id/cost_tv"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:textColor="@color/color_text_main"/>
+
+    <TextView
+      android:id="@+id/time_tv"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignBaseline="@+id/cost_tv"
+      android:layout_alignParentEnd="true"
+      android:textColor="@color/color_text_second"/>
+
+  </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

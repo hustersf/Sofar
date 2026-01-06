@@ -50,12 +50,11 @@ class ThreadMonitor : AbsMonitor() {
 
   private fun dumpThread() {
     var taskDir = File("/proc/self/task")
-    count = taskDir.listFiles().size
+    count = taskDir.listFiles()?.size ?: 0
     if (count > warningCount) {
       Log.d(tag, getInfo())
     }
   }
-
 
   fun getInfo(): String {
     val taskDir = File("/proc/self/task")

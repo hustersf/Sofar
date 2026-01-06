@@ -10,16 +10,14 @@ class ActivityTimeInfo {
   var otherCost: Long = 0
 
   override fun toString(): String {
-    var sb = StringBuilder()
-    sb.append("ActivityTimeInfo{")
-    sb.append("title=$title,")
-    sb.append("back=$back,")
-    sb.append("totalCost=$totalCost,")
-    sb.append("pauseCost=$pauseCost,")
-    sb.append("launchCost=$launchCost,")
-    sb.append("renderCost=$renderCost,")
-    sb.append("otherCost=$otherCost,")
-    sb.append("}")
+    val sb = StringBuilder()
+    sb.append("page:$title,")
+    sb.append("back=$back\n")
+    sb.append("totalCost=$totalCost\n")
+    sb.append("pauseCost=$pauseCost\n")
+    sb.append("launchCost=$launchCost\n")
+    sb.append("renderCost=$renderCost\n")
+    sb.append("otherCost=$otherCost")
     return sb.toString()
   }
 }

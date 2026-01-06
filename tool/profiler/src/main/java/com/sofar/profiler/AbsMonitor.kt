@@ -34,6 +34,6 @@ abstract class AbsMonitor : IMonitor {
   protected abstract fun onStop()
 
   override fun pollInterval(): Long {
-    return 1000
+    return MonitorManager.collectInterval()
   }
 }

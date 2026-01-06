@@ -58,7 +58,7 @@ class BatteryMonitor : AbsMonitor() {
       // 5. 电压（单位：mV）
       val voltage: Int = it.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1)
       sb.append(",${voltage}mV")
-      MonitorManager.batteryCallback(sb.toString())
+      MonitorManager.batteryCallback(tempCelsius)
     }
   }
 }

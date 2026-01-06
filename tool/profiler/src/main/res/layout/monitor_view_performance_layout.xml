@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/performance_layout"
+  android:layout_width="@dimen/panel_width"
+  android:layout_height="wrap_content"
+  android:background="@color/color_panel_background"
+  android:orientation="vertical"
+  android:padding="@dimen/page_padding"
+  android:visibility="gone">
+
+  <TextView
+    android:id="@+id/cpu_tv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textColor="@color/color_panel_text" />
+
+  <TextView
+    android:id="@+id/fps_tv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textColor="@color/color_panel_text" />
+
+  <TextView
+    android:id="@+id/memory_tv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textColor="@color/color_panel_text" />
+
+  <TextView
+    android:id="@+id/thread_tv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textColor="@color/color_panel_text" />
+
+  <TextView
+    android:id="@+id/fd_tv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textColor="@color/color_panel_text" />
+
+  <TextView
+    android:id="@+id/battery_tv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textColor="@color/color_panel_text" />
+
+  <TextView
+    android:id="@+id/traffic_tv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textColor="@color/color_panel_text" />
+</LinearLayout>

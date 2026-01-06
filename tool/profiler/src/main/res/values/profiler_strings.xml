@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="profiler_display_activity_label">Profiler</string>
+  <string name="common_config_title">常规检测模块</string>
+  <string name="business_config_title">业务检测模块</string>
+  <string name="block_config_title">卡顿检测模块</string>
+  <string name="activity_switch_text">页面耗时</string>
+  <string name="battery_switch_text">电池温度</string>
+  <string name="block_switch_text">卡顿</string>
+  <string name="block_time_text">卡顿时间阈值</string>
+  <string name="block_package_text">卡顿关键包</string>
+  <string name="cpu_switch_text">CPU</string>
+  <string name="frame_switch_text">帧率</string>
+  <string name="memory_switch_text">内存</string>
+  <string name="fd_switch_text">FD数量</string>
+  <string name="thread_switch_text">线程数量</string>
+  <string name="app_start_switch_text">启动耗时</string>
+  <string name="app_start_splash_switch_text">是否存在闪屏页</string>
+  <string name="traffic_switch_text">流量</string>
+  <string name="confirm">确认</string>
+  <string name="config_hint">重启APP生效!!!</string>
+  <string name="collect_interval_text">采集频率</string>
+  <string name="save">保存</string>
+  <string name="threshold_restore">阈值还原</string>
+</resources>

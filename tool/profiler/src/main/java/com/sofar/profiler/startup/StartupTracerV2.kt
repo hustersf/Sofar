@@ -3,12 +3,18 @@ package com.sofar.profiler.startup
 import android.app.Activity
 import android.os.SystemClock
 import android.util.Log
+import com.sofar.profiler.MonitorManager
+import com.sofar.profiler.startup.model.StartupInfo
 
 /**
  * [StartupTracer] 升级版
  * 业务方无需主动调用相关API,SDK内部统计各个阶段的耗时
  */
 internal class StartupTracerV2 {
+
+  private var activeActivityCount = 0
+  private var startupInfo: StartupInfo? = null
+  private var hasSplashActivity = true
 
   companion object {
     @JvmStatic
@@ -26,12 +32,12 @@ internal class StartupTracerV2 {
   private var firstScreenCost: Long = 0
   private var coldCost: Long = 0
 
-  private var activeActivityCount = 0
   private var warmStartUp = false
   private var lastCreateActivity: Long = 0
 
-  fun start() {
+  fun start(splashActivity: Boolean = true) {
     applicationStartTime = time()
+    this.hasSplashActivity = splashActivity
   }
 
   fun onActivityCreated(activity: Activity) {
@@ -47,8 +53,21 @@ internal class StartupTracerV2 {
   }
 
   fun onActivityResumed(activity: Activity) {
-    activity.window.decorView.post {
+    render(activity)
+  }
+
+  fun onActivityDestroyed(activity: Activity) {
+    activeActivityCount--
+  }
+
+  private fun time(): Long {
+    return SystemClock.elapsedRealtime()
+  }
+
+  private fun render(activity: Activity) {
+    activity.window.decorView.post(Runnable {
       if (isWarmStartUp()) {
+        //当前暂时不统计温启动,只统计冷启动
         warmStartUp = false
         val warmCost = time() - lastCreateActivity
       } else if (isColdStartup()) {
@@ -57,15 +76,14 @@ internal class StartupTracerV2 {
         } else {
           coldCost = time() - applicationStartTime
         }
-        if (firstScreenCost > 0 || coldCost > 0) {
+        if (!hasSplashActivity) {
+          coldCost = firstScreenCost
+        }
+        if (coldCost > 0) {
           analyse(applicationCost, firstScreenCost, coldCost, false)
         }
       }
-    }
-  }
-
-  fun onActivityDestroyed(activity: Activity) {
-    activeActivityCount--
+    })
   }
 
   private fun isColdStartup(): Boolean {
@@ -76,23 +94,26 @@ internal class StartupTracerV2 {
     return warmStartUp
   }
 
-  private fun time(): Long {
-    return SystemClock.elapsedRealtime()
-  }
-
   private fun analyse(
     applicationCost: Long,
     firstScreenCost: Long,
     allCost: Long,
     warmStartUp: Boolean
   ) {
-    if (!warmStartUp) {
-      Log.d(
-        "StartupTracer", "applicationCost=$applicationCost,"
-            + "firstScreenCost=$firstScreenCost,"
-            + "allCost=$allCost"
-      )
+    if (applicationStartTime <= 0) {
+      return
     }
+    if (!warmStartUp) {
+      startupInfo = StartupInfo(applicationCost, firstScreenCost, allCost)
+      startupInfo?.let {
+        Log.d("StartupTracerV2", it.toString())
+        MonitorManager.appStartCallback(it)
+      }
+    }
+  }
+
+  fun getStartupInfo(): StartupInfo? {
+    return startupInfo
   }
 
 }

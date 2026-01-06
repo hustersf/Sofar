@@ -3,12 +3,9 @@ package com.sofar.profiler.block.core
 import android.os.SystemClock
 import android.util.Printer
 import com.sofar.profiler.block.model.BlockInfo
+import com.sofar.profiler.config.DEFAULT_BLOCK_THRESHOLD_MILL
 
 class LooperMonitor : Printer {
-
-  companion object {
-    private const val DEFAULT_BLOCK_THRESHOLD_MILL = 300
-  }
 
   private var startTime: Long = 0
   private var startThreadTime: Long = 0
@@ -17,8 +14,12 @@ class LooperMonitor : Printer {
   private var stackSampler = StackSampler()
   private var blockThresholdMillis: Int = DEFAULT_BLOCK_THRESHOLD_MILL
 
-  fun init(blockThresholdMillis: Int = DEFAULT_BLOCK_THRESHOLD_MILL) {
-    this.blockThresholdMillis = blockThresholdMillis
+  fun init(time: Int = DEFAULT_BLOCK_THRESHOLD_MILL) {
+    if (time <= 0) {
+      blockThresholdMillis = DEFAULT_BLOCK_THRESHOLD_MILL
+    } else {
+      blockThresholdMillis = time
+    }
     stackSampler.init((blockThresholdMillis * 0.8f).toInt())
   }
 

@@ -1,6 +1,10 @@
 package com.sofar.profiler
 
 import androidx.annotation.MainThread
+import com.sofar.profiler.activity.ActivityTimeInfo
+import com.sofar.profiler.block.model.BlockInfo
+import com.sofar.profiler.memory.model.MemoryInfo
+import com.sofar.profiler.startup.model.StartupInfo
 
 interface MonitorCallback {
 
@@ -17,7 +21,7 @@ interface MonitorCallback {
   }
 
   @MainThread
-  fun onMemoryInfo(info: String) {
+  fun onMemoryInfo(info: MemoryInfo) {
   }
 
   @MainThread
@@ -25,10 +29,22 @@ interface MonitorCallback {
   }
 
   @MainThread
-  fun onBatteryInfo(info: String) {
+  fun onBatteryInfo(temperature: Float) {
   }
 
   @MainThread
   fun onTrafficInfo(info: String) {
+  }
+
+  @MainThread
+  fun onAppStartInfo(info: StartupInfo) {
+  }
+
+  @MainThread
+  fun onActivityStartInfo(info: ActivityTimeInfo) {
+  }
+
+  @MainThread
+  fun onBlock(info: BlockInfo) {
   }
 }

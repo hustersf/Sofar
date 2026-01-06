@@ -4,7 +4,15 @@ android {
     namespace 'com.sofar.profiler'
 }
 dependencies {
-
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.lifecycle.runtime.ktx
+    implementation libs.androidx.preferences
+    implementation libs.material
+    implementation libs.androidx.recyclerview
+    implementation libs.androidx.viewpager2
+    implementation libs.kotlin.coroutines
+    implementation libs.kotlin.coroutines.android
 }
 
 

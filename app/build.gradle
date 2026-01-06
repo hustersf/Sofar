@@ -71,7 +71,7 @@ dependencies {
     implementation project(':framework:config')
 
     implementation project(':debug')
-    implementation project(':tool:profiler')
+    debugImplementation project(':tool:profiler')
     implementation project(':demo:aidl')
     implementation project(':demo:datastore')
     implementation project(':demo:appwidget')

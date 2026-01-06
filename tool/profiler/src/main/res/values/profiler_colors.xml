@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="color_panel_background">#40000000</color>
+  <color name="color_panel_text">#FFFFFF</color>
+  <color name="color_tab_background">#FFFFFF</color>
+  <color name="color_background">#F5F5F5</color>
+  <color name="color_error">#FF0000</color>
+  <color name="color_divider_line">#C1C1C1</color>
+  <color name="color_text_main">#000000</color>
+  <color name="color_text_second">#666666</color>
+
+</resources>
