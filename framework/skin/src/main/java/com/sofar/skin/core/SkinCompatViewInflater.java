@@ -31,8 +31,14 @@ public class SkinCompatViewInflater {
 
     boolean skinEnable = attrs.getAttributeBooleanValue(SkinConfig.NAMESPACE,
       SkinConfig.ATTR_SKIN_ENABLE, false);
-    if (skinEnable && view != null) {
-      parseSkinView(context, attrs, view);
+    if (skinEnable) {
+      if (view == null) {
+        // 非 AppCompat 控件收集
+        view = SkinViewInflater.createViewFromTag(context, name, attrs);
+      }
+      if (view != null) {
+        parseSkinView(context, attrs, view);
+      }
     }
     return view;
   }
