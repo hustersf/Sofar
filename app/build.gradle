@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace 'com.sofar'
-    compileSdk 34
+    compileSdk libs.versions.compileSdk.get().toString() as int
 
     defaultConfig {
         applicationId "com.sofar"
-        minSdk 24
-        targetSdk 34
+        minSdk libs.versions.minSdk.get().toString() as int
+        targetSdk libs.versions.targetSdk.get().toString() as int
         versionCode 1
         versionName "1.0"
 

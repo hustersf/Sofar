@@ -1,4 +1,9 @@
 [versions]
+# SDK 版本
+targetSdk = "34"
+compileSdk = "34"
+minSdk = "24"
+
 agp = "8.7.2"
 kotlin = "2.2.20"
 ksp = "2.2.20-2.0.3"
