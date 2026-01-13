@@ -63,6 +63,7 @@ dependencies {
     implementation project(':framework:utility')
     implementation project(':framework:widget')
     implementation project(':framework:network')
+    implementation project(':framework:network2')
     implementation project(':framework:download')
     implementation project(':framework:skin')
     implementation project(':framework:audio-record')
