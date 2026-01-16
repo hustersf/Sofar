@@ -15,6 +15,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
+import java.util.concurrent.ConcurrentHashMap
 
 class OpenApiClient private constructor() {
 
@@ -27,6 +28,9 @@ class OpenApiClient private constructor() {
     // 允许宽松的 JSON 格式
     isLenient = true
   }
+
+  // 使用线程安全的 Map 存储缓存实例
+  private val serviceCache = ConcurrentHashMap<Class<*>, Any>()
 
   companion object {
     @JvmStatic
@@ -42,6 +46,7 @@ class OpenApiClient private constructor() {
    * SDK 初始化入口
    */
   fun init(context: Context, config: SdkConfig = SdkConfig.build()) {
+    serviceCache.clear()
     // 参数注入
     SdkInternal.inject(context, config)
 
@@ -72,8 +77,11 @@ class OpenApiClient private constructor() {
       .build()
   }
 
+  @Suppress("UNCHECKED_CAST")
   fun <T : Any> create(serviceClass: Class<T>): T {
-    return retrofit.create(serviceClass)
+    return serviceCache.computeIfAbsent(serviceClass) {
+      retrofit.create(serviceClass)
+    } as T
   }
 
   inline fun <reified T : Any> create(): T = create(T::class.java)
