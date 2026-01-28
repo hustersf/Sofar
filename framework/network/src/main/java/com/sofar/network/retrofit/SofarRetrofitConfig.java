@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.sofar.network.cookie.SimpleCookieJar;
-import com.sofar.network.interceptor.ContentLengthInterceptor;
 import com.sofar.network.interceptor.HeadersInterceptor;
 import com.sofar.network.interceptor.ParamsInterceptor;
 import com.sofar.network.retrofit.consumer.NetworkCounter;
@@ -63,7 +62,6 @@ public class SofarRetrofitConfig implements RetrofitConfig {
     Params params = buildParams();
     builder.addInterceptor(new HeadersInterceptor(params));
     builder.addInterceptor(new ParamsInterceptor(params));
-    builder.addInterceptor(new ContentLengthInterceptor());
 
     builder.cookieJar(new SimpleCookieJar());
     return builder.build();
