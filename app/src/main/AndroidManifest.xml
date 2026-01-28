@@ -129,6 +129,27 @@
 
     </activity>
 
+
+    <activity
+      android:name=".network.KmpNetworkActivity"
+      android:configChanges="orientation|keyboardHidden|screenSize"
+      android:exported="true"
+      android:screenOrientation="portrait">
+
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+
+        <data
+          android:host="network3"
+          android:scheme="sofar" />
+      </intent-filter>
+
+    </activity>
+
+
     <activity
       android:name=".business.github.ui.SearchRepoActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"

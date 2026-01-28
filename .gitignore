@@ -37,6 +37,7 @@ captures/
 *.iml
 .idea/
 .externalNativeBuild
+.kotlin
 
 # Mac
 .DS_Store

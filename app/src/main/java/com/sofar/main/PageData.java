@@ -16,6 +16,7 @@ public class PageData {
     list.add(PageData.createPageData("控件", "sofar://widget"));
     list.add(PageData.createPageData("网络(RxJava)", "sofar://network"));
     list.add(PageData.createPageData("网络2(协程)", "sofar://network2"));
+    list.add(PageData.createPageData("网络3(kmp-ktor)", "sofar://network3"));
     list.add(PageData.createPageData("github仓库", "sofar://github"));
     list.add(PageData.createPageData("下载库", "sofar://download"));
     list.add(PageData.createPageData("预加载库", "sofar://preload"));

@@ -15,7 +15,7 @@ import retrofit2.Call;
 public class MyRetrofitConfig extends SofarRetrofitConfig {
 
   public MyRetrofitConfig() {
-    super("http://www.wanandroid.com/", Schedulers.newThread());
+    super("https://www.wanandroid.com/", Schedulers.newThread());
   }
 
   @NonNull
