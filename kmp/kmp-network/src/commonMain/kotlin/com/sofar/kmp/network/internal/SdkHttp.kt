@@ -1,72 +1,191 @@
 package com.sofar.kmp.network.internal
 
 import com.sofar.kmp.network.api.model.ApiResponse
+import com.sofar.kmp.network.core.currentTokenManager
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.forms.MultiPartFormDataContent
+import io.ktor.client.request.forms.formData
 import io.ktor.client.request.request
+import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
+import io.ktor.http.contentType
+import io.ktor.http.defaultForFilePath
+import io.ktor.util.date.getTimeMillis
+import io.ktor.utils.io.ByteReadChannel
+import io.ktor.utils.io.core.buildPacket
+import io.ktor.utils.io.core.writeFully
+import io.ktor.utils.io.readRemaining
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
-
-class ApiException(
-  val code: Int,
-  msg: String?
-) : Exception("API Error($code): $msg")
-
-class TokenException(
-  val code: Int,
-  message: String
-) : Exception("[$code] $message")
+import kotlinx.io.buffered
+import kotlinx.io.files.Path
+import kotlinx.io.files.SystemFileSystem
+import kotlinx.io.readByteArray
 
 internal object SdkHttp {
-  const val CODE_EMPTY_DATA = -1
-  val TOKEN_INVALID_CODES = setOf(-44112)
+  const val NETWORK_ERROR = -1
+  const val NETWORK_ERROR_MSG = "Network Error"
+  const val IO_BUFFER_SIZE_BYTES = 8192L
 
   suspend inline fun <reified T> HttpResponse.safeParse(): ApiResponse<T> {
     val rawText = bodyAsText()
     return NetworkEngine.sdkJson.decodeFromString(rawText)
   }
 
+  /**
+   * 通用的 Token 重试逻辑包装器
+   * @param initialResponse 第一次请求的结果
+   * @param requestBlock 重新发起请求的逻辑
+   * @param parseBlock 如何解析 Response
+   */
+  suspend inline fun <T> withTokenRetry(
+    initialResponse: HttpResponse,
+    crossinline requestBlock: suspend () -> HttpResponse,
+    crossinline parseBlock: suspend (HttpResponse) -> ApiResponse<T>
+  ): ApiResponse<T> {
+    val manager = currentTokenManager ?: return parseBlock(initialResponse)
+    val oldToken = manager.getCurrentToken()
+    val firstResult = parseBlock(initialResponse)
+    if (SdkInternal.config.tokenRetry && manager.isExpired(initialResponse, firstResult.errorCode)) {
+      if (manager.refreshAndGet(oldToken) != null) {
+        return parseBlock(requestBlock())
+      }
+    }
+    return firstResult
+  }
+
+  @Suppress("TooGenericExceptionCaught")
   suspend inline fun <reified T> HttpClient.safeRequest(
     crossinline block: HttpRequestBuilder.() -> Unit
-  ): Result<T> = withContext(Dispatchers.Default) {
+  ): ApiResponse<T> = withContext(Dispatchers.Default) {
     try {
-      // 尝试第一次请求
       val response = request { block() }
-      val apiResponse = response.safeParse<T>()
-      Result.success(apiResponse.unwrap())
-    } catch (e: TokenException) {
-      // 捕获 TokenException（来自 Validator 的 401 或 unwrap 的业务码）
-      runCatching {
-        TokenManager.refreshAndGet(TokenManager.getAccessToken())
-        // 刷新成功后发起第二次请求
-        val retryResponse = request { block() }
-        retryResponse.safeParse<T>().unwrap()
-      }
+      withTokenRetry(
+        initialResponse = response,
+        requestBlock = { request { block() } },
+        parseBlock = { it.safeParse<T>() }
+      )
     } catch (e: Exception) {
-      Result.failure(e)
+      ApiResponse(null, NETWORK_ERROR, e.message ?: NETWORK_ERROR_MSG)
     }
   }
 
-  inline fun <reified T> ApiResponse<T>.unwrap(): T {
-    if (errorCode == 0) {
-      val data = this.data
-      return when {
-        data != null -> data
-        Unit is T -> Unit as T
-        else -> throw ApiException(
-          CODE_EMPTY_DATA,
-          "Response data is null, but expected ${T::class.simpleName}"
-        )
+  @Suppress("TooGenericExceptionCaught")
+  suspend fun HttpClient.safeDownload(
+    directoryPath: String,
+    fileName: String? = null,
+    block: HttpRequestBuilder.() -> Unit
+  ): ApiResponse<String> = withContext(Dispatchers.IO) {
+    try {
+      withTokenRetry(
+        initialResponse = request { block() },
+        requestBlock = { request { block() } },
+        parseBlock = { response ->
+          // 如果响应是 JSON，说明业务报错了，解析错误信息
+          if (response.contentType()?.match(ContentType.Application.Json) == true) {
+            val errorRes = response.safeParse<Unit>()
+            ApiResponse(null, errorRes.errorCode, errorRes.errorMsg)
+          } else {
+            // 正常下载逻辑
+            val path = download(response, directoryPath, fileName)
+            ApiResponse(path, 0)
+          }
+        }
+      )
+    } catch (e: Exception) {
+      ApiResponse(null, NETWORK_ERROR, e.message ?: NETWORK_ERROR_MSG)
+    }
+  }
+
+  private suspend fun download(
+    response: HttpResponse,
+    directoryPath: String,
+    fileName: String?
+  ): String {
+    // 正常下载逻辑：使用 kotlinx-io 流式落盘
+    val name = fileName ?: response.headers["Content-Disposition"]
+      ?.substringAfter("filename=")?.trim()
+      ?.removeSurrounding("\"") ?: "export_${getTimeMillis()}.zip"
+
+    val parentDir = Path(directoryPath)
+    val path = Path(parentDir, name)
+    val channel: ByteReadChannel = response.body()
+    // 获取系统的 sink（写入流）并开启缓冲区
+    SystemFileSystem.sink(path).buffered().use { sink ->
+      while (!channel.isClosedForRead) {
+        val packet = channel.readRemaining(IO_BUFFER_SIZE_BYTES)
+        sink.write(packet.readByteArray())
+        sink.flush()
       }
     }
+    return path.toString()
+  }
 
-    // 如果是 Token 错误码，抛出 TokenException 触发后续的 recover
-    if (TOKEN_INVALID_CODES.contains(errorCode)) {
-      throw TokenException(errorCode, errorMsg)
+  @Suppress("TooGenericExceptionCaught")
+  suspend inline fun <reified T> HttpClient.safeUpload(
+    filePath: String,
+    params: Map<String, String> = emptyMap(),
+    crossinline block: HttpRequestBuilder.() -> Unit
+  ): ApiResponse<T> = withContext(Dispatchers.IO) {
+    val path = Path(filePath)
+
+    // 跨平台检查文件是否存在及获取大小
+    val metadata = SystemFileSystem.metadataOrNull(path)
+    if (metadata == null || !metadata.isRegularFile) {
+      return@withContext ApiResponse(null, NETWORK_ERROR, "File not found or invalid: $filePath")
+    }
+    val fileSize = metadata.size
+
+    val createRequestBuilder: HttpRequestBuilder.() -> Unit = {
+      block()
+      setBody(
+        MultiPartFormDataContent(
+          formData {
+            params.forEach { (key, value) ->
+              append(key, value)
+            }
+
+            appendInput(
+              key = "file",
+              headers = Headers.build {
+                append(HttpHeaders.ContentType, ContentType.defaultForFilePath(filePath).toString())
+                append(HttpHeaders.ContentDisposition, "filename=\"${path.name}\"")
+              },
+              size = fileSize
+            ) {
+              buildPacket {
+                val source = SystemFileSystem.source(path).buffered()
+                val buffer = ByteArray(IO_BUFFER_SIZE_BYTES.toInt())
+                source.use { s ->
+                  while (true) {
+                    val bytesRead = s.readAtMostTo(buffer)
+                    if (bytesRead <= 0) break
+                    writeFully(buffer, 0, bytesRead)
+                  }
+                }
+              }
+            }
+          }
+        )
+      )
     }
 
-    throw ApiException(errorCode, errorMsg)
+    try {
+      val response = request { createRequestBuilder() }
+      withTokenRetry(
+        initialResponse = response,
+        requestBlock = { request { createRequestBuilder() } },
+        parseBlock = { it.safeParse<T>() }
+      )
+    } catch (e: Exception) {
+      ApiResponse(null, NETWORK_ERROR, e.message ?: NETWORK_ERROR_MSG)
+    }
   }
 }

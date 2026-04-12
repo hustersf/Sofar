@@ -1,5 +1,6 @@
 package com.sofar.kmp.network.api
 
+import com.sofar.kmp.network.api.model.ApiResponse
 import com.sofar.kmp.network.api.model.TokenInfo
 import com.sofar.kmp.network.internal.NetworkEngine
 import com.sofar.kmp.network.internal.SdkHttp.safeRequest
@@ -12,7 +13,7 @@ class AuthApi internal constructor(private val engine: NetworkEngine) {
   suspend fun getToken(
     clientId: String,
     clientSecret: String
-  ): Result<TokenInfo> = engine.httpClient.safeRequest {
+  ): ApiResponse<TokenInfo> = engine.httpClient.safeRequest {
     method = HttpMethod.Post
     url("auth/token")
     parameter("client_id", clientId)
@@ -23,7 +24,7 @@ class AuthApi internal constructor(private val engine: NetworkEngine) {
     clientId: String,
     clientSecret: String,
     token: String?
-  ): Result<TokenInfo> = engine.httpClient.safeRequest {
+  ): ApiResponse<TokenInfo> = engine.httpClient.safeRequest {
     method = HttpMethod.Post
     url("auth/refreshToken")
     parameter("client_id", clientId)

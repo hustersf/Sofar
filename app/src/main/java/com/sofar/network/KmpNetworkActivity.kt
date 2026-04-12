@@ -22,7 +22,7 @@ class KmpNetworkActivity : AppCompatActivity() {
 
     OpenApiClient.get().init(SdkConfig.build {
       setDebugMode(true)
-      setBaseUrl("https://www.wanandroid.com/")
+      setBaseUrl("https://wanandroid.com/")
     })
 
     bodyLayout = findViewById(R.id.body_layout)
@@ -31,21 +31,19 @@ class KmpNetworkActivity : AppCompatActivity() {
     bodyLayout.setOnClickListener {
       lifecycleScope.launch {
         body.text = "..."
-        val result = OpenApiClient.get().banner.getBanners()
-        result.fold(
-          onSuccess = {
-            val sb = StringBuilder()
-            sb.append("size=${it.size}\n")
-            it.forEach { banner ->
-              sb.append(banner.title)
-              sb.append("\n")
-            }
-            body.text = sb.toString().dropLast(1)
-          },
-          onFailure = {
-            body.text = it.message
+        val response = OpenApiClient.get().banner.getBanners()
+        if (response.isSuccess && response.data != null) {
+          val data = response.data!!
+          val sb = StringBuilder()
+          sb.append("size=${data.size}\n")
+          data.forEach { banner ->
+            sb.append(banner.title)
+            sb.append("\n")
           }
-        )
+          body.text = sb.toString().dropLast(1)
+        } else {
+          body.text = "${response.errorCode}:${response.errorMsg}"
+        }
       }
     }
 

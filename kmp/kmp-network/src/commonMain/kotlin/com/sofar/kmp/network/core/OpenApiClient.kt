@@ -1,8 +1,7 @@
 package com.sofar.kmp.network.core
 
-import com.sofar.kmp.network.api.AuthApi
-import com.sofar.kmp.network.api.BannerApi
 import com.sofar.kmp.network.internal.NetworkEngine
+import com.sofar.kmp.network.internal.OpenTokenManager
 import com.sofar.kmp.network.internal.SdkInternal
 import com.sofar.kmp.network.internal.installOpenApiAuth
 import io.ktor.client.plugins.logging.LogLevel
@@ -11,7 +10,7 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
 import kotlin.jvm.JvmStatic
 
-class OpenApiClient private constructor() {
+class OpenApiClient private constructor() : ApiProvider() {
 
   companion object {
     private val instance: OpenApiClient by lazy { OpenApiClient() }
@@ -20,13 +19,13 @@ class OpenApiClient private constructor() {
     fun get(): OpenApiClient = instance
   }
 
-  @PublishedApi
-  internal lateinit var engine: NetworkEngine
-
   fun init(config: SdkConfig = SdkConfig.build()) {
     SdkInternal.inject(config)
+    currentTokenManager = OpenTokenManager(config)
     engine = NetworkEngine(
       baseUrl = config.baseUrl,
+      trustAll = config.trustAll,
+      trustedCert = config.trustedCert,
       httpClientConfig = { clientConfig ->
         // 监控层：Debug 模式下打印日志 (替代 HttpLoggingInterceptor)
         if (config.debugMode) {
@@ -39,9 +38,6 @@ class OpenApiClient private constructor() {
       }
     )
   }
-
-  val auth: AuthApi by lazy { AuthApi(engine) }
-  val banner: BannerApi by lazy { BannerApi(engine) }
 }
 
 /**

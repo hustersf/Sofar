@@ -27,7 +27,7 @@ class Network2Activity : AppCompatActivity() {
 
     OpenApiClient.get().init(this, SdkConfig.build {
       setDebugMode(true)
-      setBaseUrl("https://www.wanandroid.com/")
+      setBaseUrl("https://wanandroid.com/")
     })
 
     bodyLayout = findViewById(R.id.body_layout)
