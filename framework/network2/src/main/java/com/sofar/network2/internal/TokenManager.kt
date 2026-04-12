@@ -1,12 +1,16 @@
 package com.sofar.network2.internal
 
+import com.sofar.network2.api.AuthService
 import com.sofar.network2.api.unwrap
-import com.sofar.network2.core.OpenApiClient
+import com.sofar.network2.core.SdkConfig
 import com.sofar.network2.core.TokenProvider
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-object TokenManager {
+class TokenManager(
+  private val config: SdkConfig,
+  private val authServiceApi: () -> AuthService
+) {
   private val mutex = Mutex()
   private var provider: TokenProvider = MemoryTokenProvider()
 
@@ -27,14 +31,14 @@ object TokenManager {
 
     // 获取 refreshToken
     val rt = p.getRefreshToken()
-    val authService = OpenApiClient.get().authApiService()
+    val authService = authServiceApi()
 
     val result = if (rt.isNullOrEmpty()) {
       // 策略 A: 初始登录
-      authService.getToken(SdkInternal.config.apiKey, SdkInternal.config.apiSecret).unwrap()
+      authService.getToken(config.apiKey, config.apiSecret).unwrap()
     } else {
       // 策略 B: 刷新令牌
-      authService.refreshToken(SdkInternal.config.apiKey, SdkInternal.config.apiSecret, rt).unwrap()
+      authService.refreshToken(config.apiKey, config.apiSecret, rt).unwrap()
     }
 
     return result.fold(

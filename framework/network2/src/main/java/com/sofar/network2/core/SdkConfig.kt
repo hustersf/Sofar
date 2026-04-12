@@ -1,6 +1,6 @@
 package com.sofar.network2.core
 
-class SdkConfig private constructor(
+data class SdkConfig private constructor(
   val id: String,
   val apiKey: String,
   val apiSecret: String,

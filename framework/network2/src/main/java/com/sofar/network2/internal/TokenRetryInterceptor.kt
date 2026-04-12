@@ -9,7 +9,11 @@ import okhttp3.Response
 /**
  * 兼容标准 Http 401 和 业务 未鉴权
  */
-class TokenRetryInterceptor(private val json: Json) : Interceptor {
+class TokenRetryInterceptor(
+  private val tokenManager: TokenManager,
+  private val json: Json
+) :
+  Interceptor {
 
   // 影子类：仅用于在拦截器中精确解析 errorCode，避免解析整个巨大的 data 节点
   @Serializable
@@ -43,7 +47,7 @@ class TokenRetryInterceptor(private val json: Json) : Interceptor {
 
       // 同步执行刷新逻辑。
       val newToken = runBlocking {
-        TokenManager.refreshAndGet(oldToken)
+        tokenManager.refreshAndGet(oldToken)
       }
 
       if (newToken != null) {

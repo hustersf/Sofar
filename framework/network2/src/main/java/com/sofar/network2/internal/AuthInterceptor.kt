@@ -3,9 +3,9 @@ package com.sofar.network2.internal
 import okhttp3.Interceptor
 import okhttp3.Response
 
-class AuthInterceptor : Interceptor {
+class AuthInterceptor(private val tokenManager: TokenManager) : Interceptor {
   override fun intercept(chain: Interceptor.Chain): Response {
-    val token = TokenManager.getAccessToken()
+    val token = tokenManager.getAccessToken()
     val requestBuilder = chain.request().newBuilder()
 
     if (!token.isNullOrEmpty()) {

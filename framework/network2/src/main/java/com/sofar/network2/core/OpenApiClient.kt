@@ -4,54 +4,45 @@ import android.content.Context
 import com.sofar.network2.api.ApiService
 import com.sofar.network2.api.AuthService
 import com.sofar.network2.internal.AuthInterceptor
-import com.sofar.network2.internal.MockTokenInterceptor
 import com.sofar.network2.internal.NetworkEngine
-import com.sofar.network2.internal.SdkInternal
+import com.sofar.network2.internal.TokenManager
 import com.sofar.network2.internal.TokenRetryInterceptor
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
 
-class OpenApiClient private constructor() {
-
-  private lateinit var engine: NetworkEngine
-
-  companion object {
-    @JvmStatic
-    private val instance: OpenApiClient by lazy {
-      OpenApiClient()
+class OpenApiClient(
+  private val context: Context,
+  val config: SdkConfig = SdkConfig.build()
+) {
+  val tokenManager: TokenManager by lazy {
+    TokenManager(config) { authApiService() }.apply {
+      setProvider(config.tokenProvider)
     }
-
-    @JvmStatic
-    fun get(): OpenApiClient = instance
   }
 
-  /**
-   * SDK 初始化入口
-   */
-  fun init(context: Context, config: SdkConfig = SdkConfig.build()) {
-    // 参数注入
-    SdkInternal.inject(context, config)
-
+  private val engine: NetworkEngine by lazy {
     // 业务相关的拦截器
     val interceptors = mutableListOf<Interceptor>().apply {
       // 最外层：监控 Token 失效并自动重试
-      add(TokenRetryInterceptor(NetworkEngine.sdkJson))
+      add(TokenRetryInterceptor(tokenManager, NetworkEngine.sdkJson))
       // 注入层：确保重试请求能拿到最新 Token
-      add(AuthInterceptor())
+      add(AuthInterceptor(tokenManager))
       // 监控层：Debug 模式下打印日志
       if (config.debugMode) {
         add(HttpLoggingInterceptor().apply {
           level = HttpLoggingInterceptor.Level.BODY
         })
-        // 模拟层：作为请求终点
-        add(MockTokenInterceptor())
       }
     }
 
-    engine = NetworkEngine(
+    NetworkEngine(
       baseUrl = config.baseUrl,
       interceptors = interceptors
     )
+  }
+
+  fun newBuilder(newBaseUrl: String): OpenApiClient {
+    return OpenApiClient(context, config.copy(baseUrl = newBaseUrl))
   }
 
   fun <T : Any> create(serviceClass: Class<T>): T {
