@@ -1,8 +1,9 @@
-package com.sofar.kmp.network.internal
+package com.sofar.kmp.network.openapi.internal
 
-import com.sofar.kmp.network.api.model.ApiResponse
-import com.sofar.kmp.network.core.currentTokenManager
-import io.ktor.client.HttpClient
+import com.sofar.kmp.network.engine.NetworkEngine
+import com.sofar.kmp.network.openapi.SdkConfig
+import com.sofar.kmp.network.openapi.TokenManager
+import com.sofar.kmp.network.openapi.api.model.ApiResponse
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.forms.MultiPartFormDataContent
@@ -29,10 +30,17 @@ import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.readByteArray
 
-internal object SdkHttp {
-  const val NETWORK_ERROR = -1
-  const val NETWORK_ERROR_MSG = "Network Error"
-  const val IO_BUFFER_SIZE_BYTES = 8192L
+internal class ApiExecutor(
+  private val engine: NetworkEngine,
+  private val config: SdkConfig,
+  private val tokenManager: TokenManager? = null,
+) {
+
+  companion object {
+    const val NETWORK_ERROR = -1
+    const val NETWORK_ERROR_MSG = "Network Error"
+    const val IO_BUFFER_SIZE_BYTES = 8192L
+  }
 
   suspend inline fun <reified T> HttpResponse.safeParse(): ApiResponse<T> {
     val rawText = bodyAsText()
@@ -48,13 +56,13 @@ internal object SdkHttp {
   suspend inline fun <T> withTokenRetry(
     initialResponse: HttpResponse,
     crossinline requestBlock: suspend () -> HttpResponse,
-    crossinline parseBlock: suspend (HttpResponse) -> ApiResponse<T>
+    crossinline parseBlock: suspend (HttpResponse) -> ApiResponse<T>,
   ): ApiResponse<T> {
-    val manager = currentTokenManager ?: return parseBlock(initialResponse)
-    val oldToken = manager.getCurrentToken()
+    if (tokenManager == null) return parseBlock(initialResponse)
+    val oldToken = tokenManager.getCurrentToken()
     val firstResult = parseBlock(initialResponse)
-    if (SdkInternal.config.tokenRetry && manager.isExpired(initialResponse, firstResult.errorCode)) {
-      if (manager.refreshAndGet(oldToken) != null) {
+    if (config.tokenRetry && tokenManager.isExpired(initialResponse, firstResult.errorCode)) {
+      if (tokenManager.refreshAndGet(oldToken) != null) {
         return parseBlock(requestBlock())
       }
     }
@@ -62,15 +70,16 @@ internal object SdkHttp {
   }
 
   @Suppress("TooGenericExceptionCaught")
-  suspend inline fun <reified T> HttpClient.safeRequest(
-    crossinline block: HttpRequestBuilder.() -> Unit
-  ): ApiResponse<T> = withContext(Dispatchers.Default) {
+  suspend inline fun <reified T> safeRequest(
+    crossinline block: HttpRequestBuilder.() -> Unit,
+  ): ApiResponse<T> = withContext(Dispatchers.IO) {
     try {
-      val response = request { block() }
+      val client = engine.httpClient
+      val response = client.request { block() }
       withTokenRetry(
         initialResponse = response,
-        requestBlock = { request { block() } },
-        parseBlock = { it.safeParse<T>() }
+        requestBlock = { client.request { block() } },
+        parseBlock = { it.safeParse<T>() },
       )
     } catch (e: Exception) {
       ApiResponse(null, NETWORK_ERROR, e.message ?: NETWORK_ERROR_MSG)
@@ -78,15 +87,16 @@ internal object SdkHttp {
   }
 
   @Suppress("TooGenericExceptionCaught")
-  suspend fun HttpClient.safeDownload(
+  suspend fun safeDownload(
     directoryPath: String,
     fileName: String? = null,
-    block: HttpRequestBuilder.() -> Unit
+    block: HttpRequestBuilder.() -> Unit,
   ): ApiResponse<String> = withContext(Dispatchers.IO) {
     try {
+      val client = engine.httpClient
       withTokenRetry(
-        initialResponse = request { block() },
-        requestBlock = { request { block() } },
+        initialResponse = client.request { block() },
+        requestBlock = { client.request { block() } },
         parseBlock = { response ->
           // 如果响应是 JSON，说明业务报错了，解析错误信息
           if (response.contentType()?.match(ContentType.Application.Json) == true) {
@@ -97,7 +107,7 @@ internal object SdkHttp {
             val path = download(response, directoryPath, fileName)
             ApiResponse(path, 0)
           }
-        }
+        },
       )
     } catch (e: Exception) {
       ApiResponse(null, NETWORK_ERROR, e.message ?: NETWORK_ERROR_MSG)
@@ -107,7 +117,7 @@ internal object SdkHttp {
   private suspend fun download(
     response: HttpResponse,
     directoryPath: String,
-    fileName: String?
+    fileName: String?,
   ): String {
     // 正常下载逻辑：使用 kotlinx-io 流式落盘
     val name = fileName ?: response.headers["Content-Disposition"]
@@ -129,10 +139,10 @@ internal object SdkHttp {
   }
 
   @Suppress("TooGenericExceptionCaught")
-  suspend inline fun <reified T> HttpClient.safeUpload(
+  suspend inline fun <reified T> safeUpload(
     filePath: String,
     params: Map<String, String> = emptyMap(),
-    crossinline block: HttpRequestBuilder.() -> Unit
+    crossinline block: HttpRequestBuilder.() -> Unit,
   ): ApiResponse<T> = withContext(Dispatchers.IO) {
     val path = Path(filePath)
 
@@ -158,7 +168,7 @@ internal object SdkHttp {
                 append(HttpHeaders.ContentType, ContentType.defaultForFilePath(filePath).toString())
                 append(HttpHeaders.ContentDisposition, "filename=\"${path.name}\"")
               },
-              size = fileSize
+              size = fileSize,
             ) {
               buildPacket {
                 val source = SystemFileSystem.source(path).buffered()
@@ -172,17 +182,18 @@ internal object SdkHttp {
                 }
               }
             }
-          }
-        )
+          },
+        ),
       )
     }
 
     try {
-      val response = request { createRequestBuilder() }
+      val client = engine.httpClient
+      val response = client.request { createRequestBuilder() }
       withTokenRetry(
         initialResponse = response,
-        requestBlock = { request { createRequestBuilder() } },
-        parseBlock = { it.safeParse<T>() }
+        requestBlock = { client.request { createRequestBuilder() } },
+        parseBlock = { it.safeParse<T>() },
       )
     } catch (e: Exception) {
       ApiResponse(null, NETWORK_ERROR, e.message ?: NETWORK_ERROR_MSG)

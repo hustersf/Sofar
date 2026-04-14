@@ -5,6 +5,7 @@ import io.ktor.client.engine.darwin.DarwinClientEngineConfig
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.cValuesOf
+import kotlinx.cinterop.convert
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.reinterpret
 import platform.CoreFoundation.CFArrayCreate
@@ -38,9 +39,9 @@ actual fun HttpClientConfig<*>.configureTrustAll() {
       if (challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust && serverTrust != null) {
         // 核心逻辑：直接使用服务器提供的信任对象创建凭据，从而信任该连接
         val credential = NSURLCredential.credentialForTrust(serverTrust)
-        completionHandler(NSURLSessionAuthChallengeUseCredential, credential)
+        completionHandler(NSURLSessionAuthChallengeUseCredential.convert(), credential)
       } else {
-        completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, null)
+        completionHandler(NSURLSessionAuthChallengePerformDefaultHandling.convert(), null)
       }
     }
   }
@@ -94,12 +95,12 @@ actual fun HttpClientConfig<*>.configureCustomCertificate(
 
         if (SecTrustEvaluateWithError(serverTrust, null)) {
           val credential = NSURLCredential.credentialForTrust(serverTrust!!)
-          completionHandler(NSURLSessionAuthChallengeUseCredential, credential)
+          completionHandler(NSURLSessionAuthChallengeUseCredential.convert(), credential)
         } else {
-          completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, null)
+          completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge.convert(), null)
         }
       } else {
-        completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, null)
+        completionHandler(NSURLSessionAuthChallengePerformDefaultHandling.convert(), null)
       }
     }
   }

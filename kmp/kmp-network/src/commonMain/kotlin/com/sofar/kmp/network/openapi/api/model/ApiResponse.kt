@@ -1,4 +1,4 @@
-package com.sofar.kmp.network.api.model
+package com.sofar.kmp.network.openapi.api.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

@@ -1,18 +1,21 @@
-package com.sofar.kmp.network.internal
+package com.sofar.kmp.network.openapi.internal
 
-import com.sofar.kmp.network.core.OpenAuthData
-import com.sofar.kmp.network.core.SdkConfig
-import com.sofar.kmp.network.core.TokenManager
+import com.sofar.kmp.network.openapi.AuthData
+import com.sofar.kmp.network.openapi.SdkConfig
+import com.sofar.kmp.network.openapi.TokenManager
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
+/** 外部模式凭证 */
+class OpenAuthData(val accessToken: String) : AuthData
+
 internal class OpenTokenManager(
   private val config: SdkConfig
 ) : TokenManager {
   companion object {
-    private const val ERROR_CODE_TOKEN_EXPIRED = -4401
+    const val ERROR_CODE_TOKEN_EXPIRED = -44112
     val TOKEN_INVALID_CODES = setOf(ERROR_CODE_TOKEN_EXPIRED)
   }
 

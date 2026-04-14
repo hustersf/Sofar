@@ -6,8 +6,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.sofar.R
-import com.sofar.kmp.network.core.OpenApiClient
-import com.sofar.kmp.network.core.SdkConfig
+import com.sofar.kmp.network.openapi.OpenApiClient
+import com.sofar.kmp.network.openapi.SdkConfig
 import kotlinx.coroutines.launch
 
 class KmpNetworkActivity : AppCompatActivity() {
@@ -20,7 +20,7 @@ class KmpNetworkActivity : AppCompatActivity() {
     setTitle("kmp网络测试页面")
     setContentView(R.layout.kmp_network_activity)
 
-    OpenApiClient.get().init(SdkConfig.build {
+    val apiClient= OpenApiClient(SdkConfig.build {
       setDebugMode(true)
       setBaseUrl("https://wanandroid.com/")
     })
@@ -31,7 +31,7 @@ class KmpNetworkActivity : AppCompatActivity() {
     bodyLayout.setOnClickListener {
       lifecycleScope.launch {
         body.text = "..."
-        val response = OpenApiClient.get().banner.getBanners()
+        val response = apiClient.banner.getBanners()
         if (response.isSuccess && response.data != null) {
           val data = response.data!!
           val sb = StringBuilder()
