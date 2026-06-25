@@ -11,4 +11,11 @@ data class ApiResponse<T>(
 ) {
   val isSuccess: Boolean
     get() = errorCode == 0
+
+  companion object {
+    const val NETWORK_ERROR = -1            // 兜底错误
+    const val ERROR_CONNECT_FAILED = -2     // 连接失败
+    const val ERROR_TIMEOUT = -3            // 请求超时
+    const val ERROR_PARSING_FAILED = -4     // 反序列化解析失败
+  }
 }

@@ -5,6 +5,9 @@ import com.sofar.kmp.network.openapi.SdkConfig
 import com.sofar.kmp.network.openapi.TokenManager
 import com.sofar.kmp.network.openapi.api.model.ApiResponse
 import io.ktor.client.call.body
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.client.network.sockets.SocketTimeoutException
+import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
@@ -17,6 +20,8 @@ import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import io.ktor.http.defaultForFilePath
+import io.ktor.http.isSuccess
+import io.ktor.serialization.JsonConvertException
 import io.ktor.util.date.getTimeMillis
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.core.buildPacket
@@ -25,10 +30,13 @@ import io.ktor.utils.io.readRemaining
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
+import kotlinx.io.IOException
 import kotlinx.io.buffered
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.readByteArray
+import kotlinx.serialization.SerializationException
+import kotlin.coroutines.cancellation.CancellationException
 
 internal class ApiExecutor(
   private val engine: NetworkEngine,
@@ -37,12 +45,17 @@ internal class ApiExecutor(
 ) {
 
   companion object {
-    const val NETWORK_ERROR = -1
-    const val NETWORK_ERROR_MSG = "Network Error"
     const val IO_BUFFER_SIZE_BYTES = 8192L
   }
 
   suspend inline fun <reified T> HttpResponse.safeParse(): ApiResponse<T> {
+    if (!status.isSuccess()) {
+      return ApiResponse(
+        data = null,
+        errorCode = status.value,
+        errorMsg = "HTTP Error: ${status.value} ${status.description}"
+      )
+    }
     val rawText = bodyAsText()
     return NetworkEngine.sdkJson.decodeFromString(rawText)
   }
@@ -70,10 +83,83 @@ internal class ApiExecutor(
   }
 
   @Suppress("TooGenericExceptionCaught")
+  private suspend inline fun <T> runNetworkCatching(
+    crossinline action: suspend () -> ApiResponse<T>
+  ): ApiResponse<T> {
+    return try {
+      action()
+    } catch (e: Exception) {
+      if (config.debugMode) {
+        println("❌ [KMP Network Error] Type: ${e::class.simpleName}, Message: ${e.messageWithCause()}")
+      }
+
+      // 统一异常匹配与错误码细分
+      val (errorCode, fallbackMsg) = when (e) {
+        // 协程取消必须上抛，不作为错误码处理
+        is CancellationException -> throw e
+
+        // 超时系列
+        is HttpRequestTimeoutException,
+        is ConnectTimeoutException,
+        is SocketTimeoutException -> {
+          ApiResponse.ERROR_TIMEOUT to "Connection timed out."
+        }
+
+        // 数据反序列化失败系列
+        is JsonConvertException,
+        is SerializationException -> {
+          ApiResponse.ERROR_PARSING_FAILED to "Data parsing failed."
+        }
+
+        // 连接失败系列（通过关键字符匹配 IOException）
+        is IOException -> {
+          val msg = e.messageWithCause()
+          if (isConnectionIssue(msg)) {
+            ApiResponse.ERROR_CONNECT_FAILED to "Server unreachable."
+          } else {
+            ApiResponse.NETWORK_ERROR to "Network I/O error."
+          }
+        }
+
+        // 其它未知错误兜底（退化回 -1）
+        else -> {
+          ApiResponse.NETWORK_ERROR to "Network Error"
+        }
+      }
+
+      ApiResponse(
+        data = null,
+        errorCode = errorCode,
+        errorMsg = e.message ?: fallbackMsg
+      )
+    }
+  }
+
+  // Android/iOS 真实断网,无网络,ssl异常
+  @Suppress("ComplexCondition")
+  private fun isConnectionIssue(msg: String): Boolean {
+    return msg.contains("connect", ignoreCase = true) ||
+        msg.contains("host", ignoreCase = true) ||
+        msg.contains("offline", ignoreCase = true) ||
+        // ssl 相关
+        msg.contains("ssl", ignoreCase = true) ||
+        msg.contains("cert", ignoreCase = true) ||
+        msg.contains("trust", ignoreCase = true)
+  }
+
+  private fun Throwable.messageWithCause(): String {
+    return listOfNotNull(
+      this::class.simpleName,
+      message,
+      cause?.let { it::class.simpleName },
+      cause?.message,
+    ).joinToString(" ")
+  }
+
   suspend inline fun <reified T> safeRequest(
     crossinline block: HttpRequestBuilder.() -> Unit,
   ): ApiResponse<T> = withContext(Dispatchers.IO) {
-    try {
+    runNetworkCatching {
       val client = engine.httpClient
       val response = client.request { block() }
       withTokenRetry(
@@ -81,18 +167,15 @@ internal class ApiExecutor(
         requestBlock = { client.request { block() } },
         parseBlock = { it.safeParse<T>() },
       )
-    } catch (e: Exception) {
-      ApiResponse(null, NETWORK_ERROR, e.message ?: NETWORK_ERROR_MSG)
     }
   }
 
-  @Suppress("TooGenericExceptionCaught")
   suspend fun safeDownload(
     directoryPath: String,
     fileName: String? = null,
     block: HttpRequestBuilder.() -> Unit,
   ): ApiResponse<String> = withContext(Dispatchers.IO) {
-    try {
+    runNetworkCatching {
       val client = engine.httpClient
       withTokenRetry(
         initialResponse = client.request { block() },
@@ -109,8 +192,6 @@ internal class ApiExecutor(
           }
         },
       )
-    } catch (e: Exception) {
-      ApiResponse(null, NETWORK_ERROR, e.message ?: NETWORK_ERROR_MSG)
     }
   }
 
@@ -138,7 +219,6 @@ internal class ApiExecutor(
     return path.toString()
   }
 
-  @Suppress("TooGenericExceptionCaught")
   suspend inline fun <reified T> safeUpload(
     filePath: String,
     params: Map<String, String> = emptyMap(),
@@ -149,7 +229,11 @@ internal class ApiExecutor(
     // 跨平台检查文件是否存在及获取大小
     val metadata = SystemFileSystem.metadataOrNull(path)
     if (metadata == null || !metadata.isRegularFile) {
-      return@withContext ApiResponse(null, NETWORK_ERROR, "File not found or invalid: $filePath")
+      return@withContext ApiResponse(
+        null,
+        ApiResponse.NETWORK_ERROR,
+        "File not found or invalid: $filePath"
+      )
     }
     val fileSize = metadata.size
 
@@ -187,7 +271,7 @@ internal class ApiExecutor(
       )
     }
 
-    try {
+    runNetworkCatching {
       val client = engine.httpClient
       val response = client.request { createRequestBuilder() }
       withTokenRetry(
@@ -195,8 +279,6 @@ internal class ApiExecutor(
         requestBlock = { client.request { createRequestBuilder() } },
         parseBlock = { it.safeParse<T>() },
       )
-    } catch (e: Exception) {
-      ApiResponse(null, NETWORK_ERROR, e.message ?: NETWORK_ERROR_MSG)
     }
   }
 }
