@@ -1,6 +1,7 @@
 package com.sofar.kmp.network.openapi
 
 import com.sofar.kmp.network.engine.NetworkConfig
+import com.sofar.kmp.network.engine.NetworkInterceptor
 import kotlin.concurrent.Volatile
 
 /**
@@ -16,6 +17,7 @@ import kotlin.concurrent.Volatile
  * @property tokenRetry 发生授权错误时是否允许自动重试
  * @property trustedCert 自定义信任的证书 (PEM 格式)，用于 SSL 校验
  * @property trustAll 是否信任所有证书（仅建议在测试环境下开启，慎用！）
+ * @property interceptors 自定义网络拦截器列表
  */
 class SdkConfig private constructor(builder: Builder) {
 
@@ -26,6 +28,7 @@ class SdkConfig private constructor(builder: Builder) {
   val tokenRetry: Boolean = builder.tokenRetry
   val trustedCert: String? = builder.trustedCert
   val trustAll: Boolean = builder.trustAll
+  val interceptors: List<NetworkInterceptor> = builder.interceptors.toList()
 
   /**
    * 访问令牌 (Bearer Token 等)
@@ -57,6 +60,7 @@ class SdkConfig private constructor(builder: Builder) {
     internal var cookie: String? = null
     internal var trustedCert: String? = null
     internal var trustAll: Boolean = false
+    internal val interceptors = mutableListOf<NetworkInterceptor>()
 
     fun setBaseUrl(url: String) = apply { this.baseUrl = url }
     fun setConnectTimeout(connectTimeout: Long) = apply { this.connectTimeout = connectTimeout }
@@ -68,18 +72,26 @@ class SdkConfig private constructor(builder: Builder) {
     fun setCookie(cookie: String) = apply { this.cookie = cookie }
     fun setTrustedCert(pem: String?) = apply { this.trustedCert = pem }
     fun setTrustAll(trustAll: Boolean) = apply { this.trustAll = trustAll }
+    fun addInterceptor(interceptor: NetworkInterceptor) = apply {
+      this.interceptors.add(interceptor)
+    }
 
     fun build() = SdkConfig(this)
   }
 
   internal fun toNetworkConfig(): NetworkConfig {
-    return NetworkConfig.Builder()
+    val builder = NetworkConfig.Builder()
       .setBaseUrl(this.baseUrl)
       .setConnectTimeout(this.connectTimeout)
       .setDebugMode(this.debugMode)
       .setTrustedCert(this.trustedCert)
       .setTrustAll(this.trustAll)
-      .build()
+
+    this.interceptors.forEach { interceptor ->
+      builder.addInterceptor(interceptor)
+    }
+
+    return builder.build()
   }
 
   companion object {

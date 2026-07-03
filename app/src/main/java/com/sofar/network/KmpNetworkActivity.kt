@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.sofar.R
 import com.sofar.kmp.network.openapi.OpenApiClient
 import com.sofar.kmp.network.openapi.SdkConfig
+import com.sofar.network.interceptor.AddTokenInterceptor
 import kotlinx.coroutines.launch
 
 class KmpNetworkActivity : AppCompatActivity() {
@@ -23,6 +24,7 @@ class KmpNetworkActivity : AppCompatActivity() {
     val apiClient= OpenApiClient(SdkConfig.build {
       setDebugMode(true)
       setBaseUrl("https://wanandroid.com/")
+      addInterceptor(AddTokenInterceptor())
     })
 
     bodyLayout = findViewById(R.id.body_layout)

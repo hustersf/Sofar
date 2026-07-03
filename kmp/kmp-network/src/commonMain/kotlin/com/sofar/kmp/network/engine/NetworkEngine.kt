@@ -66,6 +66,12 @@ class NetworkEngine(
       // 注入外部配置（如自定义 Header 等，替代拦截器）
       httpClientConfig(this)
 
+      // 注入接入方自定义拦截器插件
+      if (config.interceptors.isNotEmpty()) {
+        val businessPlugin = createBusinessInterceptorPlugin(config.interceptors)
+        install(businessPlugin)
+      }
+
       // 证书策略
       when {
         // 信任所有
