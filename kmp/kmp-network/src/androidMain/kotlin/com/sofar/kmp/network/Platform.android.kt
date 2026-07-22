@@ -42,17 +42,19 @@ actual fun HttpClientConfig<*>.configureTrustAll() {
 }
 
 @Suppress("UNCHECKED_CAST")
-actual fun HttpClientConfig<*>.configureCustomCertificate(pemContent: String) {
+actual fun HttpClientConfig<*>.configureCustomCertificate(pemContents: List<String>) {
   (this as? HttpClientConfig<OkHttpConfig>)?.engine {
     config {
       val cf = CertificateFactory.getInstance("X.509")
-      val certInputStream = pemContent.byteInputStream(Charsets.UTF_8)
-      val ca = cf.generateCertificate(certInputStream)
-
       val keyStoreType = KeyStore.getDefaultType()
       val keyStore = KeyStore.getInstance(keyStoreType).apply {
         load(null, null)
-        setCertificateEntry("ca", ca)
+        pemContents.forEachIndexed { index, pemContent ->
+          val certificates = cf.generateCertificates(pemContent.byteInputStream(Charsets.UTF_8))
+          certificates.forEachIndexed { certIndex, certificate ->
+            setCertificateEntry("ca_${index}_$certIndex", certificate)
+          }
+        }
       }
 
       val tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm()

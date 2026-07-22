@@ -1,9 +1,12 @@
 package com.sofar.kmp.network.engine
 
+import com.sofar.kmp.network.engine.plugin.ConcurrencyLimitPlugin
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
+import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.HttpTimeoutCapability
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
@@ -18,6 +21,9 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlin.test.Test
@@ -457,11 +463,6 @@ class RealNetworkInterceptorChainTest {
     assertNull(ktorResponse.headers["Response-Remove"])
     assertEquals("server-body|two|one", ktorResponse.bodyAsText())
 
-    val businessResponse = assertNotNull(ktorResponse.businessInterceptorResponse())
-    assertEquals(207, businessResponse.statusCode)
-    assertEquals("server-body|two|one", businessResponse.bodyString)
-    assertEquals("one", businessResponse.headers["Response-Replace"])
-
     client.close()
   }
 
@@ -650,5 +651,149 @@ class RealNetworkInterceptorChainTest {
       listOf("20"),
       builder.url.parameters.getAll("pageSize")
     )
+  }
+
+  @Test
+  fun interceptorCanOverrideTimeoutConfiguration() = runBlocking {
+    val client = HttpClient(MockEngine) {
+      engine {
+        addHandler { request ->
+          val timeout = request.getCapabilityOrNull(HttpTimeoutCapability)
+          assertNotNull(timeout)
+          assertEquals(1000L, timeout.connectTimeoutMillis)
+          assertEquals(2000L, timeout.socketTimeoutMillis)
+          assertEquals(3000L, timeout.requestTimeoutMillis)
+          respond(
+            content = "ok",
+            status = HttpStatusCode.OK
+          )
+        }
+      }
+
+      install(HttpTimeout) {
+        connectTimeoutMillis = 10_000
+        socketTimeoutMillis = 20_000
+        requestTimeoutMillis = 30_000
+      }
+
+      install(
+        createBusinessInterceptorPlugin(
+          listOf(
+            object : NetworkInterceptor {
+              override fun intercept(chain: NetworkChain): NetworkResponse {
+                val request = chain.request()
+                  .newBuilder()
+                  .connectTimeout(1000)
+                  .socketTimeout(2000)
+                  .requestTimeout(3000)
+                  .build()
+
+                return chain.proceed(request)
+              }
+            }
+          )
+        )
+      )
+    }
+
+    val response = client.get("https://example.com")
+    assertEquals(HttpStatusCode.OK, response.status)
+    client.close()
+  }
+
+  @Test
+  fun concurrencyLimitShouldExecuteRequestsSequentially() = runBlocking {
+    var currentRunning = 0
+    var maxRunning = 0
+    val client = HttpClient(MockEngine) {
+      install(ConcurrencyLimitPlugin) {
+        maxConcurrentRequests = 1
+      }
+      engine {
+        addHandler {
+          currentRunning++
+          maxRunning = maxOf(maxRunning, currentRunning)
+          delay(100)
+          currentRunning--
+          respond(
+            content = "ok",
+            status = HttpStatusCode.OK
+          )
+        }
+      }
+    }
+
+    coroutineScope {
+      repeat(3) {
+        launch {
+          client.get("https://example.com")
+        }
+      }
+    }
+    assertEquals(1, maxRunning)
+    client.close()
+  }
+
+  @Test
+  fun concurrencyLimitShouldAllowTwoConcurrentRequests() = runBlocking {
+    var currentRunning = 0
+    var maxRunning = 0
+    val client = HttpClient(MockEngine) {
+      install(ConcurrencyLimitPlugin) {
+        maxConcurrentRequests = 2
+      }
+      engine {
+        addHandler {
+          currentRunning++
+          maxRunning = maxOf(maxRunning, currentRunning)
+          delay(100)
+          currentRunning--
+          respond(
+            content = "ok",
+            status = HttpStatusCode.OK
+          )
+        }
+      }
+    }
+
+    coroutineScope {
+      repeat(5) {
+        launch {
+          client.get("https://example.com")
+        }
+      }
+    }
+
+    assertEquals(2, maxRunning)
+    client.close()
+  }
+
+  @Test
+  fun permitShouldBeReleasedWhenRequestFails() = runBlocking {
+    var executionCount = 0
+    val client = HttpClient(MockEngine) {
+      install(ConcurrencyLimitPlugin) {
+        maxConcurrentRequests = 1
+      }
+      engine {
+        addHandler {
+          executionCount++
+          error("mock error")
+        }
+      }
+    }
+
+    coroutineScope {
+      repeat(3) {
+        launch {
+          runCatching {
+            client.get("https://example.com")
+          }
+        }
+      }
+    }
+
+    assertEquals(3, executionCount)
+    client.close()
   }
 }

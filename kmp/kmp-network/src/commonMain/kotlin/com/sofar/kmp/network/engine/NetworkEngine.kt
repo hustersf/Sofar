@@ -2,6 +2,7 @@ package com.sofar.kmp.network.engine
 
 import com.sofar.kmp.network.configureCustomCertificate
 import com.sofar.kmp.network.configureTrustAll
+import com.sofar.kmp.network.engine.plugin.ConcurrencyLimitPlugin
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.plugins.HttpTimeout
@@ -33,7 +34,6 @@ class NetworkEngine(
       isLenient = true
       encodeDefaults = true
     }
-    const val SOCKET_TIMEOUT_FACTOR = 3L
   }
 
   val httpClient: HttpClient by lazy {
@@ -46,7 +46,8 @@ class NetworkEngine(
       // 设置超时
       install(HttpTimeout) {
         connectTimeoutMillis = config.connectTimeout
-        socketTimeoutMillis = config.connectTimeout * SOCKET_TIMEOUT_FACTOR
+        socketTimeoutMillis = config.socketTimeout
+        requestTimeoutMillis = config.requestTimeout
       }
 
       // 日志
@@ -54,6 +55,12 @@ class NetworkEngine(
         install(Logging) {
           logger = Logger.SIMPLE
           level = LogLevel.ALL
+        }
+      }
+
+      if (config.maxConcurrentRequests > 0) {
+        install(ConcurrencyLimitPlugin) {
+          maxConcurrentRequests = config.maxConcurrentRequests
         }
       }
 
@@ -79,8 +86,8 @@ class NetworkEngine(
           configureTrustAll()
         }
         // 判断是否有自定义证书：生产模式，实现“手动信任”
-        !config.trustedCert.isNullOrBlank() -> {
-          configureCustomCertificate(config.trustedCert)
+        config.trustedCerts.isNotEmpty() -> {
+          configureCustomCertificate(config.trustedCerts)
         }
       }
 

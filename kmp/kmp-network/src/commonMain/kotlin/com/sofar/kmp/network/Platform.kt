@@ -5,5 +5,4 @@ import io.ktor.client.HttpClientConfig
 expect fun platform(): String
 
 expect fun HttpClientConfig<*>.configureTrustAll()
-
-expect fun HttpClientConfig<*>.configureCustomCertificate(pemContent: String)
+expect fun HttpClientConfig<*>.configureCustomCertificate(pemContents: List<String>)

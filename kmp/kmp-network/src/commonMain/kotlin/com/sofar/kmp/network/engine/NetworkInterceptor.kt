@@ -3,6 +3,7 @@ package com.sofar.kmp.network.engine
 import io.ktor.client.call.HttpClientCall
 import io.ktor.client.plugins.api.Send
 import io.ktor.client.plugins.api.createClientPlugin
+import io.ktor.client.plugins.timeout
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
@@ -14,7 +15,6 @@ import io.ktor.http.HttpProtocolVersion
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.TextContent
 import io.ktor.http.takeFrom
-import io.ktor.util.AttributeKey
 import io.ktor.util.date.GMTDate
 import io.ktor.util.toMap
 import io.ktor.utils.io.ByteReadChannel
@@ -37,6 +37,9 @@ class NetworkRequest internal constructor(
   val headers: Map<String, String> = builder.headers.toMap()
   val bodyString: String? = builder.bodyString
   val contentType: String? = builder.contentType
+  val connectTimeout: Long? = builder.connectTimeout
+  val socketTimeout: Long? = builder.socketTimeout
+  val requestTimeout: Long? = builder.requestTimeout
 
   fun newBuilder(): Builder = Builder(this)
 
@@ -52,6 +55,9 @@ class NetworkRequest internal constructor(
     internal val headers: MutableMap<String, String> = mutableMapOf()
     internal var bodyString: String? = null
     internal var contentType: String? = null
+    internal var connectTimeout: Long? = null
+    internal var socketTimeout: Long? = null
+    internal var requestTimeout: Long? = null
 
     constructor()
 
@@ -61,6 +67,9 @@ class NetworkRequest internal constructor(
       headers.putAll(request.headers)
       bodyString = request.bodyString
       contentType = request.contentType
+      connectTimeout = request.connectTimeout
+      socketTimeout = request.socketTimeout
+      requestTimeout = request.requestTimeout
     }
 
     fun url(url: String): Builder = apply {
@@ -87,6 +96,18 @@ class NetworkRequest internal constructor(
 
     fun removeHeader(name: String): Builder = apply {
       headers.remove(name)
+    }
+
+    fun connectTimeout(timeout: Long?) = apply {
+      connectTimeout = timeout
+    }
+
+    fun socketTimeout(timeout: Long?) = apply {
+      socketTimeout = timeout
+    }
+
+    fun requestTimeout(timeout: Long?) = apply {
+      requestTimeout = timeout
     }
 
     fun build(): NetworkRequest {
@@ -167,12 +188,6 @@ interface NetworkChain {
   fun proceed(request: NetworkRequest): NetworkResponse
 }
 
-private val BusinessInterceptorResponseAttributeKey =
-  AttributeKey<NetworkResponse>("BusinessInterceptorResponse")
-
-fun HttpResponse.businessInterceptorResponse(): NetworkResponse? =
-  call.attributes.getOrNull(BusinessInterceptorResponseAttributeKey)
-
 /**
  * 将业务拦截器最终返回的 NetworkResponse 适配成 Ktor HttpResponse。
  *
@@ -230,6 +245,19 @@ private fun HttpRequestBuilder.applyNetworkRequest(request: NetworkRequest) {
   request.bodyString?.let { body ->
     val contentType = request.contentType?.let(ContentType::parse) ?: ContentType.Application.Json
     setBody(TextContent(text = body, contentType = contentType))
+  }
+
+  // 设置超时时间
+  timeout {
+    request.connectTimeout?.let {
+      connectTimeoutMillis = it
+    }
+    request.socketTimeout?.let {
+      socketTimeoutMillis = it
+    }
+    request.requestTimeout?.let {
+      requestTimeoutMillis = it
+    }
   }
 }
 
@@ -337,8 +365,6 @@ internal fun createBusinessInterceptorPlugin(
           }
         }
         .build()
-      currentCall.attributes.put(BusinessInterceptorResponseAttributeKey, networkResponse)
-
       networkResponse
     }
 
@@ -346,7 +372,6 @@ internal fun createBusinessInterceptorPlugin(
     val finalNetworkResponse = chain.proceed(initialNetworkRequest)
 
     val currentCall = executedCall ?: error("Business interceptor did not execute network call")
-    currentCall.attributes.put(BusinessInterceptorResponseAttributeKey, finalNetworkResponse)
     BusinessHttpClientCall(currentCall, finalNetworkResponse)
   }
 }
