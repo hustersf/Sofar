@@ -1,12 +1,12 @@
 [versions]
 # SDK 版本
-targetSdk = "34"
-compileSdk = "34"
+targetSdk = "36"
+compileSdk = "36"
 minSdk = "24"
 
-agp = "8.11.1"
-kotlin = "2.2.20"
-ksp = "2.2.20-2.0.3"
+agp = "9.3.1"
+kotlin = "2.4.10"
+ksp = "2.3.4"
 coreKtx = "1.12.0"
 junit = "4.13.2"
 junitVersion = "1.1.5"
