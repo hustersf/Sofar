@@ -42,7 +42,7 @@ class OpenApiClient(
   }
 
   fun newBuilder(newBaseUrl: String): OpenApiClient {
-    return OpenApiClient(context, config.copy(baseUrl = newBaseUrl))
+    return OpenApiClient(context, config.mutateBaseUrl(newBaseUrl))
   }
 
   fun <T : Any> create(serviceClass: Class<T>): T {

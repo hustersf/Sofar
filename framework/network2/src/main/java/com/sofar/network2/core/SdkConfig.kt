@@ -9,6 +9,11 @@ data class SdkConfig private constructor(
   val debugMode: Boolean,
   val tokenProvider: TokenProvider?,
 ) {
+
+  fun mutateBaseUrl(newBaseUrl: String): SdkConfig {
+    return this.copy(baseUrl = newBaseUrl)
+  }
+
   class Builder {
     private var id: String = ""
     private var apiKey: String = ""
@@ -27,7 +32,8 @@ data class SdkConfig private constructor(
       this.tokenProvider = provider
     }
 
-    fun build() = SdkConfig(id, apiKey, apiSecret, baseUrl, connectTimeout, debugMode, tokenProvider)
+    fun build() =
+      SdkConfig(id, apiKey, apiSecret, baseUrl, connectTimeout, debugMode, tokenProvider)
   }
 
   companion object {

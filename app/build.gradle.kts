@@ -17,7 +17,6 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    // 🔴 严格保持你指定的 JVM 17 标准
     kotlin {
         jvmToolchain(17)
     }
