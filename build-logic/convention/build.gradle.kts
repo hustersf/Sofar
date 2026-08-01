@@ -26,12 +26,12 @@ gradlePlugin {
     plugins {
         // 插件一：替代旧 library.gradle 的基础库规范
         register("androidLibrary") {
-            id = "social.android.library"
+            id = "convention.android.library"
             implementationClass = "AndroidLibraryConventionPlugin"
         }
         // 插件二：未来按需组合的 Compose 专属 UI 规范
         register("androidLibraryCompose") {
-            id = "social.android.library.compose"
+            id = "convention.android.library.compose"
             implementationClass = "AndroidLibraryComposeConventionPlugin"
         }
     }

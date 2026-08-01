@@ -1,5 +1,5 @@
 plugins {
-    id("social.android.library")
+    alias(libs.plugins.convention.android.library)
 }
 
 android {
