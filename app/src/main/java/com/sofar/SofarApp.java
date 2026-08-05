@@ -1,18 +1,22 @@
 package com.sofar;
 
+import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
 import com.getkeepsafe.relinker.ReLinker;
 import com.google.gson.Gson;
+import com.sofar.badge.BadgeNumberTreeManager;
 import com.sofar.base.app.AppLifeManager;
 import com.sofar.base.exception.SofarErrorConsumer;
 import com.sofar.base.location.LocationProvider;
 import com.sofar.config.ConfigManager;
 import com.sofar.download.DownloadConfig;
 import com.sofar.download.DownloadManager;
-import com.sofar.fun.FunConfig;
 import com.sofar.image.ImageManager;
 import com.sofar.preferences.PreferenceConfigHolder;
 import com.sofar.preferences.SofarSharedPreferences;
@@ -20,10 +24,6 @@ import com.sofar.skin.core.SkinColorWhiteList;
 import com.sofar.skin.core.SkinManager;
 import com.sofar.utility.FileUtil;
 import com.sofar.utility.SystemUtil;
-
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import io.reactivex.plugins.RxJavaPlugins;
 
@@ -36,8 +36,6 @@ public class SofarApp extends Application {
     SkinColorWhiteList.addSupportResName("themeColor");
 
     LocationProvider.getInstance().init(this);
-
-    FunConfig.init(this);
 
     RxJavaPlugins.setErrorHandler(new SofarErrorConsumer() {
       @Override
@@ -56,6 +54,7 @@ public class SofarApp extends Application {
     DownloadManager.get().init(this, new DownloadConfig.Builder().build());
 
     ImageManager.get().init(this);
+    BadgeNumberTreeManager.get().init(this);
 
     PreferenceConfigHolder.CONFIG = new PreferenceConfigHolder.PreferenceConfig() {
       @Override

@@ -9,6 +9,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.sofar.R;
+import com.sofar.badge.BadgeNumber;
+import com.sofar.badge.BadgeNumberInterval;
+import com.sofar.badge.BadgeNumberTreeManager;
 
 import java.util.ArrayList;
 import java.util.List;

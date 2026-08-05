@@ -11,8 +11,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":framework:utility"))
-    implementation(project(":framework:widget"))
+    implementation(project(":core:common"))
+    implementation(project(":core:ui"))
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.recyclerview)
     implementation(libs.material)

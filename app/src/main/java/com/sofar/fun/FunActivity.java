@@ -13,8 +13,8 @@ import com.sofar.fun.badge.BadgeActivity;
 import com.sofar.fun.dialog.QueueDialogFragment1;
 import com.sofar.fun.dialog.QueueDialogFragment2;
 import com.sofar.fun.dialog.QueueDialogFragment3;
-import com.sofar.fun.dialog.SofarDialogQueue;
 import com.sofar.fun.play.AutoPlayListActivity;
+import com.sofar.widget.dialog.SofarDialogQueue;
 
 public class FunActivity extends AppCompatActivity {
 

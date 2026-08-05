@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.sofar.R;
+import com.sofar.widget.dialog.SofarDialogFragment;
 
 public class QueueDialogFragment3 extends SofarDialogFragment {
 

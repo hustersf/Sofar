@@ -57,33 +57,32 @@ android {
 dependencies {
     // 基础核心与业务模块
     implementation(project(":core:base"))
-    implementation(project(":core:fun"))
+    implementation(project(":core:badge"))
     implementation(project(":core:preloader"))
     implementation(project(":core:ad"))
 
     // 基础框架模块
-    implementation(project(":framework:utility"))
-    implementation(project(":framework:widget"))
-    implementation(project(":framework:network"))
-    implementation(project(":framework:network2"))
+    implementation(project(":core:common"))
+    implementation(project(":core:ui"))
+    implementation(project(":framework:network-rxjava"))
+    implementation(project(":framework:network-coroutine"))
     implementation(project(":framework:download"))
     implementation(project(":framework:skin"))
-    implementation(project(":framework:audio-record"))
+    implementation(project(":core:audio-record"))
     implementation(project(":framework:image"))
     implementation(project(":framework:shared-preferences"))
     implementation(project(":framework:config"))
 
     // 调试与演示模块
-    implementation(project(":debug"))
     debugImplementation(project(":tool:profiler"))
-    implementation(project(":demo:aidl"))
-    implementation(project(":demo:datastore"))
-    implementation(project(":demo:appwidget"))
-    implementation(project(":demo:room"))
+    implementation(project(":feature:aidl"))
+    implementation(project(":feature:datastore"))
+    implementation(project(":feature:appwidget"))
+    implementation(project(":feature:room"))
 
     // 三方封装库与 KMP 模块
-    implementation(project(":library:mpchart"))
-    implementation(project(":kmp:kmp-network"))
+    implementation(project(":thirdparty:mpchart"))
+    implementation(project(":framework:network-kmp"))
 
     // AndroidX & Material 组件
     implementation(libs.androidx.appcompat)

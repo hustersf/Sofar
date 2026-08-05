@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.sofar.R;
-import com.sofar.fun.dialog.SofarDialogFragment;
+import com.sofar.widget.dialog.SofarDialogFragment;
 import com.sofar.utility.DeviceUtil;
 import com.sofar.utility.statusbar.StatusBarUtil;
 

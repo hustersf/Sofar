@@ -8,7 +8,7 @@ android {
 
 dependencies {
     implementation(files("libs/open_ad_sdk_v3.2.0.6.aar"))
-    implementation(project(":framework:utility"))
+    implementation(project(":core:common"))
     implementation(libs.androidx.annotation)
 
     implementation(libs.rxandroid)
