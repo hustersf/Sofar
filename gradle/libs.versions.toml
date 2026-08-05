@@ -57,6 +57,8 @@ kotlinTest = "2.2.20"
 runner = "1.5.2"
 core = "1.5.0"
 ktor = "3.4.0"
+okio = "3.16.0"
+atomicfu = "0.33.0"
 
 [libraries]
 #tool
@@ -106,6 +108,7 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 kotlin-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlin-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
+kotlin-atomicfu = { group = "org.jetbrains.kotlinx", name = "atomicfu", version.ref = "atomicfu" }
 
 #network
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
@@ -121,6 +124,8 @@ rxjava = { group = "io.reactivex.rxjava2", name = "rxjava", version.ref = "rxjav
 rxandroid = { group = "io.reactivex.rxjava2", name = "rxandroid", version.ref = "rxandroid" }
 fetch2 = { group = "com.github.tonyofrancis.Fetch", name = "fetch2", version.ref = "fetch2" }
 fetch2-okhttp = { group = "com.github.tonyofrancis.Fetch", name = "fetch2okhttp", version.ref = "fetch2" }
+okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
+okio-fakefilesystem = { group = "com.squareup.okio", name = "okio-fakefilesystem", version.ref = "okio" }
 
 #image
 fresco = { group = "com.facebook.fresco", name = "fresco", version.ref = "fresco" }
@@ -187,3 +192,4 @@ android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.
 
 # Plugins defined by this project
 convention-android-library = { id = "convention.android.library" }
+android-lint = { id = "com.android.lint", version.ref = "agp" }

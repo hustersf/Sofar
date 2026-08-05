@@ -40,6 +40,7 @@ include(":framework:image")
 include(":framework:shared-preferences")
 include(":framework:config")
 include(":framework:startup")
+include(":framework:disklrucache-kmp")
 
 include(":core:base")
 include(":core:ui")
