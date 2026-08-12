@@ -1,22 +1,21 @@
 package com.sofar.fun.play;
 
-import android.os.Bundle;
+import java.util.Map;
 
+import android.os.Bundle;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sofar.R;
+import com.sofar.core.ui.activity.BaseUIActivity;
 import com.sofar.fun.play.card.FeedItemCard;
 import com.sofar.fun.play.core.FeedPlayer;
 import com.sofar.fun.play.core.ItemScroll;
 import com.sofar.fun.play.core.RecyclerViewPlayer;
 import com.sofar.widget.DataProvider;
 
-import java.util.Map;
-
-public class AutoPlayListActivity extends AppCompatActivity {
+public class AutoPlayListActivity extends BaseUIActivity {
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {

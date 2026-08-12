@@ -12,6 +12,7 @@ android {
 
 dependencies {
     implementation(project(":core:common"))
+    implementation(libs.androidx.activity)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.recyclerview)
     implementation(libs.dynamicanimation.ktx)

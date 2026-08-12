@@ -2,15 +2,14 @@ package com.sofar.datastore
 
 import android.os.Bundle
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.flow.collect
+import com.sofar.core.ui.activity.BaseUIActivity
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-class DataStoreActivity : AppCompatActivity() {
+class DataStoreActivity : BaseUIActivity() {
 
   private val countKey = intPreferencesKey("counter_test")
   private lateinit var textView: TextView

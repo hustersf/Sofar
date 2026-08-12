@@ -3,15 +3,15 @@ package com.sofar.network
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.sofar.R
+import com.sofar.core.ui.activity.BaseUIActivity
 import com.sofar.kmp.network.openapi.OpenApiClient
 import com.sofar.kmp.network.openapi.SdkConfig
 import com.sofar.network.interceptor.AddTokenInterceptor
 import kotlinx.coroutines.launch
 
-class KmpNetworkActivity : AppCompatActivity() {
+class KmpNetworkActivity : BaseUIActivity() {
 
   private lateinit var bodyLayout: View
   private lateinit var body: TextView

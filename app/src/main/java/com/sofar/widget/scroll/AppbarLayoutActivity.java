@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.AppBarLayout;
 import com.sofar.R;
+import com.sofar.core.ui.activity.BaseUIActivity;
 import com.sofar.fun.play.Feed;
 import com.sofar.utility.ViewUtil;
 import com.sofar.widget.DataProvider;
@@ -46,7 +46,7 @@ import com.sofar.widget.recycler.adapter.CellAdapter;
  * 4.scroll_exitUntilCollapsed(minHeight):正向滑动，View收起至minHeight高度便不再继续滑动，保持置顶悬挂
  * 5.scroll_snap:随RecyclerView滑动，区别是自带吸附功能,未滑动到指定位置，将自动吸附
  */
-public class AppbarLayoutActivity extends AppCompatActivity {
+public class AppbarLayoutActivity extends BaseUIActivity {
 
   private static final String TAG = "AppbarLayoutActivity";
 

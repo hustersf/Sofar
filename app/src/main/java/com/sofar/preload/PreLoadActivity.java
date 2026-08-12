@@ -6,13 +6,13 @@ import android.os.Bundle;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.sofar.R;
+import com.sofar.core.ui.activity.BaseUIActivity;
 import com.sofar.preloader.PreLoader;
 import com.sofar.preloader.interfaces.PreloadListener;
 
-public class PreLoadActivity extends AppCompatActivity {
+public class PreLoadActivity extends BaseUIActivity {
 
   private static String KEY_PRELOAD_ID = "preloadId";
   private static long launchStart = 0;

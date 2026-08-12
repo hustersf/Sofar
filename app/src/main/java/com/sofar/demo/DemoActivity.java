@@ -4,14 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.sofar.R;
 import com.sofar.aidl.AIDLActivity;
+import com.sofar.core.ui.activity.BaseUIActivity;
 import com.sofar.datastore.DataStoreActivity;
 import com.sofar.room.RoomActivity;
 
-public class DemoActivity extends AppCompatActivity {
+public class DemoActivity extends BaseUIActivity {
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {

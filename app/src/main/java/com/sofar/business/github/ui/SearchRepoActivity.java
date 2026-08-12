@@ -1,5 +1,7 @@
 package com.sofar.business.github.ui;
 
+import java.util.Collections;
+
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -7,10 +9,8 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,12 +20,11 @@ import com.sofar.R;
 import com.sofar.business.github.model.GithubRepository;
 import com.sofar.business.github.model.SearchRepoViewModel;
 import com.sofar.business.github.model.SearchRepoViewModelFactory;
+import com.sofar.core.ui.activity.BaseUIActivity;
 import com.sofar.utility.CollectionUtil;
 import com.sofar.utility.ToastUtil;
 
-import java.util.Collections;
-
-public class SearchRepoActivity extends AppCompatActivity {
+public class SearchRepoActivity extends BaseUIActivity {
 
   private SearchRepoViewModel repoViewModel;
   private static final String DEFAULT_QUERY = "Android";

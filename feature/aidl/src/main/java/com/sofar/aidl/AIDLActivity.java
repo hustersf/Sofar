@@ -10,9 +10,10 @@ import android.os.RemoteException;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
-public class AIDLActivity extends AppCompatActivity {
+import com.sofar.core.ui.activity.BaseUIActivity;
+
+public class AIDLActivity extends BaseUIActivity {
 
   private static final String TAG = "AIDLActivity";
 

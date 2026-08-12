@@ -2,14 +2,14 @@ package com.sofar.widget.bar;
 
 import android.os.Bundle;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.sofar.R;
+import com.sofar.core.ui.activity.BaseUIActivity;
 import com.sofar.keyboard.CommentInputDialog;
 import com.sofar.utility.DateUtil;
 import com.sofar.utility.ToastUtil;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseUIActivity {
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {

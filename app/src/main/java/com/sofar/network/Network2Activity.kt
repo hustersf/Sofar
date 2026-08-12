@@ -3,9 +3,9 @@ package com.sofar.network
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.sofar.R
+import com.sofar.core.ui.activity.BaseUIActivity
 import com.sofar.network2.api.ApiService
 import com.sofar.network2.api.execute
 import com.sofar.network2.core.OpenApiClient
@@ -13,7 +13,7 @@ import com.sofar.network2.core.SdkConfig
 import com.sofar.network2.core.on
 import kotlinx.coroutines.launch
 
-class Network2Activity : AppCompatActivity() {
+class Network2Activity : BaseUIActivity() {
 
   private lateinit var bodyLayout: View
   private lateinit var dataLayout: View

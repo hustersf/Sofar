@@ -21,24 +21,18 @@ import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sofar.R;
-import com.sofar.widget.bar.SettingsActivity;
-import com.sofar.widget.chart.ChartActivity;
-import com.sofar.widget.recycler.GroupRecyclerActivity;
-import com.sofar.widget.scroll.AppbarLayoutActivity;
-import com.sofar.widget.scroll.NestedScrollActivity;
-import com.sofar.widget.textview.TextTagView;
-import com.sofar.widget.textview.TextWithTagView;
-import com.sofar.widget.textview.span.RoundBackgroundSpan;
 import com.sofar.base.span.SpanUtil;
+import com.sofar.core.ui.activity.BaseUIActivity;
 import com.sofar.keyboard.CommentInputDialog;
 import com.sofar.utility.DeviceUtil;
 import com.sofar.utility.LogUtil;
 import com.sofar.utility.ToastUtil;
 import com.sofar.utility.ViewUtil;
+import com.sofar.widget.bar.SettingsActivity;
+import com.sofar.widget.chart.ChartActivity;
 import com.sofar.widget.floating.FloatingWidget;
 import com.sofar.widget.highlight.BottomComponent;
 import com.sofar.widget.highlight.Component;
@@ -47,14 +41,19 @@ import com.sofar.widget.highlight.GuideBuilder;
 import com.sofar.widget.highlight.GuideDialogFragment;
 import com.sofar.widget.highlight.TopComponent;
 import com.sofar.widget.progress.VoteProgress;
+import com.sofar.widget.recycler.GroupRecyclerActivity;
 import com.sofar.widget.recycler.ParentNoScrollRecyclerView;
 import com.sofar.widget.recycler.StackCardAdapter;
-import com.sofar.widget.recycler.layoutmanager.stack.StartMarginStackLayout;
 import com.sofar.widget.recycler.layoutmanager.stack.StackLayoutManager;
+import com.sofar.widget.recycler.layoutmanager.stack.StartMarginStackLayout;
+import com.sofar.widget.scroll.AppbarLayoutActivity;
 import com.sofar.widget.swipe.SwipeBack;
 import com.sofar.widget.swipe.SwipeLayout;
+import com.sofar.widget.textview.TextTagView;
+import com.sofar.widget.textview.TextWithTagView;
+import com.sofar.widget.textview.span.RoundBackgroundSpan;
 
-public class WidgetActivity extends AppCompatActivity {
+public class WidgetActivity extends BaseUIActivity {
 
   VoteProgress progress;
 

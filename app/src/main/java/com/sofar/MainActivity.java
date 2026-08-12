@@ -1,14 +1,9 @@
 package com.sofar;
 
-import org.jetbrains.annotations.NotNull;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Bundle;
 import android.util.Log;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -16,13 +11,14 @@ import com.sofar.base.location.LocationProvider;
 import com.sofar.config.ABTest;
 import com.sofar.config.ConfigManager;
 import com.sofar.config.SystemConfig;
+import com.sofar.core.ui.activity.BaseUIActivity;
 import com.sofar.fun.play.Feed;
 import com.sofar.main.MainItemDecoration;
 import com.sofar.main.MainListAdapter;
 import com.sofar.utility.FileUtil;
 import com.sofar.widget.recycler.overscroll.VerticalEdgeEffectFactory;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseUIActivity {
 
   RecyclerView recyclerView;
   private static final String TAG = "MainActivity";

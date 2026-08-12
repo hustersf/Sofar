@@ -10,7 +10,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.sofar.R;
 import com.sofar.ad.AdFacade;
@@ -19,8 +18,9 @@ import com.sofar.ad.log.AdDebug;
 import com.sofar.ad.model.AdInfo;
 import com.sofar.ad.model.AdPondConfig;
 import com.sofar.ad.util.AdUtil;
+import com.sofar.core.ui.activity.BaseUIActivity;
 
-public class AdActivity extends AppCompatActivity {
+public class AdActivity extends BaseUIActivity {
 
   EditText mAdRequestCountView;
   EditText mAdParallelCountView;

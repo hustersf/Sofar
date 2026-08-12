@@ -3,14 +3,13 @@ package com.sofar.network;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.sofar.R;
+import com.sofar.core.ui.activity.BaseUIActivity;
 import com.sofar.network.response.ResponseFunction;
 
-public class NetworkActivity extends AppCompatActivity {
+public class NetworkActivity extends BaseUIActivity {
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {

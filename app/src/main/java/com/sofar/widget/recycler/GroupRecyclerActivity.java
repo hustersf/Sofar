@@ -6,13 +6,13 @@ import java.util.Map;
 
 import android.os.Bundle;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.gson.Gson;
 import com.sofar.R;
+import com.sofar.core.ui.activity.BaseUIActivity;
 import com.sofar.utility.FileUtil;
 import com.sofar.widget.recycler.model.College;
 import com.sofar.widget.recycler.model.CollegeWrapper;
@@ -22,7 +22,7 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class GroupRecyclerActivity extends AppCompatActivity {
+public class GroupRecyclerActivity extends BaseUIActivity {
 
   SwipeRefreshLayout refreshLayout;
   RecyclerView recyclerView;

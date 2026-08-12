@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.sofar.R;
 import com.sofar.chart.charts.BarChart;
@@ -28,8 +27,9 @@ import com.sofar.chart.interfaces.datasets.ILineDataSet;
 import com.sofar.chart.listener.OnChartValueSelectedListener;
 import com.sofar.chart.utils.MarkerViewHelper;
 import com.sofar.chart.utils.Utils;
+import com.sofar.core.ui.activity.BaseUIActivity;
 
-public class ChartActivity extends AppCompatActivity {
+public class ChartActivity extends BaseUIActivity {
 
   private LineChart mLineChartView1;
   private LineChart mLineChartView2;

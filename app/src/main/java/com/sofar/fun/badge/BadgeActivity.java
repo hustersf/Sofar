@@ -1,23 +1,22 @@
 package com.sofar.fun.badge;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.sofar.R;
 import com.sofar.badge.BadgeNumber;
 import com.sofar.badge.BadgeNumberInterval;
 import com.sofar.badge.BadgeNumberTreeManager;
+import com.sofar.core.ui.activity.BaseUIActivity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-public class BadgeActivity extends AppCompatActivity {
+public class BadgeActivity extends BaseUIActivity {
 
   private static final String TAG = "BadgeActivity";
 

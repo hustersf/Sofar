@@ -4,14 +4,14 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.sofar.core.ui.activity.BaseUIActivity
 import com.sofar.room.model.UserEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class RoomActivity : AppCompatActivity() {
+class RoomActivity : BaseUIActivity() {
 
   private lateinit var idEt: EditText
   private lateinit var nameEt: EditText

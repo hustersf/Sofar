@@ -6,14 +6,13 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.sofar.R;
+import com.sofar.core.ui.activity.BaseUIActivity;
 
-public class DownloadActivity extends AppCompatActivity {
+public class DownloadActivity extends BaseUIActivity {
 
   private final static String TAG = "DownloadActivity";
 

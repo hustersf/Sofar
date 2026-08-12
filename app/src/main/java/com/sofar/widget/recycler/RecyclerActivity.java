@@ -6,17 +6,17 @@ import java.util.List;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.sofar.R;
+import com.sofar.core.ui.activity.BaseUIActivity;
 import com.sofar.fun.play.Feed;
 import com.sofar.utility.ToastUtil;
 import com.sofar.widget.DataProvider;
 
-public class RecyclerActivity extends AppCompatActivity {
+public class RecyclerActivity extends BaseUIActivity {
 
   RecyclerView recyclerView;
   FeedAdapter adapter;

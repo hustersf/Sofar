@@ -3,11 +3,10 @@ package com.sofar.fun;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.sofar.R;
+import com.sofar.core.ui.activity.BaseUIActivity;
 import com.sofar.fun.ad.AdActivity;
 import com.sofar.fun.badge.BadgeActivity;
 import com.sofar.fun.dialog.QueueDialogFragment1;
@@ -16,7 +15,7 @@ import com.sofar.fun.dialog.QueueDialogFragment3;
 import com.sofar.fun.play.AutoPlayListActivity;
 import com.sofar.widget.dialog.SofarDialogQueue;
 
-public class FunActivity extends AppCompatActivity {
+public class FunActivity extends BaseUIActivity {
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {

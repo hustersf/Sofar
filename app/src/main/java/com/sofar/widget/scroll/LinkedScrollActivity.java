@@ -7,16 +7,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.HorizontalScrollView;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.sofar.R;
+import com.sofar.core.ui.activity.BaseUIActivity;
 
 
 /**
  * 测试联动滚动示例
  * 普通View监听手势触发 HorizontalScrollView 滚动+Fling
  */
-public class LinkedScrollActivity extends AppCompatActivity {
+public class LinkedScrollActivity extends BaseUIActivity {
 
   private static final String TAG = "LinkedScrollActivity";
 

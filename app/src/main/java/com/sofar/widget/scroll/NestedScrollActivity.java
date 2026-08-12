@@ -20,7 +20,6 @@ import android.webkit.WebViewClient;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -28,6 +27,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.sofar.R;
 import com.sofar.base.recycler.RecyclerAdapter;
 import com.sofar.base.viewbinder.RecyclerViewBinder;
+import com.sofar.core.ui.activity.BaseUIActivity;
 import com.sofar.fun.play.Feed;
 import com.sofar.utility.DeviceUtil;
 import com.sofar.utility.ViewUtil;
@@ -42,7 +42,7 @@ import com.sofar.widget.recycler.FeedAdapter;
 /**
  * 测试嵌套滑动
  */
-public class NestedScrollActivity extends AppCompatActivity {
+public class NestedScrollActivity extends BaseUIActivity {
 
   private static final String TAG = "NestedScrollActivity";
 
