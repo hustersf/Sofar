@@ -41,6 +41,7 @@ include(":framework:shared-preferences")
 include(":framework:config")
 include(":framework:startup")
 include(":framework:disklrucache-kmp")
+include(":framework:network-cache")
 
 include(":core:base")
 include(":core:ui")

@@ -6,4 +6,5 @@
   <string name="search_hint">GitHub Repository</string>
   <string name="no_results">No results 😓</string>
   <string name="unknown">\?</string>
+  <string name="request">Request</string>
 </resources>

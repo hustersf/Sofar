@@ -66,6 +66,7 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":framework:network-rxjava"))
     implementation(project(":framework:network-coroutine"))
+    implementation(project(":framework:network-cache"))
     implementation(project(":framework:download"))
     implementation(project(":framework:skin"))
     implementation(project(":core:audio-record"))
@@ -108,8 +109,10 @@ dependencies {
     implementation(libs.rxjava)
     implementation(libs.rxandroid)
     implementation(libs.okhttp)
+    implementation(libs.okhttp.logging)
     implementation(libs.gson)
     implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
 
     // 测试相关
     testImplementation(libs.junit)
