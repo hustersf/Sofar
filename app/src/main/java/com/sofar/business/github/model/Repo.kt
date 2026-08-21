@@ -1,36 +1,17 @@
-package com.sofar.business.github.model;
+package com.sofar.business.github.model
 
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
-import com.google.gson.annotations.SerializedName;
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "repos")
-public class Repo {
-
-  @PrimaryKey
-  @SerializedName("id")
-  public long id;
-
-  @SerializedName("name")
-  public String name;
-
-  @SerializedName("full_name")
-  public String fullName;
-
-  @SerializedName("description")
-  public String description;
-
-  @SerializedName("html_url")
-  public String url;
-
-  @SerializedName("stargazers_count")
-  public int stars;
-
-  @SerializedName("forks_count")
-  public int forks;
-
-  @SerializedName("language")
-  public String language;
-
-}
+data class Repo(
+  @PrimaryKey @SerializedName("id") val id: Long,
+  @SerializedName("name") val name: String,
+  @SerializedName("full_name") val fullName: String?,
+  @SerializedName("description") val description: String?,
+  @SerializedName("html_url") val url: String?,
+  @SerializedName("stargazers_count") val stars: Int,
+  @SerializedName("forks_count") val forks: Int,
+  @SerializedName("language") val language: String?
+)

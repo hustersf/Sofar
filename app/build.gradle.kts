@@ -96,7 +96,12 @@ dependencies {
 
     // Room
     implementation(libs.androidx.room)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.paging)
     ksp(libs.androidx.room.compiler)
+
+    // Paging
+    implementation(libs.androidx.paging)
 
     // 图片加载与底层库
     implementation(libs.glide)

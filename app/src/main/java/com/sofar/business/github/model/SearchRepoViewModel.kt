@@ -1,45 +1,31 @@
-package com.sofar.business.github.model;
+package com.sofar.business.github.model
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
-import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
 
-import java.util.List;
+class SearchRepoViewModel(private val repository: GithubRepository) : ViewModel() {
 
-public class SearchRepoViewModel extends ViewModel {
+  private val _query = MutableStateFlow("")
+  val query: StateFlow<String> = _query.asStateFlow()
 
-  private static final int VISIBLE_THRESHOLD = 5;
-
-  @NonNull
-  GithubRepository repository;
-
-  MutableLiveData<String> queryLiveData = new MutableLiveData<>();
-
-  LiveData<RepoSearchResult> repoResult = Transformations.map(queryLiveData, input -> repository.search(input));
-
-  public LiveData<List<Repo>> repos = Transformations.switchMap(repoResult, input -> input.data);
-  public LiveData<String> networkErrors = Transformations.switchMap(repoResult, input -> input.networkErrors);
-
-  public SearchRepoViewModel(@NonNull GithubRepository repository) {
-    this.repository = repository;
-  }
-
-  public void searchRepo(String query) {
-    queryLiveData.postValue(query);
-  }
-
-  public void listScrolled(int visibleItemCount, int lastVisibleItemPosition, int totalItemCount) {
-    if (visibleItemCount + lastVisibleItemPosition + VISIBLE_THRESHOLD >= totalItemCount) {
-      repository.requestMore(queryLiveData.getValue());
+  @OptIn(ExperimentalCoroutinesApi::class)
+  val pagingDataFlow: Flow<PagingData<Repo>> = _query
+    .filter { it.isNotEmpty() }
+    .flatMapLatest { queryString ->
+      repository.getSearchResultStream(queryString)
     }
-  }
+    .cachedIn(viewModelScope)
 
-  @Override
-  protected void onCleared() {
-    super.onCleared();
-    repository.clear();
+  fun searchRepo(queryString: String) {
+    _query.value = queryString
   }
-
 }

@@ -1,21 +1,22 @@
-package com.sofar.business.github.api;
+package com.sofar.business.github.api
 
-import com.sofar.business.github.model.RepoSearchResponse;
+import com.sofar.business.github.model.RepoSearchResponse
+import io.reactivex.Observable
+import retrofit2.http.GET
+import retrofit2.http.Query
 
-import io.reactivex.Observable;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
-
-public interface GithubService {
+interface GithubService {
+  @GET("search/repositories?sort=stars")
+  suspend fun searchRepos(
+    @Query("q") query: String,
+    @Query("page") page: Int,
+    @Query("per_page") itemsPerPage: Int
+  ): RepoSearchResponse
 
   @GET("search/repositories?sort=stars")
-  Observable<RepoSearchResponse> searchRepos(@Query("q") String query,
-    @Query("page") int page,
-    @Query("per_page") int itemsPerPage);
-
-  @GET("search/repositories?sort=stars")
-  Observable<String> searchReposStr(@Query("q") String query,
-    @Query("page") int page,
-    @Query("per_page") int itemsPerPage);
-
+  fun searchReposStr(
+    @Query("q") query: String,
+    @Query("page") page: Int,
+    @Query("per_page") itemsPerPage: Int
+  ): Observable<String>
 }

@@ -1,36 +1,26 @@
-package com.sofar.business.github.db;
+package com.sofar.business.github.db
 
-import android.content.Context;
+import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import com.sofar.business.github.model.Repo
 
-import androidx.annotation.NonNull;
-import androidx.room.Database;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
+@Database(entities = [Repo::class, RepoRemoteKeys::class], version = 1, exportSchema = false)
+abstract class RepoDatabase : RoomDatabase() {
+  abstract fun reposDao(): RepoDao
+  abstract fun remoteKeysDao(): RemoteKeysDao
 
-import com.sofar.business.github.model.Repo;
-
-@Database(version = 1, entities = {Repo.class},exportSchema = false)
-public abstract class RepoDatabase extends RoomDatabase {
-
-  private volatile static RepoDatabase instance;
-  private static final String DB_NAME = "github.db";
-
-  public abstract RepoDao getRepoDao();
-
-  public static RepoDatabase getInstance(@NonNull Context context) {
-    if (instance == null) {
-      synchronized (RepoDatabase.class) {
-        if (instance == null) {
-          instance = buildDatabase(context);
-        }
+  companion object {
+    @Volatile
+    private var INSTANCE: RepoDatabase? = null
+    fun getInstance(context: Context): RepoDatabase =
+      INSTANCE ?: synchronized(this) {
+        INSTANCE ?: Room.databaseBuilder(
+          context.getApplicationContext(),
+          RepoDatabase::class.java,
+          "github.db"
+        ).build().also { INSTANCE = it }
       }
-    }
-    return instance;
   }
-
-  private static RepoDatabase buildDatabase(Context context) {
-    return Room.databaseBuilder(context.getApplicationContext(), RepoDatabase.class, DB_NAME)
-      .build();
-  }
-
 }

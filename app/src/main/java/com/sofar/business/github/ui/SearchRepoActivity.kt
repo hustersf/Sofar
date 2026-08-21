@@ -1,128 +1,105 @@
-package com.sofar.business.github.ui;
+package com.sofar.business.github.ui
 
-import java.util.Collections;
+import android.os.Bundle
+import android.view.KeyEvent
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.RecyclerView
+import com.sofar.R
+import com.sofar.business.github.api.GithubApiHolder
+import com.sofar.business.github.db.RepoDatabase
+import com.sofar.business.github.model.GithubRepository
+import com.sofar.business.github.model.SearchRepoViewModel
+import com.sofar.business.github.model.SearchRepoViewModelFactory
+import com.sofar.core.ui.activity.BaseUIActivity
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
-import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.TextView;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+class SearchRepoActivity : BaseUIActivity() {
 
-import com.sofar.R;
-import com.sofar.business.github.model.GithubRepository;
-import com.sofar.business.github.model.SearchRepoViewModel;
-import com.sofar.business.github.model.SearchRepoViewModelFactory;
-import com.sofar.core.ui.activity.BaseUIActivity;
-import com.sofar.utility.CollectionUtil;
-import com.sofar.utility.ToastUtil;
-
-public class SearchRepoActivity extends BaseUIActivity {
-
-  private SearchRepoViewModel repoViewModel;
-  private static final String DEFAULT_QUERY = "Android";
-
-  EditText searchRepoEt;
-  TextView emptyList;
-
-  RecyclerView list;
-  RepoAdapter adapter;
-
-  @Override
-  protected void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.repo_search_activity);
-    searchRepoEt = findViewById(R.id.search_repo);
-    list = findViewById(R.id.list);
-    emptyList = findViewById(R.id.empty_list);
-
-    GithubRepository repository = new GithubRepository(this);
-    repoViewModel = new ViewModelProvider(this, new SearchRepoViewModelFactory(repository)).get(SearchRepoViewModel.class);
-
-    initSearch();
-    initAdapter();
-    setupScrollListener();
+  private val viewModel: SearchRepoViewModel by lazy {
+    val database = RepoDatabase.getInstance(this)
+    val service = GithubApiHolder.githubService
+    ViewModelProvider(this, SearchRepoViewModelFactory(GithubRepository(service, database)))
+      .get(SearchRepoViewModel::class.java)
   }
 
-  private void initAdapter() {
-    DividerItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-    list.addItemDecoration(itemDecoration);
-    adapter = new RepoAdapter();
-    list.setLayoutManager(new LinearLayoutManager(this));
-    list.setAdapter(adapter);
+  private lateinit var adapter: RepoAdapter
+  private lateinit var searchRepoEt: EditText
+  private lateinit var list: RecyclerView
+  private lateinit var emptyList: android.view.View
 
-    repoViewModel.repos.observe(this, repos -> {
-      if (CollectionUtil.isEmpty(repos)) {
-        list.setVisibility(View.GONE);
-        emptyList.setVisibility(View.VISIBLE);
-      } else {
-        list.setVisibility(View.VISIBLE);
-        emptyList.setVisibility(View.GONE);
-        adapter.setList(repos);
-        adapter.notifyDataSetChanged();
-      }
-    });
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.repo_search_activity)
 
-    repoViewModel.networkErrors.observe(this, s -> {
-      ToastUtil.startShort(this, s);
-    });
+    searchRepoEt = findViewById(R.id.search_repo)
+    list = findViewById(R.id.list)
+    emptyList = findViewById(R.id.empty_list)
+
+    initAdapter()
+    initSearch()
+    collectPagingData()
   }
 
-  private void initSearch() {
-    searchRepoEt.setText(DEFAULT_QUERY);
-    repoViewModel.searchRepo(DEFAULT_QUERY);
+  private fun initAdapter() {
+    adapter = RepoAdapter()
+    list.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+    list.adapter = adapter
+  }
 
-    searchRepoEt.setOnEditorActionListener((v, actionId, event) -> {
+  private fun initSearch() {
+    val query = "Android"
+    if (viewModel.query.value.isEmpty()) {
+      viewModel.searchRepo(query)
+    }
+    searchRepoEt.setText(query)
+
+    searchRepoEt.setOnEditorActionListener { _, actionId, _ ->
       if (actionId == EditorInfo.IME_ACTION_GO) {
-        updateRepoListFromInput();
-        return true;
+        updateRepoListFromInput()
+        true
       } else {
-        return false;
+        false
       }
-    });
-
-    searchRepoEt.setOnKeyListener((v, keyCode, event) -> {
-      if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
-        updateRepoListFromInput();
-        return true;
+    }
+    searchRepoEt.setOnKeyListener { _, keyCode, event ->
+      if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+        updateRepoListFromInput()
+        true
       } else {
-        return false;
+        false
       }
-    });
-  }
-
-  private void updateRepoListFromInput() {
-    String query = searchRepoEt.getText().toString().trim();
-    if (!TextUtils.isEmpty(query)) {
-      repoViewModel.searchRepo(query);
-      list.scrollToPosition(0);
-      adapter.setList(Collections.EMPTY_LIST);
-      adapter.notifyDataSetChanged();
     }
   }
 
-  private void setupScrollListener() {
-    if (list.getLayoutManager() instanceof LinearLayoutManager) {
-      LinearLayoutManager layoutManager = (LinearLayoutManager) list.getLayoutManager();
-      list.addOnScrollListener(new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-          super.onScrolled(recyclerView, dx, dy);
+  private fun updateRepoListFromInput() {
+    searchRepoEt.text.trim().toString().let {
+      if (it.isNotEmpty()) {
+        list.scrollToPosition(0)
+        viewModel.searchRepo(it)
+      }
+    }
+  }
 
-          int totalItemCount = layoutManager.getItemCount();
-          int visibleItemCount = layoutManager.getChildCount();
-          int lastVisibleItem = layoutManager.findLastVisibleItemPosition();
+  private fun collectPagingData() {
+    lifecycleScope.launch {
+      viewModel.pagingDataFlow.collectLatest { pagingData ->
+        adapter.submitData(pagingData)
+      }
+    }
 
-          repoViewModel.listScrolled(visibleItemCount, lastVisibleItem, totalItemCount);
-        }
-      });
+    lifecycleScope.launch {
+      adapter.loadStateFlow.collect { loadState ->
+        val isListEmpty = loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0
+        list.visibility = if (isListEmpty) android.view.View.GONE else android.view.View.VISIBLE
+        emptyList.visibility =
+          if (isListEmpty) android.view.View.VISIBLE else android.view.View.GONE
+      }
     }
   }
 }

@@ -1,21 +1,16 @@
-package com.sofar.business.github.model;
+package com.sofar.business.github.model
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 
-public class SearchRepoViewModelFactory implements ViewModelProvider.Factory {
+class SearchRepoViewModelFactory(private val repository: GithubRepository) :
+  ViewModelProvider.Factory {
 
-  @NonNull
-  private GithubRepository repository;
-
-  public SearchRepoViewModelFactory(@NonNull GithubRepository repository) {
-    this.repository = repository;
-  }
-
-  @NonNull
-  @Override
-  public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-    return (T) new SearchRepoViewModel(repository);
+  @Suppress("UNCHECKED_CAST")
+  override fun <T : ViewModel> create(modelClass: Class<T>): T {
+    if (modelClass.isAssignableFrom(SearchRepoViewModel::class.java)) {
+      return SearchRepoViewModel(repository) as T
+    }
+    throw IllegalArgumentException("Unknown ViewModel class")
   }
 }

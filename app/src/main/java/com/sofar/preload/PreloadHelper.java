@@ -1,5 +1,6 @@
 package com.sofar.preload;
 
+import com.sofar.business.github.api.GithubApiHolder;
 import com.sofar.network.ApiProvider;
 import com.sofar.preloader.interfaces.GroupedDataListener;
 import com.sofar.preloader.interfaces.GroupedDataLoader;
@@ -18,7 +19,7 @@ public class PreloadHelper {
 
       @Override
       public Observable<String> loader() {
-        return ApiProvider.getGithubService().searchReposStr("Android", 0, 1);
+        return  GithubApiHolder.INSTANCE.getGithubService().searchReposStr("Android", 0, 1);
       }
     };
   }

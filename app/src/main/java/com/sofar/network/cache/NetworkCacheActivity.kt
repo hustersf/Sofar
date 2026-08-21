@@ -1,14 +1,12 @@
 package com.sofar.network.cache
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.sofar.R
 import com.sofar.core.ui.activity.BaseUIActivity
-import com.sofar.network.cache.monitor.DefaultSdkLogger
-import com.sofar.network.cache.monitor.ICacheMonitor
 import com.sofar.network.cache.retrofit.CacheFlowCallAdapterFactory
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onCompletion
@@ -17,7 +15,6 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -33,8 +30,12 @@ class NetworkCacheActivity : BaseUIActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.network_cache_activity)
     initView()
-    initSdk()
     initRetrofit()
+    lifecycleScope.launch {
+      NetworkCacheInitializer.logFlow.collect { message ->
+        log(message)
+      }
+    }
     sendBtn.setOnClickListener {
       val startTime = System.currentTimeMillis()
       logTv.text = ""
@@ -71,46 +72,6 @@ class NetworkCacheActivity : BaseUIActivity() {
     logTv = findViewById(R.id.log_tv)
   }
 
-  private fun initSdk() {
-    NetworkCache.init(
-      NetworkCache.Builder(
-        cacheDir = File(externalCacheDir, "network_cache")
-      ).setLogger(
-        DefaultSdkLogger(true)
-      ).setMonitor(
-        object : ICacheMonitor {
-          override fun onCacheHit(urlPath: String) {
-            log("cache hit: $urlPath")
-          }
-
-          override fun onCacheMiss(urlPath: String) {
-            log("cache miss: $urlPath")
-          }
-
-          override fun onCacheExpired(urlPath: String) {
-            log("cache expired: $urlPath")
-          }
-
-          override fun onCacheReadFailed(urlPath: String, throwable: Throwable) {
-            log("cache read failed: ${throwable.message}")
-          }
-
-          override fun onCacheWriteFailed(urlPath: String, throwable: Throwable) {
-            log("cache write failed: ${throwable.message}")
-          }
-
-          override fun onNetworkSuccess(urlPath: String, costMs: Long) {
-            log("network success: $urlPath (${costMs}ms)")
-          }
-
-          override fun onNetworkFailed(urlPath: String, throwable: Throwable, costMs: Long) {
-            log("network failed: ${throwable.message}")
-          }
-        }
-      ).build()
-    )
-  }
-
   private fun initRetrofit() {
     val retrofit = Retrofit.Builder()
       .baseUrl("https://api.github.com/")
@@ -133,6 +94,7 @@ class NetworkCacheActivity : BaseUIActivity() {
     runOnUiThread {
       val time = SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault()).format(Date())
       logTv.append("[$time] $message\n")
+      Log.d("NetworkCacheActivity", "$message")
     }
   }
 }
