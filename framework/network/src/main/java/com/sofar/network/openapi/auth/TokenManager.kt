@@ -1,9 +1,8 @@
-package com.sofar.network2.internal
+package com.sofar.network.openapi.auth
 
-import com.sofar.network2.api.AuthService
-import com.sofar.network2.api.unwrap
-import com.sofar.network2.core.SdkConfig
-import com.sofar.network2.core.TokenProvider
+import com.sofar.network.openapi.SdkConfig
+import com.sofar.network.openapi.api.AuthService
+import com.sofar.network.openapi.unwrap
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 

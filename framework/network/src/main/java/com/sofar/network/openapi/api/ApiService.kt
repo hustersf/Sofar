@@ -1,6 +1,6 @@
-package com.sofar.network2.api
+package com.sofar.network.openapi.api
 
-import com.sofar.network2.api.model.Banner
+import com.sofar.network.openapi.api.model.Banner
 import retrofit2.http.GET
 
 interface ApiService {

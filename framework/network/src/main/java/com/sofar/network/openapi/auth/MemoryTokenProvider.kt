@@ -1,6 +1,4 @@
-package com.sofar.network2.internal
-
-import com.sofar.network2.core.TokenProvider
+package com.sofar.network.openapi.auth
 
 /**
  *  SDK 内部的内存存储实现，作为业务方未提供 Provider 时的兜底

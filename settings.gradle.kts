@@ -32,7 +32,7 @@ rootProject.name = "Sofar"
 include(":app")
 
 include(":framework:network-rxjava")
-include(":framework:network-coroutine")
+include(":framework:network")
 include(":framework:network-kmp")
 include(":framework:download")
 include(":framework:skin")

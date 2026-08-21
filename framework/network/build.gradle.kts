@@ -9,6 +9,9 @@ android {
 
 dependencies {
     implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
+    implementation(libs.retrofit.rxjava2)
+    implementation(libs.gson)
     implementation(libs.kotlinx.serialization)
     implementation(libs.retrofit.scalars)
     implementation(libs.retrofit.serialization)

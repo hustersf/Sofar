@@ -65,7 +65,8 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
     implementation(project(":framework:network-rxjava"))
-    implementation(project(":framework:network-coroutine"))
+    implementation(project(":framework:network"))
+    implementation(project(":framework:network-kmp"))
     implementation(project(":framework:network-cache"))
     implementation(project(":framework:download"))
     implementation(project(":framework:skin"))
@@ -81,9 +82,8 @@ dependencies {
     implementation(project(":feature:appwidget"))
     implementation(project(":feature:room"))
 
-    // 三方封装库与 KMP 模块
+    // 三方封装库
     implementation(project(":thirdparty:mpchart"))
-    implementation(project(":framework:network-kmp"))
 
     // AndroidX & Material 组件
     implementation(libs.androidx.appcompat)

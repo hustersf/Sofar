@@ -1,6 +1,6 @@
-package com.sofar.network2.api
+package com.sofar.network.openapi.api
 
-import com.sofar.network2.api.model.TokenInfo
+import com.sofar.network.openapi.api.model.TokenInfo
 import retrofit2.http.POST
 import retrofit2.http.Query
 

@@ -1,4 +1,4 @@
-package com.sofar.network2.core
+package com.sofar.network.openapi.auth
 
 interface TokenProvider {
   fun getAccessToken(): String?

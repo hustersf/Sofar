@@ -1,4 +1,7 @@
-package com.sofar.network2.core
+package com.sofar.network.openapi
+
+import com.google.gson.Gson
+import com.sofar.network.openapi.auth.TokenProvider
 
 data class SdkConfig private constructor(
   val id: String,
@@ -8,6 +11,7 @@ data class SdkConfig private constructor(
   val connectTimeout: Long,
   val debugMode: Boolean,
   val tokenProvider: TokenProvider?,
+  val gson: Gson = Gson(),
 ) {
 
   fun mutateBaseUrl(newBaseUrl: String): SdkConfig {
@@ -22,6 +26,7 @@ data class SdkConfig private constructor(
     private var connectTimeout: Long = 15000L
     private var debugMode: Boolean = false
     private var tokenProvider: TokenProvider? = null
+    private var gson: Gson = Gson()
 
     fun setId(id: String) = apply { this.id = id }
     fun setApiKey(key: String) = apply { this.apiKey = key }
@@ -32,8 +37,10 @@ data class SdkConfig private constructor(
       this.tokenProvider = provider
     }
 
+    fun setGson(gson: Gson) = apply { this.gson = gson }
+
     fun build() =
-      SdkConfig(id, apiKey, apiSecret, baseUrl, connectTimeout, debugMode, tokenProvider)
+      SdkConfig(id, apiKey, apiSecret, baseUrl, connectTimeout, debugMode, tokenProvider, gson)
   }
 
   companion object {

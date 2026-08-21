@@ -1,4 +1,4 @@
-package com.sofar.network2.internal
+package com.sofar.network.openapi.auth
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable

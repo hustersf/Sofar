@@ -1,4 +1,4 @@
-package com.sofar.network2.api.model
+package com.sofar.network.openapi.api.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

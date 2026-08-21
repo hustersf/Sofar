@@ -6,11 +6,11 @@ import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import com.sofar.R
 import com.sofar.core.ui.activity.BaseUIActivity
-import com.sofar.network2.api.ApiService
-import com.sofar.network2.api.execute
-import com.sofar.network2.core.OpenApiClient
-import com.sofar.network2.core.SdkConfig
-import com.sofar.network2.core.on
+import com.sofar.network.openapi.OpenApiClient
+import com.sofar.network.openapi.SdkConfig
+import com.sofar.network.openapi.api.ApiService
+import com.sofar.network.openapi.execute
+import com.sofar.network.openapi.on
 import kotlinx.coroutines.launch
 
 class Network2Activity : BaseUIActivity() {

@@ -1,4 +1,6 @@
-package com.sofar.network2.api
+package com.sofar.network.openapi
+
+import com.sofar.network.openapi.api.ApiResponse
 
 class ApiException(
   val errorCode: Int,

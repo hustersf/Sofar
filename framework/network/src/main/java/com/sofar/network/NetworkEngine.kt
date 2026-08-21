@@ -1,11 +1,14 @@
-package com.sofar.network2.internal
+package com.sofar.network
 
+import com.google.gson.Gson
 import com.skydoves.retrofit.adapters.result.ResultCallAdapterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.concurrent.ConcurrentHashMap
@@ -15,7 +18,8 @@ import java.util.concurrent.ConcurrentHashMap
  */
 class NetworkEngine(
   val baseUrl: String,
-  private val interceptors: List<Interceptor>
+  private val interceptors: List<Interceptor>,
+  private val gson: Gson,
 ) {
 
   companion object {
@@ -24,6 +28,8 @@ class NetworkEngine(
       ignoreUnknownKeys = true
       // 如果字段有默认值，解析时若服务器没传，则使用本地默认值
       coerceInputValues = true
+      // 字段缺失时不抛出异常，自动解析为 null 属性
+      explicitNulls = false
       // 允许宽松的 JSON 格式
       isLenient = true
     }
@@ -42,8 +48,10 @@ class NetworkEngine(
       .baseUrl(baseUrl)
       .client(client)
       .addConverterFactory(ScalarsConverterFactory.create())
+      .addConverterFactory(GsonConverterFactory.create(gson))
       .addConverterFactory(sdkJson.asConverterFactory(contentType))
       .addCallAdapterFactory(ResultCallAdapterFactory.create())
+      .addCallAdapterFactory(RxJava2CallAdapterFactory.createAsync())
       .build()
   }
 
