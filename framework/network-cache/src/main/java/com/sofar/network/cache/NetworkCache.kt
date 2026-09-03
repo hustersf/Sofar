@@ -1,6 +1,7 @@
 package com.sofar.network.cache
 
 import android.util.Log
+import com.sofar.network.cache.key.CacheKeyTransformer
 import com.sofar.network.cache.monitor.DefaultSdkLogger
 import com.sofar.network.cache.monitor.EmptyCacheMonitor
 import com.sofar.network.cache.monitor.ICacheMonitor
@@ -20,17 +21,18 @@ import kotlin.math.min
 class NetworkCache private constructor() {
 
   class Config internal constructor(
-    val cacheDir: File,                     // 磁盘缓存根目录
-    val maxMemorySize: Int,                 // 内存 LruCache 上限（字节）
-    val maxDiskSize: Long,                  // 磁盘 LruCache 上限（字节）
-    val ttl: Long,                          // 接口未配置 ttl 时使用的默认 TTL 值
-    val ttlUnit: TimeUnit,                  // 接口未配置 ttl 时使用的默认 TTL 单位
-    val loadPolicy: LoadPolicy,             // 接口未配置读取策略时使用的默认策略
-    val logger: ISdkLogger,                 // 调试日志处理器
-    val monitor: ICacheMonitor,             // 关键节点监控器
-    val deduplicateResponse: Boolean,       // 过滤连续相同响应，依赖 DTO equals()
-    val cachePredicate: CachePredicate?,    // 缓存写入判断器，null 表示默认全部缓存
-    val enableDiskEncryption: Boolean,      // 磁盘缓存 AES-GCM 加密开关，默认开启
+    val cacheDir: File,                             // 磁盘缓存根目录
+    val maxMemorySize: Int,                         // 内存 LruCache 上限（字节）
+    val maxDiskSize: Long,                          // 磁盘 LruCache 上限（字节）
+    val ttl: Long,                                  // 接口未配置 ttl 时使用的默认 TTL 值
+    val ttlUnit: TimeUnit,                          // 接口未配置 ttl 时使用的默认 TTL 单位
+    val loadPolicy: LoadPolicy,                     // 接口未配置读取策略时使用的默认策略
+    val logger: ISdkLogger,                         // 调试日志处理器
+    val monitor: ICacheMonitor,                     // 关键节点监控器
+    val deduplicateResponse: Boolean,               // 过滤连续相同响应，依赖 DTO equals()
+    val cachePredicate: CachePredicate?,            // 缓存写入判断器，null 表示默认全部缓存
+    val cacheKeyTransformer: CacheKeyTransformer?,  // 缓存 Key 转换器，返回 null 或空白字符串时，沿用 SDK 默认规则。
+    val enableDiskEncryption: Boolean,              // 磁盘缓存 AES-GCM 加密开关，默认开启
   ) {
     val ttlMillis: Long = ttlUnit.toMillis(ttl)
   }
@@ -47,6 +49,7 @@ class NetworkCache private constructor() {
     private var monitor: ICacheMonitor = EmptyCacheMonitor()
     private var deduplicateResponse: Boolean = false
     private var cachePredicate: CachePredicate? = null
+    private var cacheKeyTransformer: CacheKeyTransformer? = null
     private var enableDiskEncryption: Boolean = true
 
     fun setMaxMemorySize(sizeInBytes: Int) = apply { this.maxMemorySize = sizeInBytes }
@@ -101,6 +104,14 @@ class NetworkCache private constructor() {
     fun setCachePredicate(predicate: CachePredicate) = apply { this.cachePredicate = predicate }
 
     /**
+     * 设置缓存 Key 转换器。
+     * 返回 null 或空白字符串时，沿用 SDK 默认规则。
+     */
+    fun setCacheKeyTransformer(transformer: CacheKeyTransformer) = apply {
+      this.cacheKeyTransformer = transformer
+    }
+
+    /**
      * 关闭磁盘缓存 AES-GCM-256 加密（默认开启）。
      *
      * 仅在明确不需要数据保护的场景（如纯内网设备、调试环境）下调用。
@@ -122,6 +133,7 @@ class NetworkCache private constructor() {
         monitor = monitor,
         deduplicateResponse = deduplicateResponse,
         cachePredicate = cachePredicate,
+        cacheKeyTransformer = cacheKeyTransformer,
         enableDiskEncryption = enableDiskEncryption,
       )
     }

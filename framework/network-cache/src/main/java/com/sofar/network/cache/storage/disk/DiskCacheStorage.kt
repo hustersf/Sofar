@@ -31,9 +31,11 @@ class DiskCacheStorage(
     diskCipher?.warmUpKey()
   }
 
-  private fun encrypt(data: ByteArray): ByteArray? = diskCipher?.encrypt(data)
+  private fun encrypt(data: ByteArray, cacheKey: String): ByteArray? =
+    diskCipher?.encrypt(data, cacheKey.encodeToByteArray())
 
-  private fun decrypt(data: ByteArray): ByteArray? = diskCipher?.decrypt(data)
+  private fun decrypt(data: ByteArray, cacheKey: String): ByteArray? =
+    diskCipher?.decrypt(data, cacheKey.encodeToByteArray())
 
   /**
    * 磁盘存储格式：
@@ -45,7 +47,7 @@ class DiskCacheStorage(
     return runCatching {
       val stored = cache.getBytes(cacheKey) ?: return@runCatching null
       val payload = if (enableEncryption) {
-        decrypt(stored) ?: return@runCatching null
+        decrypt(stored, cacheKey) ?: return@runCatching null
       } else {
         stored
       }
@@ -64,7 +66,7 @@ class DiskCacheStorage(
         .write(entity.responseBodyBytes)
         .readByteArray()
       val stored = if (enableEncryption) {
-        encrypt(payload) ?: return@runCatching
+        encrypt(payload, entity.cacheKey) ?: return@runCatching
       } else {
         payload
       }

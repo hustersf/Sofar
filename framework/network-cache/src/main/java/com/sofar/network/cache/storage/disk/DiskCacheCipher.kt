@@ -36,11 +36,12 @@ internal class DiskCacheCipher(
   /**
    * 加密：返回 [12字节 IV][密文 + 16字节 GCM Tag]
    */
-  fun encrypt(data: ByteArray): ByteArray? {
+  fun encrypt(data: ByteArray, aad: ByteArray?): ByteArray? {
     val key = fileSecretKey ?: return null
     return runCatching {
       val cipher = Cipher.getInstance(TRANSFORMATION)
       cipher.init(Cipher.ENCRYPT_MODE, key)
+      aad?.let { cipher.updateAAD(it) }
       cipher.iv + cipher.doFinal(data)
     }.getOrNull()
   }
@@ -48,7 +49,7 @@ internal class DiskCacheCipher(
   /**
    * 解密：从首 12 字节提取 IV，解密剩余密文
    */
-  fun decrypt(data: ByteArray): ByteArray? {
+  fun decrypt(data: ByteArray, aad: ByteArray?): ByteArray? {
     val key = fileSecretKey ?: return null
     if (data.size <= GCM_IV_SIZE) return null
     return runCatching {
@@ -56,6 +57,7 @@ internal class DiskCacheCipher(
       val ciphertext = data.copyOfRange(GCM_IV_SIZE, data.size)
       val cipher = Cipher.getInstance(TRANSFORMATION)
       cipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(GCM_TAG_BITS, iv))
+      aad?.let { cipher.updateAAD(it) }
       cipher.doFinal(ciphertext)
     }.getOrNull()
   }
@@ -66,7 +68,7 @@ internal class DiskCacheCipher(
     val keyBytes = runCatching {
       cacheDir.mkdirs()
       if (encryptedKeyFile.exists()) {
-        decryptSoftKey(keystoreSecretKey, encryptedKeyFile.readBytes())
+        loadExistingFileSecretKey(keystoreSecretKey, encryptedKeyFile)
       } else {
         createAndPersistSoftKey(keystoreSecretKey, encryptedKeyFile)
       }
@@ -74,6 +76,18 @@ internal class DiskCacheCipher(
 
     if (keyBytes.size != KEY_SIZE_BYTES) return null
     return SecretKeySpec(keyBytes, AES_ALGORITHM)
+  }
+
+  private fun loadExistingFileSecretKey(
+    keystoreSecretKey: SecretKey,
+    encryptedKeyFile: File
+  ): ByteArray? {
+    val keyBytes = decryptSoftKey(keystoreSecretKey, encryptedKeyFile.readBytes())
+    if (keyBytes?.size == KEY_SIZE_BYTES) {
+      return keyBytes
+    }
+    encryptedKeyFile.delete()
+    return createAndPersistSoftKey(keystoreSecretKey, encryptedKeyFile)
   }
 
   private fun createAndPersistSoftKey(

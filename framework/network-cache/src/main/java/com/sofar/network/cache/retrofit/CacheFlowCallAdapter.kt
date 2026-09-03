@@ -15,6 +15,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
+import okhttp3.Request
+import okhttp3.RequestBody
+import okio.Buffer
 import retrofit2.Call
 import retrofit2.CallAdapter
 import java.lang.reflect.Type
@@ -28,6 +31,11 @@ internal class CacheFlowCallAdapter<R>(
 
   companion object {
     private const val TAG = "CacheFlow"
+    private val CACHE_KEY_SUPPORTED_BODY_SUBTYPES = setOf(
+      "json",
+      "x-www-form-urlencoded",
+      "xml"
+    )
   }
 
   override fun responseType(): Type = responseType
@@ -41,7 +49,13 @@ internal class CacheFlowCallAdapter<R>(
 
       val request = call.request()
       val urlPath = request.url.encodedPath
-      val cacheKey = CacheKeyGenerator.generate(request)
+      val cacheKey = CacheKeyGenerator.generate(
+        method = request.method,
+        url = request.url.toString(),
+        body = request.extractCacheKeyBody(),
+        transformer = config.cacheKeyTransformer
+      )
+
       // 请求级策略优先
       val finalLoadPolicy = request.tag(LoadPolicy::class.java)
         ?.takeIf { it != LoadPolicy.DEFAULT }
@@ -177,5 +191,27 @@ internal class CacheFlowCallAdapter<R>(
       monitor.onCacheReadFailed(urlPath, e)
       logger.e(TAG, "cache read failed: $urlPath", e)
     }
+  }
+
+  private fun Request.extractCacheKeyBody(): String? {
+    val requestBody = body ?: return null
+    if (requestBody.isOneShot()) {
+      return null
+    }
+
+    if (!requestBody.isSupportedCacheKeyBody()) {
+      return null
+    }
+
+    return runCatching {
+      val buffer = Buffer()
+      requestBody.writeTo(buffer)
+      buffer.readUtf8()
+    }.getOrNull()
+  }
+
+  private fun RequestBody.isSupportedCacheKeyBody(): Boolean {
+    val contentType = contentType() ?: return false
+    return contentType.type == "text" || contentType.subtype in CACHE_KEY_SUPPORTED_BODY_SUBTYPES
   }
 }
