@@ -9,18 +9,21 @@ import com.sofar.network.cache.policy.LoadPolicy
 import com.sofar.network.cache.predicate.CachePredicate
 import com.sofar.network.cache.storage.CacheStorageManager
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.channels.ProducerScope
-import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onEach
 import okhttp3.Request
 import okhttp3.RequestBody
 import okio.Buffer
 import retrofit2.Call
 import retrofit2.CallAdapter
 import java.lang.reflect.Type
+import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.time.Duration.Companion.milliseconds
 
 internal class CacheFlowCallAdapter<R>(
   private val responseType: Type,
@@ -31,11 +34,8 @@ internal class CacheFlowCallAdapter<R>(
 
   companion object {
     private const val TAG = "CacheFlow"
-    private val CACHE_KEY_SUPPORTED_BODY_SUBTYPES = setOf(
-      "json",
-      "x-www-form-urlencoded",
-      "xml"
-    )
+    private const val MAX_WAIT_TIME = 500L
+    private const val DELAY_STEP = 5L
   }
 
   override fun responseType(): Type = responseType
@@ -43,7 +43,10 @@ internal class CacheFlowCallAdapter<R>(
   @Suppress("TooGenericExceptionCaught")
   override fun adapt(call: Call<R>): Flow<R> {
     val config = NetworkCache.get().config
-    val flow = callbackFlow {
+    // 声明标志位，初始为安全
+    val isPipeSafe = AtomicBoolean(true)
+
+    val flow = flow {
       val logger = config.logger
       val monitor = config.monitor
 
@@ -55,21 +58,21 @@ internal class CacheFlowCallAdapter<R>(
         body = request.extractCacheKeyBody(),
         transformer = config.cacheKeyTransformer
       )
-
       // 请求级策略优先
       val finalLoadPolicy = request.tag(LoadPolicy::class.java)
         ?.takeIf { it != LoadPolicy.DEFAULT }
         ?: resolvedOptions.loadPolicy
 
-      val doReadCache = {
+      val doReadCache = suspend {
         readCache(
           cacheKey = cacheKey,
           urlPath = urlPath,
           logger = logger,
-          monitor = monitor
+          monitor = monitor,
+          isPipeSafe = isPipeSafe
         )
       }
-      val doRequestNetwork = {
+      val doRequestNetwork = suspend {
         requestNetwork(
           call = call,
           cacheKey = cacheKey,
@@ -80,56 +83,68 @@ internal class CacheFlowCallAdapter<R>(
         )
       }
 
-      var activeCall: Call<R>? = null
       when (finalLoadPolicy) {
         LoadPolicy.CACHE_ONLY -> {
           doReadCache()
-          close()
         }
 
         LoadPolicy.NETWORK_ONLY -> {
-          activeCall = doRequestNetwork()
+          doRequestNetwork()
         }
 
         LoadPolicy.CACHE_THEN_NETWORK -> {
           doReadCache()
-          activeCall = doRequestNetwork()
+          // 核心刹车逻辑：捕获异常并检查标志位
+          try {
+            doRequestNetwork()
+          } catch (t: Throwable) {
+            if (!isPipeSafe.get()) {
+              logger.d(TAG, "pipe not safe, waiting for cache consumption: $urlPath")
+              val startTime = System.currentTimeMillis()
+              while (!isPipeSafe.get() && (System.currentTimeMillis() - startTime < MAX_WAIT_TIME)) {
+                delay(DELAY_STEP.milliseconds)
+              }
+              if (!isPipeSafe.get()) {
+                logger.e(TAG, "cache consumption timeout: $urlPath")
+              } else {
+                logger.d(TAG, "cache consumed, releasing pipe: $urlPath")
+              }
+            }
+            throw t
+          }
         }
 
         else -> {
           logger.e(TAG, "invalid load policy: $finalLoadPolicy, fallback to network_only")
-          activeCall = doRequestNetwork()
-        }
-      }
-
-      // Flow 关闭时取消请求
-      awaitClose {
-        val executingCall = activeCall
-        if (executingCall != null && !executingCall.isCanceled) {
-          logger.d(TAG, "flow closed: $urlPath")
-          executingCall.cancel()
+          doRequestNetwork()
         }
       }
     }
+
     val targetFlow = if (config.deduplicateResponse) {
       flow.distinctUntilChanged()
     } else {
       flow
     }
-    return targetFlow.flowOn(dispatcher)
+
+    return targetFlow
+      .flowOn(dispatcher)
+      .onEach {
+        // 缓存已穿过 flowOn 异步通道，可释放等待中的网络异常。
+        isPipeSafe.set(true)
+      }
   }
 
   @Suppress("TooGenericExceptionCaught")
-  private fun ProducerScope<R>.requestNetwork(
+  private suspend fun FlowCollector<R>.requestNetwork(
     call: Call<R>,
     cacheKey: String,
     urlPath: String,
     logger: ISdkLogger,
     monitor: ICacheMonitor,
     cachePredicate: CachePredicate?
-  ): Call<R> {
-    return enqueueNetworkCall(
-      sourceCall = call,
+  ) {
+    val body = call.executeNetworkCall(
       responseType = responseType,
       onNetworkSuccess = { body, networkCost ->
         monitor.onNetworkSuccess(urlPath, networkCost)
@@ -150,16 +165,21 @@ internal class CacheFlowCallAdapter<R>(
       onNetworkFailure = { throwable, networkCost ->
         monitor.onNetworkFailed(urlPath, throwable, networkCost)
         logger.e(TAG, "network failed: $urlPath", throwable)
+      },
+      onCancelled = {
+        logger.d(TAG, "flow closed: $urlPath")
       }
     )
+    emit(body)
   }
 
   @Suppress("TooGenericExceptionCaught")
-  private fun ProducerScope<R>.readCache(
+  private suspend fun FlowCollector<R>.readCache(
     cacheKey: String,
     urlPath: String,
     logger: ISdkLogger,
-    monitor: ICacheMonitor
+    monitor: ICacheMonitor,
+    isPipeSafe: AtomicBoolean
   ) {
     try {
       val cacheEntity = CacheStorageManager.get(cacheKey)
@@ -182,36 +202,43 @@ internal class CacheFlowCallAdapter<R>(
         String(cacheEntity.responseBodyBytes, Charsets.UTF_8),
         responseType
       ) ?: throw EmptyBodyException("cache data is null")
-      val result = trySend(cacheData)
-      if (result.isSuccess) {
-        monitor.onCacheHit(urlPath)
-        logger.d(TAG, "cache hit: $urlPath")
-      }
+
+      // 发射前加锁
+      isPipeSafe.set(false)
+      emit(cacheData)
+      monitor.onCacheHit(urlPath)
+      logger.d(TAG, "cache hit: $urlPath")
     } catch (e: Exception) {
       monitor.onCacheReadFailed(urlPath, e)
       logger.e(TAG, "cache read failed: $urlPath", e)
     }
   }
+}
 
-  private fun Request.extractCacheKeyBody(): String? {
-    val requestBody = body ?: return null
-    if (requestBody.isOneShot()) {
-      return null
-    }
+private val CACHE_KEY_SUPPORTED_BODY_SUBTYPES = setOf(
+  "json",
+  "x-www-form-urlencoded",
+  "xml"
+)
 
-    if (!requestBody.isSupportedCacheKeyBody()) {
-      return null
-    }
-
-    return runCatching {
-      val buffer = Buffer()
-      requestBody.writeTo(buffer)
-      buffer.readUtf8()
-    }.getOrNull()
+private fun Request.extractCacheKeyBody(): String? {
+  val requestBody = body ?: return null
+  if (requestBody.isOneShot()) {
+    return null
   }
 
-  private fun RequestBody.isSupportedCacheKeyBody(): Boolean {
-    val contentType = contentType() ?: return false
-    return contentType.type == "text" || contentType.subtype in CACHE_KEY_SUPPORTED_BODY_SUBTYPES
+  if (!requestBody.isSupportedCacheKeyBody()) {
+    return null
   }
+
+  return runCatching {
+    val buffer = Buffer()
+    requestBody.writeTo(buffer)
+    buffer.readUtf8()
+  }.getOrNull()
+}
+
+private fun RequestBody.isSupportedCacheKeyBody(): Boolean {
+  val contentType = contentType() ?: return false
+  return contentType.type == "text" || contentType.subtype in CACHE_KEY_SUPPORTED_BODY_SUBTYPES
 }

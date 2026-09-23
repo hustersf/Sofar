@@ -10,6 +10,7 @@ import com.sofar.core.ui.activity.BaseUIActivity
 import com.sofar.network.cache.retrofit.CacheFlowCallAdapterFactory
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -47,11 +48,14 @@ class NetworkCacheActivity : BaseUIActivity() {
           query = "android",
           page = 1,
           itemsPerPage = 20
-        ).catch {
-          log("request failed:${it.message}")
+        ).onEach {
+          log("request onEach:")
+        }.catch {
+          log("request catch:${it.message}")
         }.onCompletion {
-          log("request completed")
+          log("request onCompletion")
         }.collect { response ->
+          log("request collect")
           val cost = System.currentTimeMillis() - startTime
           receiveCount++
           val items = response.items

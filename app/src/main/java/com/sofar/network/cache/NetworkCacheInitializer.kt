@@ -6,11 +6,14 @@ import com.sofar.network.cache.monitor.ICacheMonitor
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 /**
  * 全局网络缓存初始化与日志流分发器
  */
 object NetworkCacheInitializer {
+
+  private const val CACHE_TTL_HOURS = 24L
 
   // 供 Activity 监听的缓存日志管道
   private val _logFlow = MutableSharedFlow<String>(extraBufferCapacity = 100)
@@ -21,6 +24,8 @@ object NetworkCacheInitializer {
     NetworkCache.init(
       NetworkCache.Builder(
         cacheDir = File(context.externalCacheDir, "network_cache")
+      ).setTtl(
+        CACHE_TTL_HOURS, TimeUnit.HOURS
       ).setLogger(
         DefaultSdkLogger(true)
       ).setMonitor(object : ICacheMonitor {
