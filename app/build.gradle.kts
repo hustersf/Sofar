@@ -81,6 +81,7 @@ dependencies {
     implementation(project(":feature:datastore"))
     implementation(project(":feature:appwidget"))
     implementation(project(":feature:room"))
+    implementation(project(":feature:kmp-demo"))
 
     // 三方封装库
     implementation(project(":thirdparty:mpchart"))

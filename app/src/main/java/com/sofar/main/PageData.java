@@ -11,12 +11,12 @@ public class PageData {
 
   public static List<PageData> buildPageDatas() {
     List<PageData> list = new ArrayList<>();
+    list.add(PageData.createPageData("kmp库", "sofar://kmp.demo"));
     list.add(PageData.createPageData("有趣的", "sofar://fun"));
     list.add(PageData.createPageData("换肤", "sofar://skin"));
     list.add(PageData.createPageData("控件", "sofar://widget"));
     list.add(PageData.createPageData("网络(RxJava)", "sofar://network"));
     list.add(PageData.createPageData("网络(协程)", "sofar://network2"));
-    list.add(PageData.createPageData("网络(kmp-ktor)", "sofar://network3"));
     list.add(PageData.createPageData("网络缓存", "sofar://network.cache"));
     list.add(PageData.createPageData("github仓库分页", "sofar://github"));
     list.add(PageData.createPageData("下载库", "sofar://download"));

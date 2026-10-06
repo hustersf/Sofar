@@ -131,7 +131,7 @@
 
 
     <activity
-      android:name=".network.KmpNetworkActivity"
+      android:name=".kmp.demo.KmpDemoMainActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
       android:exported="true"
       android:screenOrientation="portrait">
@@ -143,7 +143,7 @@
         <category android:name="android.intent.category.BROWSABLE" />
 
         <data
-          android:host="network3"
+          android:host="kmp.demo"
           android:scheme="sofar" />
       </intent-filter>
 
