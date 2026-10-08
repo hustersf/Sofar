@@ -21,4 +21,7 @@ dependencies {
   implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 
   implementation(libs.kotlinx.serialization)
+
+  implementation(project(":framework:network-kmp"))
+  implementation(libs.ktor.client.core)
 }
